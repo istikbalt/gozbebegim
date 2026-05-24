@@ -3,246 +3,174 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>gözbebeğim.com — yakında açılıyor</title>
-  <meta name="description" content="Doğum ve sünnet hediye listelerinizi kolayca oluşturun. Çakışan hediye yok, WhatsApp ile paylaşın." />
+  <title>gözbebeğim.com — Çocuğunuzun her özel günü için hediye listesi</title>
+  <meta name="description" content="Doğum, yaş günü, sünnet and mezuniyet hediye listelerinizi kolayca oluşturun." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: #fff9fb;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      overflow: hidden;
+    :root {
+      --pink: #D4537E; --pink-dark: #993556;
+      --pink-light: #FBEAF0; --pink-border: #F4C0D1;
+      --bg: #fff9fb; --card: #ffffff;
+      --text: #1a1a1a; --text-sec: #666; --text-ter: #aaa;
+      --border: 0.5px solid #ecdde4; --surface: #f7f1f4;
     }
-
-    .bg-circle {
-      position: fixed;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,249,251,.94); backdrop-filter: blur(12px);
+      border-bottom: var(--border); padding: 0 1.5rem; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .bg-circle-1 { width: 500px; height: 500px; top: -150px; left: -150px; background: rgba(212, 83, 126, 0.07); }
-    .bg-circle-2 { width: 350px; height: 350px; bottom: -100px; right: -100px; background: rgba(29, 158, 117, 0.07); }
-    .bg-circle-3 { width: 180px; height: 180px; top: 30%; right: 8%; background: rgba(212, 83, 126, 0.05); }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 560px;
-      width: 100%;
-      text-align: center;
-    }
-
-    .icon {
-      font-size: 52px;
-      display: block;
-      margin-bottom: 0.75rem;
-      animation: heartbeat 2.2s ease-in-out infinite;
-    }
-
-    @keyframes heartbeat {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
-    .brand {
-      font-family: 'Playfair Display', serif;
-      font-size: 42px;
-      font-weight: 500;
-      color: #1a1a1a;
-      letter-spacing: -0.5px;
-      margin-bottom: 0.3rem;
-    }
-
-    .brand span { color: #D4537E; }
-
-    .tagline {
-      font-size: 14px;
-      color: #888;
-      letter-spacing: 1px;
-      margin-bottom: 2rem;
-      text-transform: lowercase;
-    }
-
-    .badge {
-      display: inline-block;
-      background: #FBEAF0;
-      color: #993556;
-      font-size: 13px;
-      font-weight: 600;
-      padding: 6px 20px;
-      border-radius: 20px;
-      border: 1px solid #F4C0D1;
-      margin-bottom: 2rem;
-    }
-
-    .desc {
-      font-size: 16px;
-      color: #666;
-      line-height: 1.8;
-      margin-bottom: 2.5rem;
-    }
-
-    .features {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 2.5rem;
-    }
-
-    .feature {
-      background: #fff;
-      border: 1px solid #f0e0e8;
-      border-radius: 12px;
-      padding: 10px 16px;
-      font-size: 13px;
-      color: #555;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .feature-icon {
-      font-size: 18px;
-    }
-
-    .notify-form {
-      display: flex;
-      gap: 8px;
-      max-width: 420px;
-      margin: 0 auto 1rem;
-    }
-
-    .notify-form input {
-      flex: 1;
-      padding: 12px 16px;
-      border: 1px solid #e8d0da;
-      border-radius: 10px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 14px;
-      outline: none;
-      background: #fff;
-      color: #333;
-      transition: border-color 0.2s;
-    }
-
-    .notify-form input:focus { border-color: #D4537E; }
-    .notify-form input.error { border-color: #E24B4A; }
-
-    .notify-btn {
-      background: #D4537E;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 22px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .notify-btn:hover { background: #b8436b; }
-    .notify-btn:active { transform: scale(0.97); }
-
-    .success-msg {
-      display: none;
-      font-size: 14px;
-      color: #0F6E56;
-      background: #E1F5EE;
-      border: 1px solid #9FE1CB;
-      border-radius: 10px;
-      padding: 10px 20px;
-      margin: 0.75rem auto;
-      max-width: 420px;
-    }
-
-    .footer {
-      margin-top: 2.5rem;
-      font-size: 13px;
-      color: #aaa;
-    }
-
-    .footer a {
-      color: #D4537E;
-      text-decoration: none;
-    }
-
-    .footer a:hover { text-decoration: underline; }
-
-    @media (max-width: 480px) {
-      .brand { font-size: 32px; }
-      .notify-form { flex-direction: column; }
-      .notify-btn { width: 100%; }
+    .brand { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .brand span { color: var(--pink); }
+    .nav-actions { display: flex; gap: 10px; }
+    .btn-ghost { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-sec); background: none; border: var(--border); border-radius: 8px; padding: 7px 16px; cursor: pointer; text-decoration: none; transition: all .2s; }
+    .btn-ghost:hover { background: var(--surface); color: var(--text); }
+    .btn-primary { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; color: #fff; background: var(--pink); border: none; border-radius: 8px; padding: 7px 18px; cursor: pointer; text-decoration: none; transition: background .2s; }
+    .btn-primary:hover { background: var(--pink-dark); }
+    .hero { max-width: 720px; margin: 0 auto; padding: 5rem 1.5rem 3rem; text-align: center; }
+    .hero-icon { font-size: 56px; display: block; margin-bottom: 1rem; animation: hb 2.4s ease-in-out infinite; }
+    @keyframes hb { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(30px,5vw,50px); font-weight: 500; line-height: 1.2; margin-bottom: 1.25rem; }
+    .hero h1 span { color: var(--pink); }
+    .hero-sub { font-size: 17px; color: var(--text-sec); line-height: 1.7; margin-bottom: 2.5rem; }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .btn-big { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; border-radius: 12px; padding: 13px 28px; cursor: pointer; text-decoration: none; transition: all .2s; }
+    .btn-big-pink { color: #fff; background: var(--pink); border: none; box-shadow: 0 4px 16px rgba(212,83,126,.25); }
+    .btn-big-pink:hover { background: var(--pink-dark); transform: translateY(-1px); }
+    .btn-big-ghost { color: var(--text-sec); background: var(--card); border: var(--border); }
+    .btn-big-ghost:hover { background: var(--surface); color: var(--text); }
+    .pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .pill { background: var(--card); border: var(--border); border-radius: 30px; padding: 8px 16px; font-size: 13px; color: var(--text-sec); display: flex; align-items: center; gap: 7px; }
+    .section { max-width: 900px; margin: 0 auto; padding: 4rem 1.5rem; }
+    .sec-label { font-size: 12px; font-weight: 700; color: var(--pink); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: .5rem; }
+    .sec-title { font-family: 'Playfair Display', serif; font-size: clamp(22px,3vw,32px); font-weight: 500; margin-bottom: 2.5rem; }
+    .cat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+    .cat-card { background: var(--card); border: var(--border); border-radius: 20px; padding: 2rem 1.25rem; text-align: center; text-decoration: none; color: var(--text); transition: all .25s; }
+    .cat-card:hover { border-color: var(--pink-border); box-shadow: 0 8px 24px rgba(212,83,126,.1); transform: translateY(-3px); }
+    .cat-emoji { font-size: 38px; display: block; margin-bottom: .75rem; }
+    .cat-name { font-size: 15px; font-weight: 700; margin-bottom: .3rem; }
+    .cat-desc { font-size: 12px; color: var(--text-ter); }
+    .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .how-card { background: var(--card); border: var(--border); border-radius: 20px; padding: 2rem 1.5rem; }
+    .how-num { width: 36px; height: 36px; border-radius: 50%; background: var(--pink); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; margin-bottom: 1rem; }
+    .how-card h3 { font-size: 15px; font-weight: 700; margin-bottom: .5rem; }
+    .how-card p { font-size: 13px; color: var(--text-sec); line-height: 1.6; }
+    .cta-wrap { padding: 0 1.5rem 4rem; max-width: 900px; margin: 0 auto; }
+    .cta-box { background: linear-gradient(135deg,#D4537E,#993556); border-radius: 20px; padding: 4rem 2rem; text-align: center; color: #fff; }
+    .cta-box h2 { font-family: 'Playfair Display', serif; font-size: clamp(22px,3vw,32px); margin-bottom: .75rem; }
+    .cta-box p { font-size: 15px; opacity: .85; margin-bottom: 2rem; }
+    .btn-white { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; color: var(--pink); background: #fff; border: none; border-radius: 12px; padding: 13px 28px; cursor: pointer; text-decoration: none; transition: all .2s; }
+    .btn-white:hover { background: #f5e8ed; }
+    footer { border-top: var(--border); padding: 2rem 1.5rem; text-align: center; font-size: 13px; color: var(--text-ter); }
+    footer a { color: var(--pink); text-decoration: none; }
+    .bg-c { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+    .bg-c1 { width: 600px; height: 600px; top: -200px; left: -200px; background: rgba(212,83,126,.04); }
+    .bg-c2 { width: 400px; height: 400px; bottom: -150px; right: -150px; background: rgba(29,158,117,.04); }
+    @media(max-width:700px) {
+      .cat-grid { grid-template-columns: repeat(2,1fr); }
+      .how-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 1rem; }
+      .hero { padding: 3rem 1rem 2rem; }
     }
   </style>
 </head>
 <body>
+<div class="bg-c bg-c1"></div>
+<div class="bg-c bg-c2"></div>
 
-  <div class="bg-circle bg-circle-1"></div>
-  <div class="bg-circle bg-circle-2"></div>
-  <div class="bg-circle bg-circle-3"></div>
-
-  <div class="container">
-
-    <span class="icon">🍼</span>
-
-    <h1 class="brand">göz<span>bebeğim</span>.com</h1>
-    <p class="tagline">doğum &nbsp;·&nbsp; sünnet &nbsp;·&nbsp; hediye listesi</p>
-
-    <div class="badge">⏳ &nbsp;Yakında açılıyor</div>
-
-    <p class="desc">
-      Sevdikleriniz aynı hediyeyi almadan önce biz buradayız.<br />
-      Doğum ve sünnet listelerinizi kolayca oluşturun,<br />
-      WhatsApp'ta paylaşın — gerisi bizde.
-    </p>
-
-    <div class="features">
-      <div class="feature"><span class="feature-icon">🎁</span> Çakışan hediye yok</div>
-      <div class="feature"><span class="feature-icon">🔒</span> Gizli liste seçeneği</div>
-      <div class="feature"><span class="feature-icon">💬</span> WhatsApp ile paylaş</div>
-      <div class="feature"><span class="feature-icon">👥</span> Grup hediye</div>
-    </div>
-
-    <form class="notify-form" onsubmit="handleNotify(event)">
-      <input type="email" id="emailInput" placeholder="e-posta adresiniz" />
-      <button type="submit" class="notify-btn">Haber ver</button>
-    </form>
-
-    <div class="success-msg" id="successMsg">
-      ✅ &nbsp;Haberdar edeceğiz, teşekkürler!
-    </div>
-
-    <div class="footer">
-      sorular için &nbsp;<a href="mailto:info@gozbebegim.com">info@gozbebegim.com</a>
-    </div>
-
+<nav>
+  <a class="brand" href="/">göz<span>bebeğim</span>.com</a>
+  <div class="nav-actions">
+    <a class="btn-ghost" href="/login">Giriş yap</a>
+    <a class="btn-primary" href="/signup">Kayıt ol</a>
   </div>
+</nav>
 
-  <script>
-    function handleNotify(e) {
-      e.preventDefault();
-      const input = document.getElementById('emailInput');
-      const msg = document.getElementById('successMsg');
-      if (input.value && input.value.includes('@') && input.value.includes('.')) {
-        msg.style.display = 'block';
-        input.value = '';
-        input.classList.remove('error');
-      } else {
-        input.classList.add('error');
-        setTimeout(() => input.classList.remove('error'), 1500);
-      }
-    }
-  </script>
+<section class="hero">
+  <span class="hero-icon">🍼</span>
+  <h1>Çocuğunuzun her özel günü için<br /><span>hediye listesi</span></h1>
+  <p class="hero-sub">Doğum, yaş günü, sünnet ve mezuniyette sevdikleriniz aynı hediyeyi almasın.<br />Listenizi oluşturun, WhatsApp'ta paylaşın.</p>
+  <div class="hero-btns">
+    <a class="btn-big btn-big-pink" href="/signup">Ücretsiz liste oluştur</a>
+    <a class="btn-big btn-big-ghost" href="#nasil">Nasıl çalışır?</a>
+  </div>
+  <div class="pills">
+    <div class="pill">🎁 Çakışan hediye yok</div>
+    <div class="pill">🔒 Gizli liste seçeneği</div>
+    <div class="pill">💬 WhatsApp ile paylaş</div>
+    <div class="pill">👥 Grup hediye</div>
+    <div class="pill">📸 Fotoğraflı anılar</div>
+  </div>
+</section>
 
+<section class="section">
+  <div class="sec-label">Organizasyon tipleri</div>
+  <div class="sec-title">Her özel gün için bir liste</div>
+  <div class="cat-grid">
+    <a class="cat-card" href="/signup">
+      <span class="cat-emoji">👶</span>
+      <div class="cat-name">Doğum</div>
+      <div class="cat-desc">Yeni bebeğiniz için ihtiyaç listesi</div>
+    </a>
+    <a class="cat-card" href="/signup">
+      <span class="cat-emoji">🎂</span>
+      <div class="cat-name">Yaş Günü</div>
+      <div class="cat-desc">Her yıl tekrar eden özel gün</div>
+    </a>
+    <a class="cat-card" href="/signup">
+      <span class="cat-emoji">✂️</span>
+      <div class="cat-name">Sünnet</div>
+      <div class="cat-desc">Minik kahramanın büyük günü</div>
+    </a>
+    <a class="cat-card" href="/signup">
+      <span class="cat-emoji">🎓</span>
+      <div class="cat-name">Mezuniyet</div>
+      <div class="cat-desc">İlkokul ve ortaokul mezuniyeti</div>
+    </a>
+  </div>
+</section>
+
+<section class="section" id="nasil">
+  <div class="sec-label">Basit ve hızlı</div>
+  <div class="sec-title">Nasıl çalışır?</div>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">1</div>
+      <h3>Liste oluştur</h3>
+      <p>Organizasyon tipini seç, ihtiyaç listenizi oluşturun. Şablon listeler otomatik gelir, istediğinizi ekleyip çıkarın.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">2</div>
+      <h3>WhatsApp'ta paylaş</h3>
+      <p>Tek bir link oluşur. Aile ve arkadaşlarınızla paylaşın, herkes neyin alındığını görsün.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">3</div>
+      <h3>Çakışma olmaz</h3>
+      <p>Herkes ne alacağını seçer, listede görünür. Aynı hediyeyi iki kişi almaz. Fotoğrafını paylaşabilir.</p>
+    </div>
+  </div>
+</section>
+
+<div class="cta-wrap">
+  <div class="cta-box">
+    <h2>Hemen başlayın, ücretsiz</h2>
+    <p>Dakikalar içinde listenizi oluşturun ve paylaşın.</p>
+    <a class="btn-white" href="/signup">Liste oluştur →</a>
+  </div>
+</div>
+
+<footer>
+  <p style="margin-bottom:.5rem">
+    <a href="/">göz<strong>bebeğim</strong>.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:info@gozbebegim.com">info@gozbebegim.com</a>
+  </p>
+  <p>© 2026 gözbebeğim.com</p>
+</footer>
 </body>
 </html>

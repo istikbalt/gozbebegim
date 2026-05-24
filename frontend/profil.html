@@ -3,367 +3,154 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zeynep Demir'in Doğumu — gözbebeğim.com</title>
+  <title>gözbebeğim.com</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --pink:       #D4537E;
-      --pink-dark:  #993556;
-      --pink-light: #FBEAF0;
-      --pink-border:#F4C0D1;
-      
-      /* Cover Gradient Variables */
-      --cover-start: #FBEAF0;
-      --cover-mid:   #F4C0D1;
-      --cover-end:   #E6D4F0;
-      --green-bg:   #E1F5EE;
-      --green-txt:  #0F6E56;
-      --blue-bg:    #E6F1FB;
-      --blue-txt:   #185FA5;
-      --radius-sm:  8px;
-      --radius-md:  12px;
-      --radius-lg:  16px;
-      --border:     0.5px solid #e8e0e4;
-      --bg:         #fdf8fa;
-      --card-bg:    #ffffff;
-      --text:       #1a1a1a;
-      --text-sec:   #666;
-      --text-ter:   #aaa;
-      --surface:    #f5f0f3;
+      --pink:#D4537E; --pink-dark:#993556; --pink-light:#FBEAF0; --pink-border:#F4C0D1;
+      --cover-start:#FBEAF0; --cover-mid:#F4C0D1; --cover-end:#E6D4F0;
+      --green-bg:#E1F5EE; --green-txt:#0F6E56; --blue-bg:#E6F1FB; --blue-txt:#185FA5;
+      --radius-sm:8px; --radius-md:12px; --radius-lg:16px;
+      --border:0.5px solid #e8e0e4; --bg:#fdf8fa; --card-bg:#ffffff;
+      --text:#1a1a1a; --text-sec:#666; --text-ter:#aaa; --surface:#f5f0f3;
+      --nav-bg:rgba(253,248,250,.92); --comments-bg:#fefcfd;
+    }
+    body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; transition:background-color .4s; }
+    nav { position:sticky; top:0; z-index:100; background:var(--nav-bg); backdrop-filter:blur(12px); border-bottom:var(--border); padding:0 1.5rem; height:52px; display:flex; align-items:center; justify-content:space-between; transition:background-color .4s; }
+    .nav-brand { font-family:'Playfair Display',serif; font-size:18px; font-weight:500; color:var(--text); text-decoration:none; }
+    .nav-brand span { color:var(--pink); }
+    .nav-link { font-size:13px; color:var(--text-sec); text-decoration:none; padding:6px 14px; border:var(--border); border-radius:20px; transition:all .2s; }
+    .nav-link:hover { background:var(--pink-light); color:var(--pink-dark); }
+    .page { max-width:640px; margin:0 auto; padding:0 1rem 3rem; }
+    .cover { width:100%; height:130px; background:linear-gradient(135deg,var(--cover-start),var(--cover-mid),var(--cover-end)); border-radius:0 0 var(--radius-lg) var(--radius-lg); position:relative; overflow:hidden; }
+    .cover-shine { position:absolute; top:0; left:-100%; width:50%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,.25),transparent); transform:skewX(-25deg); animation:shine 6s infinite ease-in-out; }
+    @keyframes shine { 0%{left:-100%} 35%,100%{left:200%} }
+    .profile-header { display:flex; flex-direction:column; gap:10px; padding:0 .5rem; margin-bottom:1.25rem; }
+    .profile-header-top { display:flex; align-items:flex-end; justify-content:space-between; width:100%; margin-top:-36px; position:relative; z-index:10; }
+    .profile-avatar { width:72px; height:72px; border-radius:50%; background:var(--pink); display:flex; align-items:center; justify-content:center; font-size:32px; border:3.5px solid var(--card-bg); flex-shrink:0; }
+    .profile-meta h1 { font-family:'Playfair Display',serif; font-size:22px; font-weight:600; color:var(--text); line-height:1.3; }
+    .profile-meta p { font-size:13px; color:var(--text-sec); margin-top:5px; }
+    .profile-meta p span { margin:0 4px; color:var(--pink-border); }
+    .active-badge { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--pink-dark); background:var(--pink-light); border:0.5px solid var(--pink-border); padding:5px 12px; border-radius:20px; }
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:1rem; }
+    .stat-card { background:var(--card-bg); border:var(--border); border-radius:var(--radius-sm); padding:.75rem .5rem; text-align:center; }
+    .stat-num { font-size:22px; font-weight:600; color:var(--text); }
+    .stat-num.pink { color:var(--pink); }
+    .stat-lbl { font-size:11px; color:var(--text-ter); margin-top:2px; }
+    .card { background:var(--card-bg); border:var(--border); border-radius:var(--radius-md); padding:1rem 1.25rem; margin-bottom:.875rem; }
+    .pinned-label { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:var(--pink-dark); background:var(--pink-light); border:0.5px solid var(--pink-border); padding:3px 10px; border-radius:20px; margin-bottom:.875rem; }
+    .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .info-box { background:var(--surface); border-radius:var(--radius-sm); padding:10px 12px; }
+    .info-box.full { grid-column:1/-1; }
+    .info-lbl { font-size:11px; color:var(--text-ter); margin-bottom:3px; }
+    .info-val { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; }
+    .info-val.normal { font-weight:400; }
+    .sec-title { font-size:14px; font-weight:600; color:var(--text); display:flex; align-items:center; gap:7px; margin-bottom:.75rem; }
+    .sec-title .dot { width:8px; height:8px; border-radius:50%; background:var(--pink); flex-shrink:0; }
+    .msg-item { display:flex; gap:10px; padding:.625rem 0; border-bottom:var(--border); animation:fadeIn .3s ease; }
+    .msg-item:last-child { border-bottom:none; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+    .avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; flex-shrink:0; }
+    .msg-body { flex:1; min-width:0; }
+    .msg-top { display:flex; align-items:baseline; gap:7px; margin-bottom:3px; }
+    .msg-name { font-size:13px; font-weight:600; color:var(--text); }
+    .msg-time { font-size:11px; color:var(--text-ter); }
+    .msg-text { font-size:13px; color:var(--text-sec); line-height:1.55; }
+    .reply-bubble { margin-top:6px; padding:7px 11px; background:var(--surface); border-radius:var(--radius-sm); border-left:2px solid var(--pink-border); font-size:12px; color:var(--text-sec); }
+    .reply-bubble strong { color:var(--text); margin-right:4px; font-weight:600; }
+    .msg-actions { display:flex; gap:14px; margin-top:6px; }
+    .act-btn { font-size:12px; color:var(--text-ter); background:none; border:none; cursor:pointer; display:flex; align-items:center; gap:3px; padding:0; transition:color .15s; }
+    .act-btn:hover { color:var(--pink); }
+    .act-btn.liked { color:var(--pink); }
+    .input-row { display:flex; gap:8px; margin-top:.875rem; }
+    .input-row input { flex:1; padding:9px 14px; border:var(--border); border-radius:var(--radius-sm); font-family:'Nunito',sans-serif; font-size:13px; background:var(--bg); color:var(--text); outline:none; transition:border-color .2s; }
+    .input-row input:focus { border-color:var(--pink); }
+    .send-btn { background:var(--pink); color:#fff; border:none; border-radius:var(--radius-sm); padding:9px 18px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:13px; font-weight:600; white-space:nowrap; transition:background .15s; }
+    .send-btn:hover { background:var(--pink-dark); }
+    .gift-card { border:var(--border); border-radius:var(--radius-sm); overflow:hidden; margin-bottom:8px; background:var(--card-bg); transition:border-color .15s; }
+    .gift-card:hover { border-color:var(--pink-border); }
+    .gift-main { display:flex; align-items:center; gap:10px; padding:.75rem 1rem; }
+    .gift-icon { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+    .g-done { background:var(--green-bg); }
+    .g-reserved { background:#FFF3E0; }
+    .g-group { background:var(--blue-bg); }
+    .g-open { background:var(--surface); border:var(--border); }
+    .gift-info { flex:1; min-width:0; }
+    .gift-name { font-size:14px; font-weight:600; color:var(--text); }
+    .gift-by { font-size:12px; color:var(--text-sec); margin-top:2px; }
+    .gift-cat { font-size:11px; color:var(--text-ter); background:var(--surface); padding:3px 9px; border-radius:10px; flex-shrink:0; }
+    .gift-footer { display:flex; align-items:center; gap:12px; padding:.5rem 1rem; border-top:var(--border); background:var(--surface); }
+    .gift-act { font-size:12px; color:var(--text-ter); background:none; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; padding:0; transition:color .15s; }
+    .gift-act:hover { color:var(--pink); }
+    .gift-act.liked { color:var(--pink); }
+    .progress-bar { height:4px; background:var(--surface); border-radius:2px; margin-top:5px; overflow:hidden; }
+    .progress-fill { height:100%; background:#378ADD; border-radius:2px; }
+    .gift-comments { display:none; padding:.875rem 1rem; border-top:var(--border); background:var(--comments-bg); }
+    .gift-comments.open { display:block; }
+    .gc-item { display:flex; gap:8px; margin-bottom:.5rem; }
+    .gc-avatar { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; flex-shrink:0; }
+    .gc-text { font-size:12px; color:var(--text-sec); line-height:1.5; }
+    .gc-text strong { color:var(--text); margin-right:4px; font-weight:600; }
+    .gc-text em { font-size:10px; color:var(--text-ter); font-style:normal; margin-left:5px; }
+    .gc-input { display:flex; gap:6px; margin-top:.625rem; }
+    .gc-input input { flex:1; height:32px; padding:0 10px; border:var(--border); border-radius:var(--radius-sm); font-family:'Nunito',sans-serif; font-size:12px; background:var(--bg); color:var(--text); outline:none; }
+    .gc-input input:focus { border-color:var(--pink); }
+    .gc-btn { background:var(--pink); color:#fff; border:none; border-radius:var(--radius-sm); padding:0 12px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:12px; font-weight:600; transition:background .15s; }
+    .gc-btn:hover { background:var(--pink-dark); }
+    .buy-btn { background:var(--pink); color:#fff; border:none; border-radius:var(--radius-sm); padding:6px 14px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:12px; font-weight:600; flex-shrink:0; transition:background .15s; }
+    .buy-btn:hover { background:var(--pink-dark); }
+    .reserve-btn { background:#FF9800; color:#fff; border:none; border-radius:var(--radius-sm); padding:6px 14px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:12px; font-weight:600; flex-shrink:0; transition:background .15s; }
+    .reserve-btn:hover { background:#e65100; }
+    .bought-btn { background:var(--green-bg); color:var(--green-txt); border:1px solid #9FE1CB; border-radius:var(--radius-sm); padding:6px 14px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:12px; font-weight:600; flex-shrink:0; }
+    .add-btn { background:var(--surface); color:var(--text-sec); border:var(--border); border-radius:var(--radius-sm); padding:6px 14px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:12px; font-weight:600; flex-shrink:0; }
+    .gift-card.dashed { border-style:dashed; opacity:.65; }
+    .url-bar { display:flex; align-items:center; gap:8px; padding:.625rem 1rem; background:var(--surface); border-radius:var(--radius-sm); margin-bottom:.875rem; font-size:12px; color:var(--text-sec); cursor:pointer; transition:background .15s; }
+    .url-bar:hover { background:var(--pink-light); }
+    .url-bar span { color:var(--pink); font-weight:600; flex:1; }
+    .copy-hint { font-size:11px; color:var(--text-ter); }
+    .page-footer { text-align:center; padding:2rem 1rem 1rem; font-size:12px; color:var(--text-ter); }
+    .page-footer a { color:var(--pink); text-decoration:none; }
 
-      /* Dynamic Theme Extras */
-      --nav-bg:     rgba(253,248,250,.92);
-      --cover-shadow: rgba(212, 83, 126, 0.04);
-      --pattern-color-1: rgba(212, 83, 126, 0.15);
-      --pattern-color-2: rgba(175, 169, 236, 0.2);
-      --comments-bg: #fefcfd;
-    }
+    /* ── MODAL ── */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1000; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--card-bg); border-radius:var(--radius-lg); padding:1.75rem; width:100%; max-width:420px; position:relative; animation:modalIn .25s ease; }
+    @keyframes modalIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+    .modal-close { position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:20px; color:var(--text-ter); cursor:pointer; line-height:1; }
+    .modal-close:hover { color:var(--text); }
+    .modal-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:500; margin-bottom:.25rem; }
+    .modal-sub { font-size:13px; color:var(--text-sec); margin-bottom:1.25rem; }
+    .modal-gift-name { font-size:14px; font-weight:700; color:var(--pink); background:var(--pink-light); border:0.5px solid var(--pink-border); border-radius:var(--radius-sm); padding:8px 12px; margin-bottom:1.25rem; }
+    .form-group { margin-bottom:1rem; }
+    .form-label { display:block; font-size:13px; font-weight:600; color:var(--text); margin-bottom:.4rem; }
+    .form-label span { color:var(--text-ter); font-weight:400; }
+    .form-input { width:100%; padding:10px 14px; border:var(--border); border-radius:var(--radius-sm); font-family:'Nunito',sans-serif; font-size:14px; background:var(--bg); color:var(--text); outline:none; transition:border-color .2s; }
+    .form-input:focus { border-color:var(--pink); }
+    .form-check { display:flex; align-items:center; gap:10px; margin-top:.5rem; cursor:pointer; font-size:13px; color:var(--text-sec); }
+    .form-check input { width:16px; height:16px; accent-color:var(--pink); cursor:pointer; }
+    .modal-actions { display:flex; gap:10px; margin-top:1.5rem; }
+    .modal-btn-primary { flex:1; background:var(--pink); color:#fff; border:none; border-radius:var(--radius-sm); padding:11px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:background .2s; }
+    .modal-btn-primary:hover { background:var(--pink-dark); }
+    .modal-btn-ghost { flex:1; background:none; color:var(--text-sec); border:var(--border); border-radius:var(--radius-sm); padding:11px; font-family:'Nunito',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; }
+    .modal-btn-ghost:hover { background:var(--surface); }
+    .modal-step { display:none; }
+    .modal-step.active { display:block; }
+    .step-success { text-align:center; padding:1rem 0; }
+    .step-success .success-icon { font-size:48px; margin-bottom:1rem; }
+    .step-success h3 { font-family:'Playfair Display',serif; font-size:20px; margin-bottom:.5rem; }
+    .step-success p { font-size:13px; color:var(--text-sec); margin-bottom:1.25rem; line-height:1.6; }
+    .photo-upload-area { border:2px dashed var(--pink-border); border-radius:var(--radius-md); padding:2rem; text-align:center; cursor:pointer; transition:all .2s; margin-bottom:1rem; }
+    .photo-upload-area:hover { border-color:var(--pink); background:var(--pink-light); }
+    .photo-upload-area p { font-size:13px; color:var(--text-sec); margin-top:.5rem; }
+    .reminder-bubble { background:#FFF8E1; border:1px solid #FFE082; border-radius:var(--radius-sm); padding:10px 14px; font-size:13px; color:#795548; display:flex; align-items:center; gap:8px; margin-top:8px; }
 
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      transition: background-color 0.4s ease;
-    }
-
-    /* NAV */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: var(--nav-bg);
-      backdrop-filter: blur(12px);
-      border-bottom: var(--border);
-      padding: 0 1.5rem;
-      height: 52px;
-      display: flex; align-items: center; justify-content: space-between;
-      transition: background-color 0.4s ease, border-bottom 0.4s ease;
-    }
-    .nav-brand {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px; font-weight: 500; color: var(--text);
-      text-decoration: none;
-    }
-    .nav-brand span { color: var(--pink); }
-    .nav-link {
-      font-size: 13px; color: var(--text-sec);
-      text-decoration: none; padding: 6px 14px;
-      border: var(--border); border-radius: 20px;
-      transition: all .2s;
-    }
-    .nav-link:hover { background: var(--pink-light); color: var(--pink-dark); }
-
-    /* LAYOUT */
-    .page { max-width: 640px; margin: 0 auto; padding: 0 1rem 3rem; }
-
-    /* COVER */
-    .cover {
-      width: 100%; height: 130px; /* Azaltılmış kapak yüksekliği */
-      background: linear-gradient(135deg, var(--cover-start) 0%, var(--cover-mid) 50%, var(--cover-end) 100%);
-      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-      position: relative; overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: inset 0 -30px 40px var(--cover-shadow);
-      transition: box-shadow 0.4s ease;
-    }
-    .cover-pattern {
-      position: absolute; inset: 0;
-      background-image: radial-gradient(circle at 20% 50%, var(--pattern-color-1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, var(--pattern-color-2) 0%, transparent 40%);
-      opacity: 0.8;
-    }
-    .cover-shine {
-      position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-      background: linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent);
-      transform: skewX(-25deg);
-      animation: shine 6s infinite ease-in-out;
-    }
-    @keyframes shine {
-      0% { left: -100%; }
-      35%, 100% { left: 200%; }
-    }
-
-    /* PROFILE HEADER (Modern Twitter/Facebook stili) */
-    .profile-header {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 0 .5rem;
-      margin-bottom: 1.25rem;
-    }
-    .profile-header-top {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      width: 100%;
-      margin-top: -36px; /* Sadece en üst satırı (avatar & badge) yukarı çeker */
-      position: relative;
-      z-index: 10;
-    }
-    .profile-avatar {
-      width: 72px; height: 72px; border-radius: 50%;
-      background: var(--pink);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 32px;
-      border: 3.5px solid var(--card-bg);
-      flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    .profile-meta {
-      padding-bottom: 4px;
-      text-align: left;
-    }
-    .profile-meta h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px; font-weight: 600; color: var(--text);
-      line-height: 1.3;
-    }
-    .profile-meta p { font-size: 13px; color: var(--text-sec); margin-top: 5px; }
-    .profile-meta p span { margin: 0 4px; color: var(--pink-border); }
-    .active-badge {
-      flex-shrink: 0;
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 12px; font-weight: 600; color: var(--pink-dark);
-      background: var(--pink-light); border: 0.5px solid var(--pink-border);
-      padding: 5px 12px; border-radius: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    }
-
-    /* STATS */
-    .stats-row {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 8px; margin-bottom: 1rem;
-    }
-    .stat-card {
-      background: var(--card-bg); border: var(--border);
-      border-radius: var(--radius-sm); padding: .75rem .5rem;
-      text-align: center;
-    }
-    .stat-num { font-size: 22px; font-weight: 600; color: var(--text); }
-    .stat-num.pink { color: var(--pink); }
-    .stat-lbl { font-size: 11px; color: var(--text-ter); margin-top: 2px; }
-
-    /* CARD */
-    .card {
-      background: var(--card-bg); border: var(--border);
-      border-radius: var(--radius-md); padding: 1rem 1.25rem;
-      margin-bottom: .875rem;
-    }
-
-    /* PINNED */
-    .pinned-label {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 600; color: var(--pink-dark);
-      background: var(--pink-light); border: 0.5px solid var(--pink-border);
-      padding: 3px 10px; border-radius: 20px; margin-bottom: .875rem;
-    }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .info-box {
-      background: var(--surface); border-radius: var(--radius-sm);
-      padding: 10px 12px;
-    }
-    .info-box.full { grid-column: 1 / -1; }
-    .info-lbl { font-size: 11px; color: var(--text-ter); margin-bottom: 3px; }
-    .info-val { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; }
-    .info-val.normal { font-weight: 400; }
-
-    /* SECTION TITLE */
-    .sec-title {
-      font-size: 14px; font-weight: 600; color: var(--text);
-      display: flex; align-items: center; gap: 7px;
-      margin-bottom: .75rem;
-    }
-    .sec-title .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--pink); flex-shrink: 0;
-    }
-
-    /* MESSAGES */
-    .msg-list { margin-bottom: .5rem; }
-    .msg-item {
-      display: flex; gap: 10px;
-      padding: .625rem 0;
-      border-bottom: var(--border);
-      animation: fadeIn .3s ease;
-    }
-    .msg-item:last-child { border-bottom: none; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
-    .avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 600; flex-shrink: 0;
-    }
-    .msg-body { flex: 1; min-width: 0; }
-    .msg-top { display: flex; align-items: baseline; gap: 7px; margin-bottom: 3px; }
-    .msg-name { font-size: 13px; font-weight: 600; color: var(--text); }
-    .msg-time { font-size: 11px; color: var(--text-ter); }
-    .msg-text { font-size: 13px; color: var(--text-sec); line-height: 1.55; }
-    .reply-bubble {
-      margin-top: 6px; padding: 7px 11px;
-      background: var(--surface); border-radius: var(--radius-sm);
-      border-left: 2px solid var(--pink-border);
-      font-size: 12px; color: var(--text-sec);
-    }
-    .reply-bubble strong { color: var(--text); margin-right: 4px; font-weight: 600; }
-    .msg-actions { display: flex; gap: 14px; margin-top: 6px; }
-    .act-btn {
-      font-size: 12px; color: var(--text-ter);
-      background: none; border: none; cursor: pointer;
-      display: flex; align-items: center; gap: 3px;
-      padding: 0; transition: color .15s;
-    }
-    .act-btn:hover { color: var(--pink); }
-    .act-btn.liked { color: var(--pink); }
-    .input-row { display: flex; gap: 8px; margin-top: .875rem; }
-    .input-row input, .gc-input input {
-      flex: 1; padding: 9px 14px;
-      border: var(--border); border-radius: var(--radius-sm);
-      font-family: 'Nunito', sans-serif; font-size: 13px;
-      background: var(--bg); color: var(--text);
-      outline: none; transition: border-color .2s;
-    }
-    .input-row input:focus, .gc-input input:focus { border-color: var(--pink); }
-    .send-btn, .gc-btn {
-      background: var(--pink); color: #fff;
-      border: none; border-radius: var(--radius-sm);
-      padding: 9px 18px; cursor: pointer;
-      font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600;
-      white-space: nowrap; transition: background .15s;
-    }
-    .send-btn:hover, .gc-btn:hover { background: var(--pink-dark); }
-
-    /* GIFTS */
-    .gift-card {
-      border: var(--border); border-radius: var(--radius-sm);
-      overflow: hidden; margin-bottom: 8px;
-      background: var(--card-bg); transition: border-color .15s;
-    }
-    .gift-card:hover { border-color: var(--pink-border); }
-    .gift-main {
-      display: flex; align-items: center; gap: 10px;
-      padding: .75rem 1rem;
-    }
-    .gift-icon {
-      width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; flex-shrink: 0;
-    }
-    .g-done { background: var(--green-bg); }
-    .g-group { background: var(--blue-bg); }
-    .g-open { background: var(--surface); border: var(--border); }
-    .gift-info { flex: 1; min-width: 0; }
-    .gift-name { font-size: 14px; font-weight: 600; color: var(--text); }
-    .gift-by { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
-    .gift-cat {
-      font-size: 11px; color: var(--text-ter);
-      background: var(--surface); padding: 3px 9px;
-      border-radius: 10px; flex-shrink: 0;
-    }
-    .gift-footer {
-      display: flex; align-items: center; gap: 12px;
-      padding: .5rem 1rem;
-      border-top: var(--border); background: var(--surface);
-    }
-    .gift-act {
-      font-size: 12px; color: var(--text-ter);
-      background: none; border: none; cursor: pointer;
-      display: flex; align-items: center; gap: 4px; padding: 0;
-      transition: color .15s;
-    }
-    .gift-act:hover { color: var(--pink); }
-    .gift-act.liked { color: var(--pink); }
-    .progress-bar {
-      height: 4px; background: var(--surface);
-      border-radius: 2px; margin-top: 5px; overflow: hidden;
-    }
-    .progress-fill { height: 100%; background: #378ADD; border-radius: 2px; }
-
-    /* GIFT COMMENTS */
-    .gift-comments {
-      display: none; padding: .875rem 1rem;
-      border-top: var(--border); background: var(--comments-bg);
-      transition: background-color 0.4s ease;
-    }
-    .gift-comments.open { display: block; }
-    .gc-item { display: flex; gap: 8px; margin-bottom: .5rem; }
-    .gc-avatar {
-      width: 26px; height: 26px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px; font-weight: 600; flex-shrink: 0;
-    }
-    .gc-text { font-size: 12px; color: var(--text-sec); line-height: 1.5; }
-    .gc-text strong { color: var(--text); margin-right: 4px; font-weight: 600; }
-    .gc-text em { font-size: 10px; color: var(--text-ter); font-style: normal; margin-left: 5px; }
-    .gc-input { display: flex; gap: 6px; margin-top: .625rem; }
-    .gc-input input { height: 32px; font-size: 12px; }
-    .gc-btn { padding: 0 12px; font-size: 12px; }
-
-    /* BUY BTN */
-    .buy-btn {
-      background: var(--pink); color: #fff;
-      border: none; border-radius: var(--radius-sm);
-      padding: 6px 14px; cursor: pointer;
-      font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600;
-      flex-shrink: 0; transition: background .15s;
-    }
-    .buy-btn:hover { background: var(--pink-dark); }
-    .add-btn {
-      background: var(--surface); color: var(--text-sec);
-      border: var(--border); border-radius: var(--radius-sm);
-      padding: 6px 14px; cursor: pointer;
-      font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    /* DASHED */
-    .gift-card.dashed { border-style: dashed; opacity: .65; }
-
-    /* URL BAR */
-    .url-bar {
-      display: flex; align-items: center; gap: 8px;
-      padding: .625rem 1rem;
-      background: var(--surface); border-radius: var(--radius-sm);
-      margin-bottom: .875rem; font-size: 12px; color: var(--text-sec);
-      cursor: pointer; transition: background .15s;
-    }
-    .url-bar:hover { background: var(--pink-light); }
-    .url-bar span { color: var(--pink); font-weight: 600; flex: 1; }
-    .copy-hint { font-size: 11px; color: var(--text-ter); }
-
-    /* FOOTER NAV */
-    .page-footer {
-      text-align: center; padding: 2rem 1rem 1rem;
-      font-size: 12px; color: var(--text-ter);
-    }
-    .page-footer a { color: var(--pink); text-decoration: none; }
-
-    @media (max-width: 480px) {
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .info-grid { grid-template-columns: 1fr; }
-      .info-box.full { grid-column: 1; }
-      nav { padding: 0 1rem; }
+    @media(max-width:480px) {
+      .stats-row { grid-template-columns:repeat(2,1fr); }
+      .info-grid { grid-template-columns:1fr; }
+      .info-box.full { grid-column:1; }
+      nav { padding:0 1rem; }
     }
   </style>
 </head>
@@ -375,112 +162,60 @@
 </nav>
 
 <div class="page">
+  <div class="cover"><div class="cover-shine"></div></div>
 
-  <!-- COVER -->
-  <div class="cover">
-    <div class="cover-pattern"></div>
-    <div class="cover-shine"></div>
-  </div>
-
-  <!-- PROFILE HEADER -->
   <div class="profile-header">
     <div class="profile-header-top">
-      <div class="profile-avatar" id="avatarIcon" aria-label="Profil fotoğrafı">🍼</div>
+      <div class="profile-avatar" id="avatarIcon">🍼</div>
       <div class="active-badge" id="statusBadge">● Aktif</div>
     </div>
     <div class="profile-meta">
-      <h1 id="pageTitle">Zeynep Demir'in Doğumu</h1>
-      <p id="subMeta">
-        📍 İstanbul
-        <span>·</span>
-        📅 15 Mart 2025
-        <span>·</span>
-        Ayşe &amp; Murat Demir
-      </p>
+      <h1 id="pageTitle">Yükleniyor...</h1>
+      <p id="subMeta"></p>
     </div>
   </div>
 
-  <!-- URL BAR -->
   <div class="url-bar" onclick="copyUrl()">
-    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 16H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2m-6 12h8a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/></svg>
-    <span id="urlSpan">gozbebegim.com/ayse-demir/zeynep-dogum-2025</span>
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2m-6 12h8a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/></svg>
+    <span id="urlSpan"></span>
     <span class="copy-hint" id="copyHint">Kopyala</span>
   </div>
 
-  <!-- STATS -->
   <div class="stats-row">
-    <div class="stat-card"><div class="stat-num" id="statGuests">10</div><div class="stat-lbl">Katılan</div></div>
-    <div class="stat-card"><div class="stat-num" id="statBought">8</div><div class="stat-lbl">Hediye alındı</div></div>
-    <div class="stat-card"><div class="stat-num" id="statWaiting">3</div><div class="stat-lbl">Bekliyor</div></div>
-    <div class="stat-card"><div class="stat-num pink" id="statPercent">%73</div><div class="stat-lbl">Tamamlandı</div></div>
+    <div class="stat-card"><div class="stat-num" id="statGuests">—</div><div class="stat-lbl">Katılan</div></div>
+    <div class="stat-card"><div class="stat-num" id="statBought">—</div><div class="stat-lbl">Hediye alındı</div></div>
+    <div class="stat-card"><div class="stat-num" id="statWaiting">—</div><div class="stat-lbl">Bekliyor</div></div>
+    <div class="stat-card"><div class="stat-num pink" id="statPercent">—</div><div class="stat-lbl">Tamamlandı</div></div>
   </div>
 
-  <!-- PINNED -->
   <div class="card">
-    <div class="pinned-label">
-      📌 Sabit bilgiler
-    </div>
+    <div class="pinned-label">📌 Sabit bilgiler</div>
     <div class="info-grid">
-      <div class="info-box">
-        <div class="info-lbl">Çocuk Adı</div>
-        <div class="info-val" id="infoChildName">Zeynep</div>
-      </div>
-      <div class="info-box">
-        <div class="info-lbl">Cinsiyet</div>
-        <div class="info-val" id="infoGender">Kız 🩷</div>
-      </div>
-      <div class="info-box">
-        <div class="info-lbl">Etkinlik Tarihi</div>
-        <div class="info-val" id="infoDate">15 Mart 2025</div>
-      </div>
-      <div class="info-box">
-        <div class="info-lbl">Yer / Hastane</div>
-        <div class="info-val" id="infoLocation">Acıbadem Maslak</div>
-      </div>
-      <div class="info-box">
-        <div class="info-lbl">Anne</div>
-        <div class="info-val" id="infoParent1">Ayşe Demir</div>
-      </div>
-      <div class="info-box">
-        <div class="info-lbl" id="infoAgeLabel">Etkinlik Yaşı / Dönemi</div>
-        <div class="info-val" id="infoAgeVal">-</div>
-      </div>
-      <div class="info-box full">
-        <div class="info-lbl">Aileden Not</div>
-        <div class="info-val normal" id="infoNote">İlk hafta misafir kabul etmiyoruz, anlayışınız için teşekkürler. Hediyelerinizi kapıya bırakabilirsiniz 🙏</div>
-      </div>
+      <div class="info-box"><div class="info-lbl">Çocuk Adı</div><div class="info-val" id="infoChildName">—</div></div>
+      <div class="info-box"><div class="info-lbl">Cinsiyet</div><div class="info-val" id="infoGender">—</div></div>
+      <div class="info-box"><div class="info-lbl">Etkinlik Tarihi</div><div class="info-val" id="infoDate">—</div></div>
+      <div class="info-box"><div class="info-lbl">Yer / Hastane</div><div class="info-val" id="infoLocation">—</div></div>
+      <div class="info-box"><div class="info-lbl">Anne / Baba</div><div class="info-val" id="infoParent1">—</div></div>
+      <div class="info-box"><div class="info-lbl" id="infoAgeLabel">Dönem</div><div class="info-val" id="infoAgeVal">—</div></div>
+      <div class="info-box full"><div class="info-lbl">Aileden Not</div><div class="info-val normal" id="infoNote">—</div></div>
     </div>
   </div>
 
-  <!-- GENERAL MESSAGES -->
   <div class="card">
     <div class="sec-title"><div class="dot"></div> Genel mesajlar</div>
-    <div class="msg-list" id="msgList">
-      <!-- Dinamik olarak backend'den yüklenecek -->
-    </div>
+    <div class="msg-list" id="msgList"></div>
     <div class="input-row">
       <input type="text" id="genInput" placeholder="Tebrik mesajınızı yazın..." />
-      <button class="send-btn" onclick="sendGenMsg()">Gönder</button>
+      <button class="send-btn" onclick="openMsgModal()">Gönder</button>
     </div>
   </div>
 
-  <!-- GIFT LIST -->
   <div class="card">
     <div class="sec-title"><div class="dot"></div> Hediye listesi</div>
-
-    <!-- ALINAN -->
     <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">Alınanlar</div>
-    <div id="boughtGiftsList">
-      <!-- Dinamik olarak backend'den yüklenecek -->
-    </div>
-
-    <!-- BEKLEYENLER -->
+    <div id="boughtGiftsList"></div>
     <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin:1rem 0 8px;text-transform:uppercase">Henüz alınmayanlar</div>
-    <div id="openGiftsList">
-      <!-- Dinamik olarak backend'den yüklenecek -->
-    </div>
-
-    <!-- MANUEL EKLE -->
+    <div id="openGiftsList"></div>
     <div class="gift-card dashed">
       <div class="gift-main">
         <div class="gift-icon g-open">＋</div>
@@ -488,151 +223,405 @@
           <div class="gift-name" style="color:var(--text-ter)">Listede olmayan bir hediye aldınız mı?</div>
           <div class="gift-by">Manuel ekleyin</div>
         </div>
-        <button class="add-btn" onclick="openManualGiftModal()">Ekle</button>
+        <button class="add-btn" onclick="openManualModal()">Ekle</button>
       </div>
     </div>
-
   </div>
 
   <div class="page-footer">
-    <a href="/">gözbebeğim.com</a> ile oluşturuldu &nbsp;·&nbsp; <a href="/create-organization">Liste oluştur</a>
+    <a href="/">gözbebeğim.com</a> ile oluşturuldu &nbsp;·&nbsp; <a href="/signup">Liste oluştur</a>
   </div>
-
 </div>
 
+<!-- ══════════════ MODALLER ══════════════ -->
+
+<!-- 1. MESAJ MODAL -->
+<div class="modal-overlay" id="msgModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('msgModal')">✕</button>
+    <div class="modal-title">Tebrik mesajı</div>
+    <div class="modal-sub">Aileden bilgileriniz görmeyecek, sadece adınız görünür.</div>
+    <div class="form-group">
+      <label class="form-label">Adınız Soyadınız</label>
+      <input class="form-input" id="msgName" type="text" placeholder="Örn: Ayşe Kaya" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mesajınız</label>
+      <input class="form-input" id="msgText" type="text" placeholder="Tebrik mesajınızı yazın..." />
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn-ghost" onclick="closeModal('msgModal')">İptal</button>
+      <button class="modal-btn-primary" onclick="submitMsg()">Gönder</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. HEDİYE AL MODAL (3 adım) -->
+<div class="modal-overlay" id="buyModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('buyModal')">✕</button>
+
+    <!-- Adım 1: Bilgi gir -->
+    <div class="modal-step active" id="buyStep1">
+      <div class="modal-title">Hediye al</div>
+      <div class="modal-sub">Bu hediyeyi almak istediğinizi bildirin.</div>
+      <div class="modal-gift-name" id="buyGiftName"></div>
+      <div class="form-group">
+        <label class="form-label">Adınız Soyadınız</label>
+        <input class="form-input" id="buyerName" type="text" placeholder="Örn: Mehmet Yıldız" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Telefon <span>(opsiyonel)</span></label>
+        <input class="form-input" id="buyerPhone" type="tel" placeholder="05XX XXX XX XX" />
+      </div>
+      <label class="form-check">
+        <input type="checkbox" id="buyerAnon" />
+        İsmim listede anonim görünsün
+      </label>
+      <div class="modal-actions">
+        <button class="modal-btn-ghost" onclick="closeModal('buyModal')">İptal</button>
+        <button class="modal-btn-primary" onclick="submitBuy()">Onaylıyorum</button>
+      </div>
+    </div>
+
+    <!-- Adım 2: Başarı + fotoğraf/link sor -->
+    <div class="modal-step" id="buyStep2">
+      <div class="step-success">
+        <div class="success-icon">🎁</div>
+        <h3>Harika!</h3>
+        <p>Hediye listede rezerve edildi.<br />Aldığınızda bizi haberdar etmeyi unutmayın!</p>
+        <div class="reminder-bubble">⏰ Satın aldıktan sonra lütfen "Aldım" butonuna basın.</div>
+      </div>
+      <div class="modal-actions" style="margin-top:1.25rem">
+        <button class="modal-btn-ghost" onclick="closeModal('buyModal')">Tamam</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. ALDIM MODAL (fotoğraf/link) -->
+<div class="modal-overlay" id="boughtModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('boughtModal')">✕</button>
+    <div class="modal-title">Aldım! 🎉</div>
+    <div class="modal-sub">İsterseniz hediye fotoğrafını veya linkini paylaşın.</div>
+    <div class="modal-gift-name" id="boughtGiftName"></div>
+    <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
+      <div style="font-size:32px">📸</div>
+      <p>Fotoğraf yüklemek için tıklayın</p>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="previewPhoto(this)" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ya da link paylaşın <span>(opsiyonel)</span></label>
+      <input class="form-input" id="boughtLink" type="url" placeholder="https://trendyol.com/..." />
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn-ghost" onclick="closeModal('boughtModal')">Atla</button>
+      <button class="modal-btn-primary" onclick="submitBought()">Paylaş</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. YORUM MODAL -->
+<div class="modal-overlay" id="commentModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('commentModal')">✕</button>
+    <div class="modal-title">Yorum yaz</div>
+    <div class="modal-gift-name" id="commentGiftName"></div>
+    <div class="form-group">
+      <label class="form-label">Adınız</label>
+      <input class="form-input" id="commentName" type="text" placeholder="Örn: Fatma Teyze" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Yorumunuz</label>
+      <input class="form-input" id="commentText" type="text" placeholder="Nereden aldınız? Çok güzel!" />
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn-ghost" onclick="closeModal('commentModal')">İptal</button>
+      <button class="modal-btn-primary" onclick="submitComment()">Gönder</button>
+    </div>
+  </div>
+</div>
+
+<!-- 5. MANUEl HEDİYE MODAL -->
+<div class="modal-overlay" id="manualModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('manualModal')">✕</button>
+    <div class="modal-title">Hediye ekle</div>
+    <div class="modal-sub">Listede olmayan bir hediye aldıysanız buradan ekleyin.</div>
+    <div class="form-group">
+      <label class="form-label">Hediye adı</label>
+      <input class="form-input" id="manualGiftName" type="text" placeholder="Örn: Uçak oyuncağı" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Kategori</label>
+      <select class="form-input" id="manualCategory">
+        <option value="Oyuncak">Oyuncak</option>
+        <option value="Kıyafet">Kıyafet</option>
+        <option value="Banyo">Banyo</option>
+        <option value="Uyku">Uyku</option>
+        <option value="Beslenme">Beslenme</option>
+        <option value="Ulaşım">Ulaşım</option>
+        <option value="Para">Para</option>
+        <option value="Diğer">Diğer</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Adınız Soyadınız</label>
+      <input class="form-input" id="manualBuyerName" type="text" placeholder="Örn: Ayşe Kaya" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Telefon <span>(opsiyonel)</span></label>
+      <input class="form-input" id="manualPhone" type="tel" placeholder="05XX XXX XX XX" />
+    </div>
+    <label class="form-check">
+      <input type="checkbox" id="manualAnon" />
+      İsmim anonim görünsün
+    </label>
+    <div class="modal-actions">
+      <button class="modal-btn-ghost" onclick="closeModal('manualModal')">İptal</button>
+      <button class="modal-btn-primary" onclick="submitManual()">Ekle</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
 <script>
   let organizationId = null;
-  let giftsData = [];
-  let commentsData = [];
+  let currentGiftId = null;
+  let currentCommentGiftId = null;
+  let currentCommentGiftEl = null;
 
-  // Rota slug'larını URL'den çek (örn: /ayse-demir/zeynep-dogum-2025)
   const pathParts = window.location.pathname.split("/").filter(p => p);
   const parentSlug = pathParts[0] || "ayse-demir";
   const orgSlug = pathParts[1] || "zeynep-dogum-2025";
 
-  // Sayfa yüklendiğinde verileri getir
   window.addEventListener("DOMContentLoaded", () => {
     fetch(`/api/organizations/slug/${parentSlug}/${orgSlug}`)
-      .then(res => {
-        if (!res.ok) throw new Error("Organizasyon bulunamadı.");
-        return res.json();
-      })
-      .then(data => {
-        if (data.success) {
-          renderPage(data);
-        }
-      })
-      .catch(err => {
-        console.warn("API hatası veya statik kullanım algılandı. Mockup verileri yükleniyor.", err);
-        // API çalışmadığında (file:/// veya ilk açılışta) mockup verileri yükleyerek arayüzü kırmıyoruz
-        loadMockData();
-      });
+      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+      .then(data => { if (data.success) renderPage(data); })
+      .catch(() => loadMockData());
   });
 
-  // Sayfayı Dinamik Veriyle Doldur
+  // ── MODAL YÖNETİMİ ──
+  function openModal(id) { document.getElementById(id).classList.add("open"); }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove("open");
+    // Buy modal adımını sıfırla
+    if (id === "buyModal") {
+      document.getElementById("buyStep1").classList.add("active");
+      document.getElementById("buyStep2").classList.remove("active");
+      document.getElementById("buyerName").value = "";
+      document.getElementById("buyerPhone").value = "";
+      document.getElementById("buyerAnon").checked = false;
+    }
+  }
+  // ESC ile kapat
+  document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".modal-overlay.open").forEach(m => m.classList.remove("open")); });
+  // Overlay'e tıklayınca kapat
+  document.querySelectorAll(".modal-overlay").forEach(overlay => {
+    overlay.addEventListener("click", e => { if (e.target === overlay) overlay.classList.remove("open"); });
+  });
+
+  // ── MESAJ ──
+  function openMsgModal() {
+    const val = document.getElementById("genInput").value.trim();
+    if (!val) return;
+    document.getElementById("msgText").value = val;
+    openModal("msgModal");
+  }
+  function submitMsg() {
+    const name = document.getElementById("msgName").value.trim();
+    const msg = document.getElementById("msgText").value.trim();
+    if (!name || !msg) { alert("Lütfen adınızı ve mesajınızı girin."); return; }
+    fetch("/api/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ org_id: organizationId, user_name: name, message: msg })
+    }).then(r => r.json()).then(d => {
+      if (d.success) {
+        closeModal("msgModal");
+        document.getElementById("genInput").value = "";
+        document.getElementById("msgName").value = "";
+        // Yeni mesajı sayfaya ekle
+        const list = document.getElementById("msgList");
+        const div = document.createElement("div");
+        div.className = "msg-item";
+        const initials = name.substring(0, 2).toUpperCase();
+        div.innerHTML = `
+          <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
+          <div class="msg-body">
+            <div class="msg-top"><span class="msg-name">${name}</span><span class="msg-time">şimdi</span></div>
+            <div class="msg-text">${msg}</div>
+            <div class="msg-actions">
+              <button class="act-btn" onclick="toggleLike(this)">♡ <span>0</span></button>
+            </div>
+          </div>`;
+        list.appendChild(div);
+      }
+    });
+  }
+
+  // ── HEDİYE AL ──
+  function openBuyModal(giftId, giftName) {
+    currentGiftId = giftId;
+    document.getElementById("buyGiftName").textContent = giftName;
+    openModal("buyModal");
+  }
+  function submitBuy() {
+    const name = document.getElementById("buyerName").value.trim();
+    const phone = document.getElementById("buyerPhone").value.trim() || "0000000000";
+    const anon = document.getElementById("buyerAnon").checked;
+    if (!name) { alert("Lütfen adınızı girin."); return; }
+    fetch(`/api/gifts/buy/${currentGiftId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ buyer_name: name, buyer_phone: phone, is_anonymous: anon })
+    }).then(r => r.json()).then(d => {
+      if (d.success) {
+        // Adım 2'ye geç
+        document.getElementById("buyStep1").classList.remove("active");
+        document.getElementById("buyStep2").classList.add("active");
+        // Sayfadaki hediye kartını güncelle
+        setTimeout(() => { closeModal("buyModal"); location.reload(); }, 3000);
+      } else { alert(d.error || "Bir hata oluştu."); }
+    });
+  }
+
+  // ── ALDIM ──
+  function openBoughtModal(giftId, giftName) {
+    currentGiftId = giftId;
+    document.getElementById("boughtGiftName").textContent = giftName;
+    document.getElementById("boughtLink").value = "";
+    openModal("boughtModal");
+  }
+  function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+      const area = input.closest(".photo-upload-area");
+      area.innerHTML = `<img src="${URL.createObjectURL(input.files[0])}" style="max-width:100%;border-radius:8px;" />`;
+    }
+  }
+  function submitBought() {
+    fetch(`/api/gifts/buy/${currentGiftId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ buyer_name: "Mevcut Kullanıcı", buyer_phone: "0000000000", is_anonymous: false })
+    }).then(() => { closeModal("boughtModal"); location.reload(); });
+  }
+
+  // ── YORUM ──
+  function openCommentModal(giftId, giftName, gcList) {
+    currentCommentGiftId = giftId;
+    currentCommentGiftEl = gcList;
+    document.getElementById("commentGiftName").textContent = giftName;
+    document.getElementById("commentName").value = "";
+    document.getElementById("commentText").value = "";
+    openModal("commentModal");
+  }
+  function submitComment() {
+    const name = document.getElementById("commentName").value.trim();
+    const comment = document.getElementById("commentText").value.trim();
+    if (!name || !comment) { alert("Lütfen adınızı ve yorumunuzu girin."); return; }
+    fetch(`/api/gifts/comment/${currentCommentGiftId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_name: name, comment })
+    }).then(r => r.json()).then(d => {
+      if (d.success) {
+        closeModal("commentModal");
+        if (currentCommentGiftEl) {
+          const div = document.createElement("div");
+          div.className = "gc-item";
+          div.innerHTML = `<div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${name.substring(0,2).toUpperCase()}</div><div class="gc-text"><strong>${name}</strong>${comment}<em>şimdi</em></div>`;
+          currentCommentGiftEl.appendChild(div);
+        }
+      }
+    });
+  }
+
+  // ── MANUEL HEDİYE ──
+  function openManualModal() { openModal("manualModal"); }
+  function submitManual() {
+    const name = document.getElementById("manualGiftName").value.trim();
+    const cat = document.getElementById("manualCategory").value;
+    const buyer = document.getElementById("manualBuyerName").value.trim();
+    const phone = document.getElementById("manualPhone").value.trim() || "0000000000";
+    const anon = document.getElementById("manualAnon").checked;
+    if (!name || !buyer) { alert("Lütfen hediye adını ve adınızı girin."); return; }
+    fetch("/api/gifts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ org_id: organizationId, name, category: cat, buyer_name: buyer, buyer_phone: phone, is_anonymous: anon })
+    }).then(r => r.json()).then(d => {
+      if (d.success) { closeModal("manualModal"); location.reload(); }
+    });
+  }
+
+  // ── SAYFA RENDER ──
   function renderPage(data) {
     const org = data.organization;
     organizationId = org.id;
-    giftsData = data.gifts;
 
-    // Erkek çocuk ise sayfa renklerini dinamik olarak maviye çevir (Kayıpsız CSS Override)
     if (org.child_gender === "Erkek") {
-      document.documentElement.style.setProperty("--pink", "#3A86C8"); // Güzel bir mavi
-      document.documentElement.style.setProperty("--pink-dark", "#1C5A90"); // Koyu mavi
-      document.documentElement.style.setProperty("--pink-light", "#E6F1FB"); // Açık mavi arka plan
-      document.documentElement.style.setProperty("--pink-border", "#B2D1F0"); // Mavi kenarlıklar
-      
-      // Kapak gradyanını mavi yap
+      document.documentElement.style.setProperty("--pink", "#3A86C8");
+      document.documentElement.style.setProperty("--pink-dark", "#1C5A90");
+      document.documentElement.style.setProperty("--pink-light", "#E6F1FB");
+      document.documentElement.style.setProperty("--pink-border", "#B2D1F0");
       document.documentElement.style.setProperty("--cover-start", "#E6F1FB");
       document.documentElement.style.setProperty("--cover-mid", "#B2D1F0");
       document.documentElement.style.setProperty("--cover-end", "#D6E4F5");
-
-      // Tüm sayfa arka planı ve tamamlayıcı elemanları tamamen mavi yap
       document.documentElement.style.setProperty("--bg", "#f0f6fc");
       document.documentElement.style.setProperty("--surface", "#e6eef7");
       document.documentElement.style.setProperty("--border", "0.5px solid #d8e5f2");
-      document.documentElement.style.setProperty("--nav-bg", "rgba(240, 246, 252, 0.92)");
-      document.documentElement.style.setProperty("--cover-shadow", "rgba(58, 134, 200, 0.04)");
-      document.documentElement.style.setProperty("--pattern-color-1", "rgba(58, 134, 200, 0.15)");
-      document.documentElement.style.setProperty("--pattern-color-2", "rgba(110, 160, 220, 0.2)");
+      document.documentElement.style.setProperty("--nav-bg", "rgba(240,246,252,0.92)");
       document.documentElement.style.setProperty("--comments-bg", "#f4f8fc");
     }
 
-    // Başlık ve meta bilgileri
     document.title = `${org.title} — gözbebeğim.com`;
     document.getElementById("pageTitle").textContent = org.title;
-    document.getElementById("urlSpan").textContent = `gozbebegim.com/${org.parent_slug}/${org.slug}`;
-    
-    // Emoji ataması
-    const emojis = { "Doğum": "🍼", "Sünnet": "✂️", "Yaş Günü": "🎂", "Mezuniyet": "🎓" };
+    document.getElementById("urlSpan").textContent = `gozbebegim.com/${parentSlug}/${orgSlug}`;
+
+    const emojis = { "Doğum":"🍼", "Sünnet":"✂️", "Yaş Günü":"🎂", "Mezuniyet":"🎓" };
     document.getElementById("avatarIcon").textContent = emojis[org.type] || "👶";
 
-    const formattedDate = new Date(org.date).toLocaleDateString("tr-TR", {
-      day: "numeric", month: "long", year: "numeric"
-    });
+    const d = new Date(org.date);
+    const formattedDate = d.toLocaleDateString("tr-TR", { day:"numeric", month:"long", year:"numeric" });
 
-    document.getElementById("subMeta").innerHTML = `
-      📍 ${org.city}
-      <span>·</span>
-      📅 ${formattedDate}
-      <span>·</span>
-      ${org.parent_first_name} &amp; ${org.parent_last_name}
-    `;
-
+    document.getElementById("subMeta").innerHTML = `📍 ${org.city}<span>·</span>📅 ${formattedDate}<span>·</span>${org.parent_first_name} ${org.parent_last_name}`;
     document.getElementById("statusBadge").textContent = org.status === "Active" ? "● Aktif" : "● Arşivlendi";
-    
-    // Sabit bilgiler kartı
     document.getElementById("infoChildName").textContent = org.child_name;
-    document.getElementById("infoGender").textContent = org.child_gender === "Kız" ? "Kız 🩷" : org.child_gender === "Erkek" ? "Erkek 💙" : "Bilinmiyor 👶";
+    document.getElementById("infoGender").textContent = org.child_gender === "Kız" ? "Kız 🩷" : org.child_gender === "Erkek" ? "Erkek 💙" : "👶";
     document.getElementById("infoDate").textContent = formattedDate;
     document.getElementById("infoLocation").textContent = org.hospital || "Ev / Salon";
     document.getElementById("infoParent1").textContent = `${org.parent_first_name} ${org.parent_last_name}`;
-    
-    // Dinamik Yaş / Dönem Bilgisi
+    document.getElementById("infoNote").textContent = org.family_note || "—";
+
     const ageLabel = document.getElementById("infoAgeLabel");
     const ageVal = document.getElementById("infoAgeVal");
-    if (org.type === "Yaş Günü") {
-      ageLabel.textContent = "Kaçıncı Yaş Günü?";
-      ageVal.textContent = org.age_milestone ? `${org.age_milestone}. Yaş Günü 🎂` : "Belirtilmedi";
-    } else if (org.type === "Sünnet") {
-      ageLabel.textContent = "Sünnet Yaşı";
-      ageVal.textContent = org.age_milestone || org.child_age ? `${org.age_milestone || org.child_age} Yaş ✂️` : "Belirtilmedi";
-    } else if (org.type === "Doğum") {
-      ageLabel.textContent = "Etkinlik Yaşı";
-      ageVal.textContent = "Yeni Doğan 🍼";
-    } else {
-      ageLabel.textContent = "Çocuk Yaşı";
-      ageVal.textContent = org.child_age ? `${org.child_age} Yaş 🎓` : "Belirtilmedi";
-    }
+    if (org.type === "Yaş Günü") { ageLabel.textContent = "Kaçıncı Yaş Günü?"; ageVal.textContent = org.age_milestone ? `${org.age_milestone}. Yaş 🎂` : "—"; }
+    else if (org.type === "Sünnet") { ageLabel.textContent = "Sünnet Yaşı"; ageVal.textContent = org.age_milestone ? `${org.age_milestone} Yaş ✂️` : "—"; }
+    else if (org.type === "Doğum") { ageLabel.textContent = "Dönem"; ageVal.textContent = "Yeni Doğan 🍼"; }
+    else { ageLabel.textContent = "Dönem"; ageVal.textContent = org.child_age ? `${org.child_age} Yaş 🎓` : "—"; }
 
-    // Hediyeleri render et
     renderGifts(data.gifts);
-
-    // Tebrik mesajlarını render et
     renderMessages(data.messages);
   }
 
-  // Hediyeleri Arayüze Yazdır
   function renderGifts(gifts) {
     const boughtList = document.getElementById("boughtGiftsList");
     const openList = document.getElementById("openGiftsList");
     boughtList.innerHTML = "";
     openList.innerHTML = "";
-
-    let boughtCount = 0;
-    let openCount = 0;
-    let distinctBuyers = new Set();
+    let boughtCount = 0, openCount = 0;
+    const buyers = new Set();
 
     gifts.forEach(gift => {
       if (gift.is_bought) {
         boughtCount++;
-        if (gift.buyer_name && !gift.is_anonymous) {
-          gift.buyer_name.split("·").forEach(n => distinctBuyers.add(n.trim()));
-        }
-        
-        // Alınanlar Kartı
+        if (gift.buyer_name && !gift.is_anonymous) gift.buyer_name.split("·").forEach(n => buyers.add(n.trim()));
         const card = document.createElement("div");
         card.className = "gift-card";
+        const gcListId = `gc-list-${gift.id}`;
         card.innerHTML = `
           <div class="gift-main">
             <div class="gift-icon g-done">✅</div>
@@ -643,45 +632,33 @@
             <span class="gift-cat">${gift.category}</span>
           </div>
           <div class="gift-footer">
-            <button class="gift-act" onclick="toggleLike(this)">♡ <span>${Math.floor(Math.random() * 5) + 1}</span></button>
-            <button class="gift-act" onclick="toggleComments(this)">💬 ${gift.comments ? gift.comments.length : 0} yorum</button>
+            <button class="gift-act" onclick="toggleLike(this)">♡ <span>0</span></button>
+            <button class="gift-act" onclick="toggleComments(this)">💬 Yorumlar</button>
+            <button class="gift-act" onclick="openCommentModal(${gift.id},'${gift.name}',document.getElementById('${gcListId}'))">+ Yorum</button>
           </div>
           <div class="gift-comments">
-            <div class="gc-list">
-              ${(gift.comments || []).map(c => `
-                <div class="gc-item">
-                  <div class="gc-avatar" style="background:#F5F0F3;color:#666">${c.user_name.substring(0,2).toUpperCase()}</div>
-                  <div class="gc-text"><strong>${c.user_name}</strong>${c.comment}</div>
-                </div>
-              `).join("")}
+            <div class="gc-list" id="${gcListId}">
+              ${(gift.comments||[]).map(c=>`<div class="gc-item"><div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${c.user_name.substring(0,2).toUpperCase()}</div><div class="gc-text"><strong>${c.user_name}</strong>${c.comment}</div></div>`).join("")}
             </div>
-            <div class="gc-input">
-              <input type="text" placeholder="Yorum yaz..." />
-              <button class="gc-btn" onclick="addComment(this, ${gift.id})">Gönder</button>
-            </div>
-          </div>
-        `;
+          </div>`;
         boughtList.appendChild(card);
       } else {
         openCount++;
-        // Alınmayanlar Kartı
         const card = document.createElement("div");
         card.className = "gift-card";
-        
         if (gift.is_group) {
-          const progress = Math.min(100, Math.floor((gift.group_current / gift.group_target) * 100));
+          const pct = Math.min(100, Math.floor((gift.group_current/gift.group_target)*100));
           card.innerHTML = `
             <div class="gift-main">
               <div class="gift-icon g-group">👥</div>
               <div class="gift-info">
-                <div class="gift-name">${gift.name} (Grup Hediyesi)</div>
-                <div class="gift-by" style="color:var(--pink)">${gift.group_target} kişiden ${gift.group_current} kişi katıldı</div>
-                <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+                <div class="gift-name">${gift.name}</div>
+                <div class="gift-by" style="color:var(--pink)">${gift.group_target} kişiden ${gift.group_current} katıldı</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
               </div>
               <span class="gift-cat">${gift.category}</span>
-              <button class="buy-btn" onclick="openBuyModal(${gift.id}, '${gift.name}')">Katıl</button>
-            </div>
-          `;
+              <button class="buy-btn" onclick="openBuyModal(${gift.id},'${gift.name}')">Katıl</button>
+            </div>`;
         } else {
           card.innerHTML = `
             <div class="gift-main">
@@ -691,278 +668,85 @@
                 <div class="gift-by" style="color:var(--text-ter)">Henüz alınmadı</div>
               </div>
               <span class="gift-cat">${gift.category}</span>
-              <button class="buy-btn" onclick="openBuyModal(${gift.id}, '${gift.name}')">Al</button>
-            </div>
-          `;
+              <button class="reserve-btn" onclick="openBuyModal(${gift.id},'${gift.name}')">Bunu ben alacağım</button>
+            </div>`;
         }
         openList.appendChild(card);
       }
     });
 
-    // İstatistikler kartını güncelle
     const total = gifts.length || 1;
-    const pct = Math.floor((boughtCount / total) * 100);
-    document.getElementById("statGuests").textContent = distinctBuyers.size || 10;
+    document.getElementById("statGuests").textContent = buyers.size || "—";
     document.getElementById("statBought").textContent = boughtCount;
     document.getElementById("statWaiting").textContent = openCount;
-    document.getElementById("statPercent").textContent = `%${pct}`;
+    document.getElementById("statPercent").textContent = `%${Math.floor((boughtCount/total)*100)}`;
   }
 
-  // Pano Tebrik Mesajlarını Yazdır
   function renderMessages(messages) {
     const list = document.getElementById("msgList");
     list.innerHTML = "";
-
-    // Gelen mesajları parent-child (yanıt) şeklinde ayarla
-    const rootMsgs = messages.filter(m => !m.parent_id);
+    const roots = messages.filter(m => !m.parent_id);
     const replies = messages.filter(m => m.parent_id);
-
-    rootMsgs.forEach(msg => {
-      const msgItem = document.createElement("div");
-      msgItem.className = "msg-item";
-      
-      const initials = msg.user_name.substring(0, 2).toUpperCase();
+    roots.forEach(msg => {
+      const div = document.createElement("div");
+      div.className = "msg-item";
+      const initials = msg.user_name.substring(0,2).toUpperCase();
       const msgReplies = replies.filter(r => r.parent_id === msg.id);
-
-      msgItem.innerHTML = `
+      div.innerHTML = `
         <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
         <div class="msg-body" data-id="${msg.id}">
           <div class="msg-top"><span class="msg-name">${msg.user_name}</span></div>
           <div class="msg-text">${msg.message}</div>
-          
-          ${msgReplies.map(r => `
-            <div class="reply-bubble"><strong>${r.user_name}</strong>${r.message}</div>
-          `).join("")}
-          
+          ${msgReplies.map(r=>`<div class="reply-bubble"><strong>${r.user_name}</strong>${r.message}</div>`).join("")}
           <div class="msg-actions">
-            <button class="act-btn" onclick="likeMessage(this, ${msg.id})">♡ <span>${msg.likes || 0}</span></button>
-            <button class="act-btn" onclick="showReplyInput(this, ${msg.id})">↩ Yanıtla</button>
+            <button class="act-btn" onclick="likeMessage(this,${msg.id})">♡ <span>${msg.likes||0}</span></button>
           </div>
-        </div>
-      `;
-      list.appendChild(msgItem);
+        </div>`;
+      list.appendChild(div);
     });
   }
 
-  // Hediye Beğeni/Kalp Butonu
   function toggleLike(btn) {
-    var span = btn.querySelector('span');
-    var n = parseInt(span.textContent) || 0;
-    if (btn.dataset.liked) {
-      btn.dataset.liked = '';
-      btn.classList.remove('liked');
-      span.textContent = n - 1;
-    } else {
-      btn.dataset.liked = '1';
-      btn.classList.add('liked');
-      span.textContent = n + 1;
-    }
+    const s = btn.querySelector("span");
+    const n = parseInt(s.textContent)||0;
+    if (btn.dataset.liked) { btn.dataset.liked=""; btn.classList.remove("liked"); s.textContent=n-1; }
+    else { btn.dataset.liked="1"; btn.classList.add("liked"); s.textContent=n+1; }
   }
 
-  // Mesaj Beğen (API Bağlantılı)
   function likeMessage(btn, msgId) {
-    fetch(`/api/messages/like/${msgId}`, { method: "POST" })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          btn.classList.add("liked");
-          btn.querySelector("span").textContent = data.likes;
-        }
-      });
+    fetch(`/api/messages/like/${msgId}`, { method:"POST" }).then(r=>r.json()).then(d => {
+      if (d.success) { btn.classList.add("liked"); btn.querySelector("span").textContent=d.likes; }
+    });
   }
 
-  // Hediye Yorum Pano Görünürlüğü
   function toggleComments(btn) {
-    var card = btn.closest('.gift-card');
-    var box = card.querySelector('.gift-comments');
-    if (box) box.classList.toggle('open');
-  }
-
-  // Hediye Yorum Ekle (API Bağlantılı)
-  function addComment(btn, giftId) {
-    var input = btn.previousElementSibling;
-    var val = input.value.trim();
-    if (!val) return;
-
-    const guestName = prompt("Yorum yazmak için adınızı girin:") || "Misafir";
-
-    fetch(`/api/gifts/comment/${giftId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_name: guestName, comment: val })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          var box = btn.closest('.gift-comments').querySelector('.gc-list');
-          var div = document.createElement('div');
-          div.className = 'gc-item';
-          div.style.animation = 'fadeIn .3s ease';
-          div.innerHTML = `<div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${guestName.substring(0,2).toUpperCase()}</div><div class="gc-text"><strong>${guestName}</strong>${val}</div>`;
-          box.appendChild(div);
-          input.value = '';
-        }
-      });
-  }
-
-  // Genel Pano Mesajı Gönder (API Bağlantılı)
-  function sendGenMsg() {
-    var input = document.getElementById('genInput');
-    var val = input.value.trim();
-    if (!val) return;
-
-    const guestName = prompt("Mesajınızı göndermek için isminizi yazın:") || "Misafir";
-
-    fetch("/api/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ org_id: organizationId, user_name: guestName, message: val })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          // Sayfayı yeniden yükle
-          location.reload();
-        }
-      });
-  }
-
-  // Yanıt Alanını Göster
-  function showReplyInput(btn, parentMsgId) {
-    var body = btn.closest('.msg-body');
-    if (body.querySelector('.reply-input-row')) return;
-    var row = document.createElement('div');
-    row.className = 'input-row reply-input-row';
-    row.style.marginTop = '6px';
-    row.innerHTML = `<input type="text" placeholder="Yanıtınızı yazın..." style="font-size:12px;height:32px" /><button class="send-btn" style="font-size:12px;padding:0 12px" onclick="sendReply(this, ${parentMsgId})">Gönder</button>`;
-    btn.closest('.msg-actions').after(row);
-    row.querySelector('input').focus();
-  }
-
-  // Yanıt Gönder (API Bağlantılı)
-  function sendReply(btn, parentMsgId) {
-    var input = btn.previousElementSibling;
-    var val = input.value.trim();
-    if (!val) return;
-
-    const guestName = prompt("Yanıtınızı göndermek için isminizi yazın:") || "Misafir";
-
-    fetch("/api/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ org_id: organizationId, user_name: guestName, message: val, parent_id: parentMsgId })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          location.reload();
-        }
-      });
-  }
-
-  // Hediye Alım Dialog Kutusu (SMS Doğrulaması Simülasyonu)
-  function openBuyModal(giftId, giftName) {
-    const buyerName = prompt(`"${giftName}" hediyesini almak üzeresiniz. Lütfen adınızı ve soyadınızı girin:`);
-    if (!buyerName) return;
-
-    const phone = prompt("Alım onayı ve SMS doğrulama kodu için telefon numaranızı girin (örn: 0555...):");
-    if (!phone) return;
-
-    const isAnon = confirm("İsminizin hediye listesinde gizli (Anonim) kalmasını ister misiniz?");
-
-    // Hediye Alımı API'ye gönder
-    fetch(`/api/gifts/buy/${giftId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ buyer_name: buyerName, buyer_phone: phone, is_anonymous: isAnon })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert("Harika! Doğrulama tamamlandı ve hediye alındı olarak işaretlendi. Teşekkür ederiz! 🎉");
-          location.reload();
-        } else {
-          alert(data.error);
-        }
-      });
-  }
-
-  // Listede Olmayan Hediye Ekleme Formu
-  function openManualGiftModal() {
-    const giftName = prompt("Aldığınız hediyenin adını yazın:");
-    if (!giftName) return;
-
-    const category = prompt("Kategori seçin (Giyim, Oyuncak, Banyo, Uyku, Beslenme, Ulaşım vb.):") || "Diğer";
-    const buyerName = prompt("Adınız soyadınız:");
-    if (!buyerName) return;
-
-    const phone = prompt("Telefon numaranız:");
-    if (!phone) return;
-
-    const isAnon = confirm("İsminiz anonim olarak mı görünsün?");
-
-    fetch("/api/gifts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        org_id: organizationId,
-        name: giftName,
-        category,
-        buyer_name: buyerName,
-        buyer_phone: phone,
-        is_anonymous: isAnon
-      })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert("Hediye başarıyla alındı ve listeye eklendi! ➕");
-          location.reload();
-        }
-      });
+    const box = btn.closest(".gift-card").querySelector(".gift-comments");
+    if (box) box.classList.toggle("open");
   }
 
   function copyUrl() {
-    var url = window.location.href;
-    navigator.clipboard.writeText(url).catch(function(){});
-    var hint = document.getElementById('copyHint');
-    hint.textContent = 'Kopyalandı ✓';
-    hint.style.color = 'var(--green-txt)';
-    setTimeout(function(){ hint.textContent = 'Kopyala'; hint.style.color = ''; }, 2000);
+    navigator.clipboard.writeText(window.location.href).catch(()=>{});
+    const hint = document.getElementById("copyHint");
+    hint.textContent = "Kopyalandı ✓";
+    hint.style.color = "var(--green-txt)";
+    setTimeout(()=>{ hint.textContent="Kopyala"; hint.style.color=""; }, 2000);
   }
 
-  // --- STATİK FALLBACK / MOCK VERİ (API Çevrimdışıysa Kırılmayı Önler) ---
   function loadMockData() {
-    // Sayfa parametreleri varsayılan değerlerle statik tutulur
-    // Bu sayede HTML dosyasına çift tıklandığında bile tasarım kusursuz görünür.
     organizationId = 1;
-    
-    // Mevcut statik mesajları ve hediyeleri yerel JS fonksiyonlarıyla mockup olarak bağlar
-    const mockMessages = [
-      { id: 1, user_name: "Fatma Teyze", message: "Zeynepciğim hoş geldin! Geçmiş olsun Ayşeciğim, çok mutlu olduk! 💕", likes: 5 },
-      { id: 2, user_name: "Selin K.", message: "Maşallah! Zeynep'e uzun ve sağlıklı ömürler dilerim 🌸", likes: 3 },
-      { id: 3, user_name: "Mehmet Amca", message: "Hayırlı olsun, Allah uzun ömür versin!", likes: 2 },
-      { id: 4, user_name: "Deniz A.", message: "Bu uygulama çok pratik, tam ihtiyacımız olan şeydi. Tebrikler! 🎉", likes: 4 }
-    ];
-
-    const mockGifts = [
-      { id: 101, name: "Bebek arabası", category: "Ulaşım", is_bought: 1, buyer_name: "Fatma Teyze", is_anonymous: 0, comments: [{ user_name: "Selin K.", comment: "Çok güzel bir araba, nereden aldınız?" }, { user_name: "Fatma Teyze", comment: "Bebek&Biz'den aldım, indirimdeydi." }] },
-      { id: 102, name: "Uyku tulumu x3", category: "Kıyafet", is_bought: 1, buyer_name: "Selin K.", is_anonymous: 0, comments: [] },
-      { id: 103, name: "Küvet seti", category: "Banyo", is_bought: 1, buyer_name: "Ahmet & Burcu", is_anonymous: 0, comments: [] },
-      { id: 104, name: "Pike takımı", category: "Uyku", is_bought: 1, buyer_name: "Anonim", is_anonymous: 1, comments: [] },
-      { id: 105, name: "Oyuncak seti", category: "Oyuncak", is_bought: 1, buyer_name: "Deniz A.", is_anonymous: 0, comments: [] },
-      { id: 106, name: "Giysi seti", category: "Kıyafet", is_bought: 1, buyer_name: "Hande M.", is_anonymous: 0, comments: [] },
-      { id: 107, name: "500₺ para hediyesi", category: "Para", is_bought: 1, buyer_name: "Mehmet Amca", is_anonymous: 0, comments: [] },
-      { id: 108, name: "Mama sandalyesi", category: "Beslenme", is_bought: 0, is_group: 1, group_target: 3, group_current: 2, comments: [] },
-      { id: 109, name: "Emzik seti", category: "Beslenme", is_bought: 0, comments: [] },
-      { id: 110, name: "Bebek monitörü", category: "Güvenlik", is_bought: 0, comments: [] },
-      { id: 111, name: "Banyo seti", category: "Banyo", is_bought: 0, comments: [] }
-    ];
-
-    renderGifts(mockGifts);
-    renderMessages(mockMessages);
+    renderGifts([
+      { id:101, name:"Bebek arabası", category:"Ulaşım", is_bought:1, buyer_name:"Fatma Teyze", is_anonymous:0, comments:[{user_name:"Selin K.",comment:"Nereden aldınız?"}] },
+      { id:102, name:"Uyku tulumu x3", category:"Kıyafet", is_bought:1, buyer_name:"Selin K.", is_anonymous:0, comments:[] },
+      { id:103, name:"Pike takımı", category:"Uyku", is_bought:1, buyer_name:"Anonim", is_anonymous:1, comments:[] },
+      { id:104, name:"Mama sandalyesi", category:"Beslenme", is_bought:0, is_group:1, group_target:3, group_current:2, comments:[] },
+      { id:105, name:"Emzik seti", category:"Beslenme", is_bought:0, comments:[] },
+      { id:106, name:"Bebek monitörü", category:"Güvenlik", is_bought:0, comments:[] },
+    ]);
+    renderMessages([
+      { id:1, user_name:"Fatma Teyze", message:"Zeynepciğim hoş geldin! 💕", likes:5 },
+      { id:2, user_name:"Selin K.", message:"Maşallah! Uzun ömürler 🌸", likes:3 },
+    ]);
   }
 </script>
-
 </body>
 </html>
