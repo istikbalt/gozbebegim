@@ -61,4 +61,35 @@ router.post("/like/:messageId", async (req, res) => {
   }
 });
 
+// PUT /api/messages/:messageId - Mesajı düzenle
+router.put("/:messageId", async (req, res) => {
+  const { messageId } = req.params;
+  const { message } = req.body;
+
+  if (!message) {
+    return res.status(400).json({ success: false, error: "Mesaj boş bırakılamaz." });
+  }
+
+  try {
+    await pool.query("UPDATE general_messages SET message = ? WHERE id = ?", [message, messageId]);
+    res.json({ success: true, message: "Mesaj başarıyla güncellendi." });
+  } catch (error) {
+    console.error("Edit message error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası." });
+  }
+});
+
+// DELETE /api/messages/:messageId - Mesajı sil
+router.delete("/:messageId", async (req, res) => {
+  const { messageId } = req.params;
+
+  try {
+    await pool.query("DELETE FROM general_messages WHERE id = ?", [messageId]);
+    res.json({ success: true, message: "Mesaj başarıyla silindi." });
+  } catch (error) {
+    console.error("Delete message error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası." });
+  }
+});
+
 module.exports = router;

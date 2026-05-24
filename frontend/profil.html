@@ -363,10 +363,26 @@
     <button class="modal-close" onclick="closeModal('commentModal')">✕</button>
     <div class="modal-title">Yorum yaz</div>
     <div class="modal-gift-name" id="commentGiftName"></div>
-    <div class="form-group">
-      <label class="form-label">Adınız</label>
-      <input class="form-input" id="commentName" type="text" placeholder="Örn: Fatma Teyze" />
+    
+    <!-- Giriş yapılmamışsa Ad/Soyad ve İletişim sor -->
+    <div id="commentGuestFields">
+      <div class="form-group">
+        <label class="form-label">Adınız Soyadınız</label>
+        <input class="form-input" id="commentName" type="text" placeholder="Örn: Fatma Teyze" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">E-posta veya Telefon</label>
+        <input class="form-input" id="commentContact" type="text" placeholder="ornek@mail.com veya 05XX XXX XX XX" />
+      </div>
     </div>
+
+    <!-- Giriş yapılmışsa gösterilecek bilgi kartı -->
+    <div id="commentLoggedInFields" style="display:none; background: var(--pink-light); border: 1px solid var(--pink-border); padding: 12px; border-radius: var(--radius-md); margin-bottom: 1rem; text-align: left;">
+      <div style="font-weight: 600; color: var(--pink-dark); font-size: 13px; margin-bottom: 4px;">Aktif Oturum:</div>
+      <div id="commentLoggedInUser" style="font-size: 13px; font-weight: 500; color: var(--text);"></div>
+      <div style="font-size: 11px; color: var(--text-sec); margin-top: 4px;">Yorumunuz bu isimle yayınlanacaktır.</div>
+    </div>
+
     <div class="form-group">
       <label class="form-label">Yorumunuz</label>
       <input class="form-input" id="commentText" type="text" placeholder="Nereden aldınız? Çok güzel!" />
@@ -463,6 +479,11 @@
       document.getElementById("msgText").value = "";
       document.getElementById("msgName").value = "";
       document.getElementById("msgContact").value = "";
+    }
+    if (id === "commentModal") {
+      document.getElementById("commentText").value = "";
+      document.getElementById("commentName").value = "";
+      document.getElementById("commentContact").value = "";
     }
   }
   // ESC ile kapat
@@ -810,29 +831,124 @@
     currentCommentGiftId = giftId;
     currentCommentGiftEl = gcList;
     document.getElementById("commentGiftName").textContent = giftName;
-    document.getElementById("commentName").value = "";
     document.getElementById("commentText").value = "";
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    if (currentUser) {
+      document.getElementById("commentGuestFields").style.display = "none";
+      document.getElementById("commentLoggedInFields").style.display = "block";
+      document.getElementById("commentLoggedInUser").textContent = `${currentUser.first_name} ${currentUser.last_name}`;
+    } else {
+      document.getElementById("commentGuestFields").style.display = "block";
+      document.getElementById("commentLoggedInFields").style.display = "none";
+      document.getElementById("commentName").value = "";
+      document.getElementById("commentContact").value = "";
+    }
+
     openModal("commentModal");
   }
   function submitComment() {
-    const name = document.getElementById("commentName").value.trim();
     const comment = document.getElementById("commentText").value.trim();
-    if (!name || !comment) { alert("Lütfen adınızı ve yorumunuzu girin."); return; }
-    fetch(`/api/gifts/comment/${currentCommentGiftId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_name: name, comment })
-    }).then(r => r.json()).then(d => {
-      if (d.success) {
-        closeModal("commentModal");
-        if (currentCommentGiftEl) {
-          const div = document.createElement("div");
-          div.className = "gc-item";
-          div.innerHTML = `<div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${name.substring(0,2).toUpperCase()}</div><div class="gc-text"><strong>${name}</strong>${comment}<em>şimdi</em></div>`;
-          currentCommentGiftEl.appendChild(div);
+    if (!comment) { alert("Lütfen yorumunuzu yazın."); return; }
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (currentUser) {
+      // Giriş yapılmış: doğrudan gönder
+      const name = `${currentUser.first_name} ${currentUser.last_name}`;
+      fetch(`/api/gifts/comment/${currentCommentGiftId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_name: name, comment })
+      }).then(r => r.json()).then(d => {
+        if (d.success) {
+          closeModal("commentModal");
+          if (currentCommentGiftEl) {
+            const div = document.createElement("div");
+            div.className = "gc-item";
+            div.innerHTML = `<div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${name.substring(0,2).toUpperCase()}</div><div class="gc-text"><strong>${name}</strong>${comment}<em>şimdi</em></div>`;
+            currentCommentGiftEl.appendChild(div);
+          }
         }
+      });
+    } else {
+      // Giriş yapılmamış: Misafir kayıt olmalı
+      const fullName = document.getElementById("commentName").value.trim();
+      const contact = document.getElementById("commentContact").value.trim();
+
+      if (!fullName) {
+        alert("Lütfen adınızı ve soyadınızı girin.");
+        return;
       }
-    });
+      if (!contact) {
+        alert("Yorum bırakabilmek için lütfen e-posta veya telefon numaranızı girin.");
+        return;
+      }
+
+      // Ad ve soyadı ayır
+      const parts = fullName.split(/\s+/);
+      const firstName = parts[0];
+      const lastName = parts.slice(1).join(" ") || " ";
+
+      const payload = {
+        first_name: firstName,
+        last_name: lastName
+      };
+
+      // Email mi telefon mu tespit et
+      if (contact.includes("@")) {
+        payload.email = contact;
+      } else {
+        payload.phone_number = contact;
+      }
+
+      // 1. Misafir hesabı oluştur
+      fetch("/api/auth/guest-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(authData => {
+        if (!authData.success) {
+          alert(authData.error || "Misafir kaydı yapılırken bir hata oluştu.");
+          return null;
+        }
+
+        // 2. Oturumu kaydet
+        localStorage.setItem("user", JSON.stringify(authData.user));
+        
+        // Navbar'ı güncelle
+        const navLink = document.getElementById("navAuthLink");
+        if (navLink) {
+          navLink.textContent = "Hesabım";
+          navLink.href = "/dashboard";
+        }
+
+        // 3. Yorumu gönder
+        return fetch(`/api/gifts/comment/${currentCommentGiftId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_name: fullName, comment })
+        });
+      })
+      .then(r => r ? r.json() : null)
+      .then(d => {
+        if (d && d.success) {
+          closeModal("commentModal");
+          if (currentCommentGiftEl) {
+            const div = document.createElement("div");
+            div.className = "gc-item";
+            div.innerHTML = `<div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${fullName.substring(0,2).toUpperCase()}</div><div class="gc-text"><strong>${fullName}</strong>${comment}<em>şimdi</em></div>`;
+            currentCommentGiftEl.appendChild(div);
+          }
+        }
+      })
+      .catch(err => {
+        console.error("Comment submit guest signup error:", err);
+        alert("İşlem gerçekleştirilemedi.");
+      });
+    }
   }
 
   // ── MANUEL HEDİYE ──
@@ -1018,11 +1134,24 @@
     list.innerHTML = "";
     const roots = messages.filter(m => !m.parent_id);
     const replies = messages.filter(m => m.parent_id);
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    const currentUserName = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : "";
+
     roots.forEach(msg => {
       const div = document.createElement("div");
       div.className = "msg-item";
       const initials = msg.user_name.substring(0,2).toUpperCase();
       const msgReplies = replies.filter(r => r.parent_id === msg.id);
+
+      let actionButtons = "";
+      if (currentUser && msg.user_name === currentUserName) {
+        actionButtons = `
+          <button class="act-btn" onclick="startEditMessage(${msg.id}, this)" style="margin-left: 10px; color: var(--pink);">✏️ Düzenle</button>
+          <button class="act-btn" onclick="deleteMessage(${msg.id}, this)" style="margin-left: 10px; color: #E24B4A;">🗑️ Sil</button>
+        `;
+      }
+
       div.innerHTML = `
         <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
         <div class="msg-body" data-id="${msg.id}">
@@ -1031,9 +1160,89 @@
           ${msgReplies.map(r=>`<div class="reply-bubble"><strong>${r.user_name}</strong>${r.message}</div>`).join("")}
           <div class="msg-actions">
             <button class="act-btn" onclick="likeMessage(this,${msg.id})">♡ <span>${msg.likes||0}</span></button>
+            ${actionButtons}
           </div>
         </div>`;
       list.appendChild(div);
+    });
+  }
+
+  function startEditMessage(msgId, btn) {
+    const msgBody = btn.closest(".msg-body");
+    const textEl = msgBody.querySelector(".msg-text");
+    const originalText = textEl.textContent.trim();
+
+    // Çift düzenlemeyi önle
+    if (msgBody.dataset.editing) return;
+    msgBody.dataset.editing = "1";
+
+    const editContainer = document.createElement("div");
+    editContainer.style.display = "flex";
+    editContainer.style.flexDirection = "column";
+    editContainer.style.gap = "8px";
+    editContainer.style.marginTop = "8px";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = originalText;
+    input.className = "form-input";
+    input.style.padding = "6px 12px";
+    input.style.fontSize = "13px";
+
+    const buttonRow = document.createElement("div");
+    buttonRow.style.display = "flex";
+    buttonRow.style.gap = "6px";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.textContent = "Kaydet";
+    saveBtn.className = "modal-btn-primary";
+    saveBtn.style.padding = "4px 10px";
+    saveBtn.style.fontSize = "11px";
+    saveBtn.style.borderRadius = "12px";
+    saveBtn.onclick = () => {
+      const newText = input.value.trim();
+      if (!newText) return;
+      fetch(`/api/messages/${msgId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: newText })
+      }).then(r => r.json()).then(d => {
+        if (d.success) {
+          textEl.textContent = newText;
+          editContainer.remove();
+          delete msgBody.dataset.editing;
+        }
+      });
+    };
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.textContent = "İptal";
+    cancelBtn.className = "modal-btn-ghost";
+    cancelBtn.style.padding = "4px 10px";
+    cancelBtn.style.fontSize = "11px";
+    cancelBtn.style.borderRadius = "12px";
+    cancelBtn.onclick = () => {
+      editContainer.remove();
+      delete msgBody.dataset.editing;
+    };
+
+    buttonRow.appendChild(saveBtn);
+    buttonRow.appendChild(cancelBtn);
+    editContainer.appendChild(input);
+    editContainer.appendChild(buttonRow);
+
+    textEl.after(editContainer);
+  }
+
+  function deleteMessage(msgId, btn) {
+    if (!confirm("Bu mesajı silmek istediğinize emin misiniz?")) return;
+    fetch(`/api/messages/${msgId}`, {
+      method: "DELETE"
+    }).then(r => r.json()).then(d => {
+      if (d.success) {
+        const msgItem = btn.closest(".msg-item");
+        msgItem.remove();
+      }
     });
   }
 
