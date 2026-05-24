@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yeni Organizasyon Başlat — gözbebeğim.com</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:       #D4537E;
+      --pink-dark:  #993556;
+      --pink-light: #FBEAF0;
+      --pink-border:#F4C0D1;
+      --border:     0.5px solid #e8e0e4;
+      --bg:         #fdf8fa;
+      --card-bg:    #ffffff;
+      --text:       #1a1a1a;
+      --text-sec:   #666;
+      --radius-md:  12px;
+      --radius-lg:  16px;
+      --surface:    #f5f0f3;
+      --nav-bg:     rgba(253,248,250,.92);
+      --input-bg:   #fafafa;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: var(--border);
+      padding: 0 1.5rem;
+      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background-color 0.4s ease, border-bottom 0.4s ease;
+    }
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 500; color: var(--text);
+      text-decoration: none;
+    }
+    .nav-brand span { color: var(--pink); }
+    .nav-link {
+      font-size: 13px; color: var(--text-sec);
+      text-decoration: none; padding: 6px 14px;
+      border: var(--border); border-radius: 20px;
+      transition: all .2s;
+    }
+    .nav-link:hover { background: var(--pink-light); color: var(--pink-dark); }
+
+    /* LAYOUT */
+    .page { max-width: 640px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+    .header-row {
+      margin-bottom: 2rem;
+    }
+    .header-row h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px; font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    .header-row p { font-size: 13px; color: var(--text-sec); }
+
+    /* FORM CARD */
+    .card {
+      background: var(--card-bg); border: var(--border);
+      border-radius: var(--radius-lg); padding: 2rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.01);
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .form-group label {
+      font-size: 13px; font-weight: 600; color: var(--text);
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 10px 14px; border: var(--border); border-radius: 8px;
+      font-family: 'Nunito', sans-serif; font-size: 14px;
+      background: var(--input-bg); outline: none;
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--pink); background: #fff;
+    }
+
+    .radio-group {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px;
+    }
+    .radio-card {
+      background: var(--input-bg); border: var(--border); border-radius: 10px;
+      padding: 12px 6px; text-align: center; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+    .radio-card:hover { border-color: var(--pink-border); }
+    .radio-card input { display: none; }
+    .radio-card .emoji { font-size: 22px; }
+    .radio-card .label-text { font-size: 11px; font-weight: 600; color: var(--text-sec); }
+
+    .radio-card.selected {
+      background: var(--pink-light); border-color: var(--pink-border);
+    }
+    .radio-card.selected .label-text { color: var(--pink-dark); }
+
+    /* CHILD SELECT OPTIONS */
+    .child-toggle-box {
+      border: var(--border); border-radius: 10px; padding: 12px;
+      background: var(--input-bg); margin-bottom: 0.5rem;
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+
+    .btn-submit {
+      background: var(--pink); color: #fff; border: none; border-radius: 20px;
+      padding: 12px 24px; font-family: 'Nunito', sans-serif; font-size: 15px;
+      font-weight: 600; cursor: pointer; text-align: center;
+      box-shadow: 0 4px 12px rgba(212, 83, 126, 0.15);
+      transition: background 0.2s;
+      margin-top: 1rem;
+    }
+    .btn-submit:hover { background: var(--pink-dark); }
+
+    .child-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .radio-group { grid-template-columns: repeat(2, 1fr); }
+      .child-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/dashboard">göz<span>bebeğim</span>.com</a>
+  <a class="nav-link" href="/dashboard">Geri dön</a>
+</nav>
+
+<div class="page">
+  <div class="header-row">
+    <h1>Yeni Organizasyon Başlat</h1>
+    <p>Hediye listeniz dakikalar içinde hazır olacak ve WhatsApp'ta paylaşabileceksiniz.</p>
+  </div>
+
+  <form id="createOrgForm" onsubmit="handleSubmit(event)">
+    <div class="card">
+      
+      <!-- 1. Kategori Seçimi -->
+      <div class="form-group">
+        <label>Organizasyon Kategorisi</label>
+        <div class="radio-group">
+          <label class="radio-card selected" onclick="selectRadio(this)">
+            <input type="radio" name="type" value="Doğum" checked />
+            <span class="emoji">🍼</span>
+            <span class="label-text">Doğum</span>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this)">
+            <input type="radio" name="type" value="Yaş Günü" />
+            <span class="emoji">🎂</span>
+            <span class="label-text">Yaş Günü</span>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this)">
+            <input type="radio" name="type" value="Sünnet" />
+            <span class="emoji">✂️</span>
+            <span class="label-text">Sünnet</span>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this)">
+            <input type="radio" name="type" value="Mezuniyet" />
+            <span class="emoji">🎓</span>
+            <span class="label-text">Mezuniyet</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 2. Çocuk Seç/Ekle -->
+      <div class="form-group">
+        <label>Çocuk Bilgisi</label>
+        <div class="child-toggle-box">
+          <div style="font-size:12px;color:var(--text-sec);margin-bottom:8px;">
+            Bir çocuk seçin veya yeni bir çocuk ekleyin (Tam doğum tarihi gerekmez):
+          </div>
+          
+          <select id="childSelect" onchange="toggleChildInput(this)">
+            <option value="new">+ Yeni Çocuk Ekle</option>
+            <!-- Eğer mevcut çocuklar varsa JS ile yüklenecek -->
+          </select>
+
+          <!-- Yeni Çocuk Ekleme Alanları -->
+          <div id="newChildFields" class="child-grid">
+            <input type="text" id="newChildName" placeholder="Çocuğun Adı (örn: Zeynep)" required />
+            <select id="newChildGender">
+              <option value="Bilinmiyor">Cinsiyet seçin</option>
+              <option value="Kız">Kız</option>
+              <option value="Erkek">Erkek</option>
+            </select>
+            <input type="number" id="newChildAge" placeholder="Çocuğun Yaşı (örn: 13)" min="0" max="18" required />
+          </div>
+        </div>
+      </div>
+
+      <!-- Dinamik Yaş Dönemi Alanı (Kategori Seçimine Göre Gösterilir) -->
+      <div class="form-group" id="milestoneGroup" style="display:none;">
+        <label id="milestoneLabel">Kaçıncı Yaş Günü?</label>
+        <input type="number" id="ageMilestone" placeholder="örn: 13" min="1" max="18" />
+      </div>
+
+      <!-- 3. Tarih ve Lokasyon -->
+      <div class="form-group">
+        <label for="date">Tahmini / Tören Tarihi</label>
+        <input type="date" id="date" required />
+      </div>
+
+      <div class="form-group">
+        <label for="city">Şehir</label>
+        <input type="text" id="city" required placeholder="İstanbul" />
+      </div>
+
+      <div class="form-group">
+        <label for="hospital">Hastane veya Tören Salonu (İsteğe bağlı)</label>
+        <input type="text" id="hospital" placeholder="Acıbadem Maslak Hastanesi" />
+      </div>
+
+      <!-- 4. Not -->
+      <div class="form-group">
+        <label for="notes">Misafirlere Özel Aile Notu (İsteğe bağlı)</label>
+        <textarea id="notes" rows="3" placeholder="Örn: İlk hafta ziyaret kabul etmiyoruz, anlayışınız için teşekkür ederiz..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">Listeyi ve Rotaları Otomatik Oluştur ✨</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Auth Kontrolü
+  const userData = localStorage.getItem("user");
+  if (!userData) {
+    window.location.href = "/login";
+  }
+  const user = JSON.parse(userData);
+
+  // Cinsiyet seçildiğinde form renklerini dinamik olarak güncelle (Mavi/Pembe geri bildirim)
+  document.getElementById("newChildGender").addEventListener("change", function(e) {
+    if (e.target.value === "Erkek") {
+      document.documentElement.style.setProperty("--pink", "#3A86C8");
+      document.documentElement.style.setProperty("--pink-dark", "#1C5A90");
+      document.documentElement.style.setProperty("--pink-light", "#E6F1FB");
+      document.documentElement.style.setProperty("--pink-border", "#B2D1F0");
+      document.documentElement.style.setProperty("--bg", "#f0f6fc");
+      document.documentElement.style.setProperty("--surface", "#e6eef7");
+      document.documentElement.style.setProperty("--border", "0.5px solid #d8e5f2");
+      document.documentElement.style.setProperty("--nav-bg", "rgba(240, 246, 252, 0.92)");
+      document.documentElement.style.setProperty("--input-bg", "#f4f8fd");
+    } else {
+      // Varsayılan Pembe
+      document.documentElement.style.setProperty("--pink", "#D4537E");
+      document.documentElement.style.setProperty("--pink-dark", "#993556");
+      document.documentElement.style.setProperty("--pink-light", "#FBEAF0");
+      document.documentElement.style.setProperty("--pink-border", "#F4C0D1");
+      document.documentElement.style.setProperty("--bg", "#fdf8fa");
+      document.documentElement.style.setProperty("--surface", "#f5f0f3");
+      document.documentElement.style.setProperty("--border", "0.5px solid #e8e0e4");
+      document.documentElement.style.setProperty("--nav-bg", "rgba(253, 248, 250, 0.92)");
+      document.documentElement.style.setProperty("--input-bg", "#fafafa");
+    }
+  });
+
+  function selectRadio(element) {
+    document.querySelectorAll(".radio-card").forEach(el => el.classList.remove("selected"));
+    element.classList.add("selected");
+    const radio = element.querySelector("input");
+    radio.checked = true;
+
+    // Dinamik yaş dönemi alanını göster/gizle
+    const milestoneGroup = document.getElementById("milestoneGroup");
+    const milestoneLabel = document.getElementById("milestoneLabel");
+    const ageMilestone = document.getElementById("ageMilestone");
+
+    if (radio.value === "Yaş Günü") {
+      milestoneGroup.style.display = "flex";
+      milestoneLabel.textContent = "Çocuğunuz Kaç Yaşına Giriyor? (Kaçıncı Yaş Günü?)";
+      ageMilestone.required = true;
+      ageMilestone.placeholder = "örn: 13";
+    } else if (radio.value === "Sünnet") {
+      milestoneGroup.style.display = "flex";
+      milestoneLabel.textContent = "Sünnet Töreni Anında Çocuğunuz Kaç Yaşında?";
+      ageMilestone.required = true;
+      ageMilestone.placeholder = "örn: 7";
+    } else {
+      milestoneGroup.style.display = "none";
+      ageMilestone.required = false;
+      ageMilestone.value = "";
+    }
+  }
+
+  function toggleChildInput(select) {
+    const fields = document.getElementById("newChildFields");
+    const newName = document.getElementById("newChildName");
+    const newAge = document.getElementById("newChildAge");
+    
+    if (select.value === "new") {
+      fields.style.display = "grid";
+      newName.required = true;
+      newAge.required = true;
+    } else {
+      fields.style.display = "none";
+      newName.required = false;
+      newAge.required = false;
+    }
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    
+    const type = document.querySelector('input[name="type"]:checked').value;
+    const childSelect = document.getElementById("childSelect").value;
+    const newChildName = document.getElementById("newChildName").value;
+    const newChildGender = document.getElementById("newChildGender").value;
+    const newChildAge = document.getElementById("newChildAge").value;
+    const ageMilestone = document.getElementById("ageMilestone").value;
+    const date = document.getElementById("date").value;
+    const city = document.getElementById("city").value;
+    const hospital = document.getElementById("hospital").value;
+    const notes = document.getElementById("notes").value;
+
+    const payload = {
+      parent_id: user.id,
+      type,
+      date,
+      city,
+      hospital,
+      notes,
+      age_milestone: ageMilestone ? Number(ageMilestone) : null
+    };
+
+    if (childSelect === "new") {
+      payload.new_child_name = newChildName;
+      payload.new_child_gender = newChildGender;
+      payload.new_child_age = newChildAge ? Number(newChildAge) : null;
+    } else {
+      payload.child_id = childSelect;
+    }
+
+    fetch("/api/organizations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("Hayırlı olsun! Organizasyon oluşturuldu ve ihtiyaç listeniz yaşa göre hazırlandı. 🎉");
+        window.location.href = "/dashboard";
+      } else {
+        alert(data.error || "Bir hata oluştu.");
+      }
+    })
+    .catch(err => {
+      console.error("Create org error:", err);
+      alert("Bağlantı hatası oluştu.");
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giriş Yap — gözbebeğim.com</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:       #D4537E;
+      --pink-dark:  #993556;
+      --pink-light: #FBEAF0;
+      --pink-border:#F4C0D1;
+      --border:     0.5px solid #e8e0e4;
+      --bg:         #fff9fb;
+      --card-bg:    #ffffff;
+      --text:       #1a1a1a;
+      --text-sec:   #666;
+      --radius-md:  12px;
+      --surface:    #f5f0f3;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-circle {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-circle-1 { width: 500px; height: 500px; top: -150px; left: -150px; background: rgba(212, 83, 126, 0.05); }
+    .bg-circle-2 { width: 350px; height: 350px; bottom: -100px; right: -100px; background: rgba(29, 158, 117, 0.05); }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      max-width: 420px;
+      width: 100%;
+      background: var(--card-bg);
+      border: var(--border);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(212, 83, 126, 0.03);
+      text-align: center;
+    }
+
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .brand span { color: var(--pink); }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-sec);
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 11px 14px;
+      border: var(--border);
+      border-radius: 8px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      background: #fafafa;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--pink);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(212, 83, 126, 0.05);
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--pink);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--pink-dark);
+    }
+
+    .error-msg {
+      display: none;
+      background: #FDF2F2;
+      border: 1px solid #FDE8E8;
+      color: #E24B4A;
+      font-size: 13px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .switch-link {
+      margin-top: 1.5rem;
+      font-size: 13px;
+      color: var(--text-sec);
+    }
+
+    .switch-link a {
+      color: var(--pink);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .switch-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-circle bg-circle-1"></div>
+  <div class="bg-circle bg-circle-2"></div>
+
+  <div class="card">
+    <a href="/" class="brand">göz<span>bebeğim</span>.com</a>
+    <p class="subtitle">Giriş yapın ve çocuklarınızın hediye listelerini yönetin.</p>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="phone">Telefon Numaranız</label>
+        <input type="tel" id="phone" required placeholder="0555 123 4567" />
+      </div>
+      <div class="form-group">
+        <label for="password">Şifreniz</label>
+        <input type="password" id="password" required placeholder="••••••••" />
+      </div>
+
+      <button type="submit" class="btn">Giriş Yap</button>
+    </form>
+
+    <p class="switch-link">
+      Henüz bir hesabınız yok mu? <a href="/signup">Kayıt Ol</a>
+    </p>
+  </div>
+
+  <script>
+    // Zaten giriş yapılmışsa doğrudan yönlendir
+    if (localStorage.getItem("user")) {
+      window.location.href = "/dashboard";
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const phone = document.getElementById("phone").value;
+      const password = document.getElementById("password").value;
+      const errBox = document.getElementById("errorMsg");
+
+      errBox.style.display = "none";
+
+      fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone_number: phone, password: password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          // Kullanıcıyı local storage'a kaydet
+          localStorage.setItem("user", JSON.stringify(data.user));
+          window.location.href = "/dashboard";
+        } else {
+          errBox.textContent = data.error || "Giriş başarısız.";
+          errBox.style.display = "block";
+        }
+      })
+      .catch(err => {
+        console.error("Login error:", err);
+        errBox.textContent = "Bağlantı hatası oluştu.";
+        errBox.style.display = "block";
+      });
+    }
+  </script>
+</body>
+</html>
