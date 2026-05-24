@@ -146,6 +146,161 @@
     .photo-upload-area p { font-size:13px; color:var(--text-sec); margin-top:.5rem; }
     .reminder-bubble { background:#FFF8E1; border:1px solid #FFE082; border-radius:var(--radius-sm); padding:10px 14px; font-size:13px; color:#795548; display:flex; align-items:center; gap:8px; margin-top:8px; }
 
+    /* PREMIUM DIWANET.COM CARD STYLES */
+    .msg-card-premium {
+      background: var(--card-bg);
+      border: var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.01);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+    }
+    .msg-header-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .msg-meta-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .msg-meta-info .msg-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .msg-meta-info .msg-date {
+      font-size: 11px;
+      color: var(--text-sec);
+    }
+    .msg-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-top: var(--border);
+      border-bottom: var(--border);
+      padding: 8px 4px;
+      margin-top: 4px;
+    }
+    .act-btn-like, .act-btn-comment {
+      background: none;
+      border: none;
+      font-size: 13px;
+      color: var(--text-sec);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.15s;
+    }
+    .act-btn-like:hover { color: #E24B4A; }
+    .act-btn-comment:hover { color: var(--pink-dark); }
+    .msg-comments-section {
+      background: var(--comments-bg, #fcf8fa);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .msg-replies-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .reply-bubble {
+      display: flex;
+      gap: 8px;
+      background: var(--card-bg);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      border: var(--border);
+      align-items: flex-start;
+    }
+    .reply-bubble .gc-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--pink-light);
+      color: var(--pink-dark);
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .reply-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      text-align: left;
+    }
+    .reply-content strong {
+      font-size: 12.5px;
+      color: var(--text);
+    }
+    .reply-content .msg-text {
+      font-size: 12.5px;
+      color: var(--text);
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+    .reply-footer-row {
+      font-size: 11px;
+      color: var(--text-sec);
+      margin-top: 4px;
+    }
+    .reply-act {
+      cursor: pointer;
+      color: var(--pink);
+      font-weight: 600;
+    }
+    .reply-act.delete {
+      color: #E24B4A;
+    }
+    .reply-act:hover {
+      text-decoration: underline;
+    }
+    .inline-comment-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .inline-comment-bar input {
+      flex: 1;
+      border: var(--border);
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 12.5px;
+      outline: none;
+      background: var(--card-bg);
+      transition: all 0.2s;
+    }
+    .inline-comment-bar input:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(212, 83, 126, 0.05);
+    }
+    .inline-comment-bar button {
+      background: var(--pink);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .inline-comment-bar button:hover {
+      background: var(--pink-dark);
+    }
+
     @media(max-width:480px) {
       .stats-row { grid-template-columns:repeat(2,1fr); }
       .info-grid { grid-template-columns:1fr; }
@@ -619,17 +774,39 @@
     const list = document.getElementById("msgList");
     if (!list) return;
     const div = document.createElement("div");
-    div.className = "msg-item";
+    div.className = "msg-card-premium";
     const initials = name.substring(0, 2).toUpperCase();
+
+    // Yeni atıldığı için kesinlikle kullanıcıya aittir!
+    const actionButtons = `
+      <button class="act-btn-like" style="margin-left: 10px; color: var(--pink);" onclick="startEditMessage(${id}, this)">✏️ Düzenle</button>
+      <button class="act-btn-like" style="margin-left: 10px; color: #E24B4A;" onclick="deleteMessage(${id}, this)">🗑️ Sil</button>
+    `;
+
     div.innerHTML = `
-      <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
-      <div class="msg-body">
-        <div class="msg-top"><span class="msg-name">${name}</span><span class="msg-time">şimdi</span></div>
-        <div class="msg-text">${msg}</div>
-        <div class="msg-actions">
-          <button class="act-btn" onclick="toggleLike(this)">♡ <span>0</span></button>
+      <div class="msg-header-row">
+        <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
+        <div class="msg-meta-info">
+          <span class="msg-name">${name}</span>
+          <span class="msg-date">şimdi</span>
         </div>
-      </div>`;
+      </div>
+      <div class="msg-body" data-id="${id}">
+        <div class="msg-text">${msg}</div>
+      </div>
+      <div class="msg-actions-row">
+        <button class="act-btn-like" onclick="likeMessage(this,${id})">❤️ <span>0</span></button>
+        <button class="act-btn-comment" onclick="focusCommentInput(${id})">💬 <span>0</span> Yorum</button>
+        ${actionButtons}
+      </div>
+      <div class="msg-comments-section">
+        <div class="msg-replies-list" id="replies-list-${id}"></div>
+        <div class="inline-comment-bar">
+          <input type="text" id="comment-input-${id}" placeholder="Bir yorum yaz..." onkeypress="handleCommentKeyPress(event, ${id})" />
+          <button onclick="submitInlineComment(${id})">Gönder</button>
+        </div>
+      </div>
+    `;
     list.appendChild(div);
   }
 
@@ -1140,39 +1317,175 @@
 
     roots.forEach(msg => {
       const div = document.createElement("div");
-      div.className = "msg-item";
+      div.className = "msg-card-premium";
       const initials = msg.user_name.substring(0,2).toUpperCase();
       const msgReplies = replies.filter(r => r.parent_id === msg.id);
 
       let actionButtons = "";
       if (currentUser && msg.user_name === currentUserName) {
         actionButtons = `
-          <button class="act-btn" onclick="startEditMessage(${msg.id}, this)" style="margin-left: 10px; color: var(--pink);">✏️ Düzenle</button>
-          <button class="act-btn" onclick="deleteMessage(${msg.id}, this)" style="margin-left: 10px; color: #E24B4A;">🗑️ Sil</button>
+          <button class="act-btn-like" style="margin-left: 10px; color: var(--pink);" onclick="startEditMessage(${msg.id}, this)">✏️ Düzenle</button>
+          <button class="act-btn-like" style="margin-left: 10px; color: #E24B4A;" onclick="deleteMessage(${msg.id}, this)">🗑️ Sil</button>
         `;
       }
 
-      div.innerHTML = `
-        <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
-        <div class="msg-body" data-id="${msg.id}">
-          <div class="msg-top"><span class="msg-name">${msg.user_name}</span></div>
-          <div class="msg-text">${msg.message}</div>
-          ${msgReplies.map(r=>`<div class="reply-bubble"><strong>${r.user_name}</strong>${r.message}</div>`).join("")}
-          <div class="msg-actions">
-            <button class="act-btn" onclick="likeMessage(this,${msg.id})">♡ <span>${msg.likes||0}</span></button>
-            ${actionButtons}
+      // Render replies list
+      const repliesHtml = msgReplies.map(r => {
+        let replyActions = "";
+        if (currentUser && r.user_name === currentUserName) {
+          replyActions = `
+            · <span class="reply-act" onclick="startEditMessage(${r.id}, this)">Düzenle</span>
+            · <span class="reply-act delete" onclick="deleteMessage(${r.id}, this)">Sil</span>
+          `;
+        }
+        const repInitials = r.user_name.substring(0,2).toUpperCase();
+        return `
+          <div class="reply-bubble" data-id="${r.id}">
+            <div class="gc-avatar">${repInitials}</div>
+            <div class="reply-content">
+              <strong>${r.user_name}</strong>
+              <div class="msg-text">${r.message}</div>
+              <div class="reply-footer-row">
+                <span class="reply-time">şimdi</span> ${replyActions}
+              </div>
+            </div>
           </div>
-        </div>`;
+        `;
+      }).join("");
+
+      div.innerHTML = `
+        <div class="msg-header-row">
+          <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
+          <div class="msg-meta-info">
+            <span class="msg-name">${msg.user_name}</span>
+            <span class="msg-date">Tebrik Mesajı</span>
+          </div>
+        </div>
+        <div class="msg-body" data-id="${msg.id}">
+          <div class="msg-text">${msg.message}</div>
+        </div>
+        <div class="msg-actions-row">
+          <button class="act-btn-like" onclick="likeMessage(this,${msg.id})">❤️ <span>${msg.likes||0}</span></button>
+          <button class="act-btn-comment" onclick="focusCommentInput(${msg.id})">💬 <span>${msgReplies.length}</span> Yorum</button>
+          ${actionButtons}
+        </div>
+        
+        <!-- Yorumlar Bölümü -->
+        <div class="msg-comments-section">
+          <div class="msg-replies-list" id="replies-list-${msg.id}">
+            ${repliesHtml}
+          </div>
+          
+          <!-- Inline Comment Input Bar -->
+          <div class="inline-comment-bar">
+            <input type="text" id="comment-input-${msg.id}" placeholder="Bir yorum yaz..." onkeypress="handleCommentKeyPress(event, ${msg.id})" />
+            <button onclick="submitInlineComment(${msg.id})">Gönder</button>
+          </div>
+        </div>
+      `;
       list.appendChild(div);
     });
   }
 
+  function focusCommentInput(msgId) {
+    const el = document.getElementById(`comment-input-${msgId}`);
+    if (el) el.focus();
+  }
+
+  function handleCommentKeyPress(event, msgId) {
+    if (event.key === "Enter") {
+      submitInlineComment(msgId);
+    }
+  }
+
+  function submitInlineComment(msgId) {
+    const input = document.getElementById(`comment-input-${msgId}`);
+    const text = input.value.trim();
+    if (!text) return;
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+
+    const sendComment = (name) => {
+      fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ org_id: organizationId, user_name: name, message: text, parent_id: msgId })
+      }).then(r => r.json()).then(d => {
+        if (d.success) {
+          input.value = "";
+          // Yorumu DOM listesine ekle
+          appendInlineCommentToDOM(msgId, name, text, d.message_data.id);
+        }
+      });
+    };
+
+    if (currentUser) {
+      sendComment(`${currentUser.first_name} ${currentUser.last_name}`);
+    } else {
+      // Giriş yapılmadıysa hızlı isim sorarak misafir kaydı başlat
+      const name = prompt("Lütfen yorum yazabilmek için adınızı girin:");
+      if (!name || !name.trim()) return;
+
+      const parts = name.trim().split(/\s+/);
+      const firstName = parts[0];
+      const lastName = parts.slice(1).join(" ") || " ";
+
+      fetch("/api/auth/guest-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          email: `${firstName.toLowerCase()}-${Date.now()}@temp.com`
+        })
+      })
+      .then(r => r.json())
+      .then(authData => {
+        if (authData.success) {
+          localStorage.setItem("user", JSON.stringify(authData.user));
+          const navLink = document.getElementById("navAuthLink");
+          if (navLink) {
+            navLink.textContent = "Hesabım";
+            navLink.href = "/dashboard";
+          }
+          sendComment(`${authData.user.first_name} ${authData.user.last_name}`);
+        }
+      });
+    }
+  }
+
+  function appendInlineCommentToDOM(msgId, name, text, id) {
+    const list = document.getElementById(`replies-list-${msgId}`);
+    if (!list) return;
+
+    const initials = name.substring(0, 2).toUpperCase();
+    const div = document.createElement("div");
+    div.className = "reply-bubble";
+    div.dataset.id = id;
+
+    const actionButtons = `
+      · <span class="reply-act" onclick="startEditMessage(${id}, this)">Düzenle</span>
+      · <span class="reply-act delete" onclick="deleteMessage(${id}, this)">Sil</span>
+    `;
+
+    div.innerHTML = `
+      <div class="gc-avatar">${initials}</div>
+      <div class="reply-content">
+        <strong>${name}</strong>
+        <div class="msg-text">${text}</div>
+        <div class="reply-footer-row">
+          <span class="reply-time">şimdi</span> ${actionButtons}
+        </div>
+      </div>
+    `;
+    list.appendChild(div);
+  }
+
   function startEditMessage(msgId, btn) {
-    const msgBody = btn.closest(".msg-body");
+    const msgBody = btn.closest("[data-id]");
     const textEl = msgBody.querySelector(".msg-text");
     const originalText = textEl.textContent.trim();
 
-    // Çift düzenlemeyi önle
     if (msgBody.dataset.editing) return;
     msgBody.dataset.editing = "1";
 
@@ -1235,12 +1548,12 @@
   }
 
   function deleteMessage(msgId, btn) {
-    if (!confirm("Bu mesajı silmek istediğinize emin misiniz?")) return;
+    if (!confirm("Bu kaydı silmek istediğinize emin misiniz?")) return;
     fetch(`/api/messages/${msgId}`, {
       method: "DELETE"
     }).then(r => r.json()).then(d => {
       if (d.success) {
-        const msgItem = btn.closest(".msg-item");
+        const msgItem = btn.closest(".msg-card-premium") || btn.closest(".reply-bubble");
         msgItem.remove();
       }
     });
