@@ -215,8 +215,9 @@
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          alert("Hesabınız başarıyla oluşturuldu! Şimdi giriş yapabilirsiniz.");
-          window.location.href = "/login";
+          // Otomatik giriş yapmak için kullanıcı bilgilerini tarayıcıya kaydet
+          localStorage.setItem("user", JSON.stringify(data.user));
+          window.location.href = "/dashboard";
         } else {
           errBox.textContent = data.error || "Bir hata oluştu.";
           errBox.style.display = "block";
