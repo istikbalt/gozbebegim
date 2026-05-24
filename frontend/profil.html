@@ -502,11 +502,26 @@
     }
   }
   function submitBought() {
-    fetch(`/api/gifts/buy/${currentGiftId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ buyer_name: "Mevcut Kullanıcı", buyer_phone: "0000000000", is_anonymous: false })
-    }).then(() => { closeModal("boughtModal"); location.reload(); });
+    const link = document.getElementById("boughtLink").value.trim();
+    const photoInput = document.getElementById("photoInput");
+
+    const sendData = (base64Photo) => {
+      fetch(`/api/gifts/bought/${currentGiftId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gift_link: link, gift_photo: base64Photo })
+      }).then(() => { closeModal("boughtModal"); location.reload(); });
+    };
+
+    if (photoInput.files && photoInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        sendData(e.target.result); // Base64 string
+      };
+      reader.readAsDataURL(photoInput.files[0]);
+    } else {
+      sendData(null);
+    }
   }
 
   // ── YORUM ──
@@ -612,22 +627,35 @@
     const openList = document.getElementById("openGiftsList");
     boughtList.innerHTML = "";
     openList.innerHTML = "";
-    let boughtCount = 0, openCount = 0;
+    let boughtCount = 0, openCount = 0, reservedCount = 0;
     const buyers = new Set();
 
     gifts.forEach(gift => {
-      if (gift.is_bought) {
+      if (gift.is_bought === 2) {
+        // Alındı (Aşama 3)
         boughtCount++;
         if (gift.buyer_name && !gift.is_anonymous) gift.buyer_name.split("·").forEach(n => buyers.add(n.trim()));
         const card = document.createElement("div");
         card.className = "gift-card";
         const gcListId = `gc-list-${gift.id}`;
+        
+        let photoHtml = "";
+        if (gift.gift_photo) {
+          photoHtml = `<div style="margin-top:8px;"><img src="${gift.gift_photo}" alt="Hediye Fotoğrafı" style="max-width:100%;max-height:140px;border-radius:var(--radius-sm);border:var(--border);" /></div>`;
+        }
+
+        let linkHtml = "";
+        if (gift.gift_link) {
+          linkHtml = `<a class="gift-act" href="${gift.gift_link}" target="_blank" style="color:var(--pink);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:3px;">🔗 Ürünü İncele</a>`;
+        }
+
         card.innerHTML = `
           <div class="gift-main">
             <div class="gift-icon g-done">✅</div>
             <div class="gift-info">
               <div class="gift-name">${gift.name}</div>
               <div class="gift-by">${gift.is_anonymous ? "🔒 Anonim" : `🔓 ${gift.buyer_name} aldı`}</div>
+              ${photoHtml}
             </div>
             <span class="gift-cat">${gift.category}</span>
           </div>
@@ -635,6 +663,7 @@
             <button class="gift-act" onclick="toggleLike(this)">♡ <span>0</span></button>
             <button class="gift-act" onclick="toggleComments(this)">💬 Yorumlar</button>
             <button class="gift-act" onclick="openCommentModal(${gift.id},'${gift.name}',document.getElementById('${gcListId}'))">+ Yorum</button>
+            ${linkHtml}
           </div>
           <div class="gift-comments">
             <div class="gc-list" id="${gcListId}">
@@ -642,7 +671,27 @@
             </div>
           </div>`;
         boughtList.appendChild(card);
+      } else if (gift.is_bought === 1) {
+        // Rezerve Edildi (Aşama 1 & 2)
+        reservedCount++;
+        const card = document.createElement("div");
+        card.className = "gift-card";
+        card.innerHTML = `
+          <div class="gift-main">
+            <div class="gift-icon g-reserved">🔵</div>
+            <div class="gift-info">
+              <div class="gift-name">${gift.name}</div>
+              <div class="gift-by" style="color:#e65100;font-weight:600;">Biri alacak (${gift.is_anonymous ? "🔒 Anonim" : `🔓 ${gift.buyer_name} rezerve etti`})</div>
+              <div class="reminder-bubble" style="margin-top:6px;font-size:11px;padding:6px 10px;background:#FFF8E1;border:1px solid #FFE082;border-radius:var(--radius-sm);color:#795548;">
+                ⏰ Lütfen satın aldıktan sonra yandaki <strong>"Aldım!"</strong> butonuna basın.
+              </div>
+            </div>
+            <span class="gift-cat">${gift.category}</span>
+            <button class="buy-btn" style="background:#4CAF50;" onclick="openBoughtModal(${gift.id},'${gift.name}')">Aldım! 🎉</button>
+          </div>`;
+        openList.appendChild(card);
       } else {
+        // Henüz Alınmadı
         openCount++;
         const card = document.createElement("div");
         card.className = "gift-card";
@@ -678,7 +727,7 @@
     const total = gifts.length || 1;
     document.getElementById("statGuests").textContent = buyers.size || "—";
     document.getElementById("statBought").textContent = boughtCount;
-    document.getElementById("statWaiting").textContent = openCount;
+    document.getElementById("statWaiting").textContent = openCount + reservedCount;
     document.getElementById("statPercent").textContent = `%${Math.floor((boughtCount/total)*100)}`;
   }
 
@@ -735,8 +784,8 @@
   function loadMockData() {
     organizationId = 1;
     renderGifts([
-      { id:101, name:"Bebek arabası", category:"Ulaşım", is_bought:1, buyer_name:"Fatma Teyze", is_anonymous:0, comments:[{user_name:"Selin K.",comment:"Nereden aldınız?"}] },
-      { id:102, name:"Uyku tulumu x3", category:"Kıyafet", is_bought:1, buyer_name:"Selin K.", is_anonymous:0, comments:[] },
+      { id:101, name:"Bebek arabası", category:"Ulaşım", is_bought:2, buyer_name:"Fatma Teyze", is_anonymous:0, comments:[{user_name:"Selin K.",comment:"Nereden aldınız?"}] },
+      { id:102, name:"Uyku tulumu x3", category:"Kıyafet", is_bought:2, buyer_name:"Selin K.", is_anonymous:0, comments:[] },
       { id:103, name:"Pike takımı", category:"Uyku", is_bought:1, buyer_name:"Anonim", is_anonymous:1, comments:[] },
       { id:104, name:"Mama sandalyesi", category:"Beslenme", is_bought:0, is_group:1, group_target:3, group_current:2, comments:[] },
       { id:105, name:"Emzik seti", category:"Beslenme", is_bought:0, comments:[] },

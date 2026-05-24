@@ -58,11 +58,13 @@ CREATE TABLE IF NOT EXISTS `gifts` (
   `sub_category` VARCHAR(100) DEFAULT NULL,
   `buyer_name` VARCHAR(255) DEFAULT NULL,
   `buyer_phone` VARCHAR(15) DEFAULT NULL,
-  `is_bought` TINYINT(1) DEFAULT 0,
+  `is_bought` TINYINT DEFAULT 0, -- 0: open, 1: reserved, 2: bought
   `is_anonymous` TINYINT(1) DEFAULT 0,
   `is_group` TINYINT(1) DEFAULT 0,
   `group_target` INT DEFAULT 1,
   `group_current` INT DEFAULT 0,
+  `gift_photo` LONGTEXT DEFAULT NULL,
+  `gift_link` TEXT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`org_id`) REFERENCES `organizations`(`id`) ON DELETE CASCADE

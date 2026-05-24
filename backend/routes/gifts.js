@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
         category,
         buyer_name || null,
         buyer_phone || null,
-        buyer_name ? 1 : 0, // Eğer alan adı girilmişse doğrudan "Alındı" işaretle
+        buyer_name ? 2 : 0, // Manuel girilmişse doğrudan "Alındı (2)" olarak işaretle
         is_anonymous ? 1 : 0
       ]
     );
@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// POST /api/gifts/buy/:giftId - Hediyeyi Alındı olarak işaretle (Bireysel veya Grup katkı)
+// POST /api/gifts/buy/:giftId - Hediyeyi Rezerve Et / Biri Alacak Olarak İşaretle (Aşama 1)
 router.post("/buy/:giftId", async (req, res) => {
   const { giftId } = req.params;
   const { buyer_name, buyer_phone, is_anonymous } = req.body;
@@ -54,14 +54,14 @@ router.post("/buy/:giftId", async (req, res) => {
 
     const gift = gifts[0];
 
-    if (gift.is_bought) {
+    if (gift.is_bought === 2) {
       return res.status(400).json({ success: false, error: "Bu hediye zaten alınmış." });
     }
 
     if (gift.is_group) {
       // Grup hediyesi katkısı
       const newCurrent = gift.group_current + 1;
-      const isNowBought = newCurrent >= gift.group_target ? 1 : 0;
+      const isNowBought = newCurrent >= gift.group_target ? 2 : 0; // Hedef tamamlandıysa Alındı (2), yoksa Açık (0)
 
       // Katılımcı ismini ekle
       let newBuyerName = gift.buyer_name ? `${gift.buyer_name} · ${buyer_name}` : buyer_name;
@@ -78,11 +78,11 @@ router.post("/buy/:giftId", async (req, res) => {
 
       res.json({
         success: true,
-        message: isNowBought ? "Tebrikler, grup hediyesi tamamlandı!" : "Grup hediyesine katkınız eklendi.",
+        message: isNowBought === 2 ? "Tebrikler, grup hediyesi tamamlandı!" : "Grup hediyesine katkınız eklendi.",
         gift: { ...gift, group_current: newCurrent, is_bought: isNowBought, buyer_name: newBuyerName }
       });
     } else {
-      // Normal hediye alımı
+      // Normal hediye için Rezerve Etme (Aşama 1 -> is_bought = 1)
       await pool.query(
         `UPDATE gifts 
          SET is_bought = 1, buyer_name = ?, buyer_phone = ?, is_anonymous = ?
@@ -92,12 +92,41 @@ router.post("/buy/:giftId", async (req, res) => {
 
       res.json({
         success: true,
-        message: "Hediye başarıyla alındı.",
+        message: "Hediye başarıyla rezerve edildi.",
         gift: { ...gift, is_bought: 1, buyer_name: is_anonymous ? "Anonim" : buyer_name }
       });
     }
   } catch (error) {
-    console.error("Buy gift error:", error);
+    console.error("Reserve gift error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası." });
+  }
+});
+
+// POST /api/gifts/bought/:giftId - Hediyenin Alındığını/Satın Alındığını Doğrula (Aşama 3)
+router.post("/bought/:giftId", async (req, res) => {
+  const { giftId } = req.params;
+  const { gift_link, gift_photo } = req.body;
+
+  try {
+    const [gifts] = await pool.query("SELECT * FROM gifts WHERE id = ?", [giftId]);
+    if (gifts.length === 0) {
+      return res.status(404).json({ success: false, error: "Hediye bulunamadı." });
+    }
+
+    // Alındı (2) durumuna çek ve link/fotoğrafı kaydet
+    await pool.query(
+      `UPDATE gifts 
+       SET is_bought = 2, gift_link = ?, gift_photo = ?
+       WHERE id = ?`,
+      [gift_link || null, gift_photo || null, giftId]
+    );
+
+    res.json({
+      success: true,
+      message: "Hediye alımı başarıyla onaylandı ve tamamlandı."
+    });
+  } catch (error) {
+    console.error("Finalize bought gift error:", error);
     res.status(500).json({ success: false, error: "Sunucu hatası." });
   }
 });
