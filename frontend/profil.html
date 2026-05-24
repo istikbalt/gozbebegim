@@ -426,6 +426,7 @@
   let currentGiftId = null;
   let currentCommentGiftId = null;
   let currentCommentGiftEl = null;
+  let giftsData = [];
 
   const pathParts = window.location.pathname.split("/").filter(p => p);
   const parentSlug = pathParts[0] || "ayse-demir";
@@ -856,6 +857,7 @@
   function renderPage(data) {
     const org = data.organization;
     organizationId = org.id;
+    giftsData = data.gifts;
 
     if (org.child_gender === "Erkek") {
       document.documentElement.style.setProperty("--pink", "#3A86C8");
