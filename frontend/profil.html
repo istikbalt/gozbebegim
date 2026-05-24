@@ -304,8 +304,12 @@
   <div class="modal">
     <button class="modal-close" onclick="closeModal('boughtModal')">✕</button>
     <div class="modal-title">Aldım! 🎉</div>
-    <div class="modal-sub">İsterseniz hediye fotoğrafını veya linkini paylaşın.</div>
+    <div class="modal-sub">Lütfen adınızı doğrulayın, isterseniz hediye fotoğrafını/linkini paylaşın.</div>
     <div class="modal-gift-name" id="boughtGiftName"></div>
+    <div class="form-group">
+      <label class="form-label">Satın Alan Kişi (Adınız Soyadınız)</label>
+      <input class="form-input" id="boughtBuyerName" type="text" placeholder="Örn: Ahmet Kaya" required />
+    </div>
     <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
       <div style="font-size:32px">📸</div>
       <p>Fotoğraf yüklemek için tıklayın</p>
@@ -493,6 +497,20 @@
     currentGiftId = giftId;
     document.getElementById("boughtGiftName").textContent = giftName;
     document.getElementById("boughtLink").value = "";
+    
+    // Rezerve eden kişiyi bulup otomatik doldurma (Guest session kolaylığı)
+    const gift = giftsData.find(g => g.id === giftId);
+    const nameField = document.getElementById("boughtBuyerName");
+    if (gift && gift.buyer_name) {
+      nameField.value = gift.buyer_name;
+    } else {
+      nameField.value = localStorage.getItem("guestName") || "";
+    }
+    
+    // Resim yükleyiciyi sıfırla
+    const uploadArea = document.querySelector("#boughtModal .photo-upload-area");
+    uploadArea.innerHTML = `<div style="font-size:32px">📸</div><p>Fotoğraf yüklemek için tıklayın</p><input type="file" id="photoInput" accept="image/*" style="display:none" onchange="previewPhoto(this)" />`;
+    
     openModal("boughtModal");
   }
   function previewPhoto(input) {
@@ -502,6 +520,12 @@
     }
   }
   function submitBought() {
+    const buyerName = document.getElementById("boughtBuyerName").value.trim();
+    if (!buyerName) { alert("Lütfen satın alan kişinin adını girin."); return; }
+    
+    // Bir sonraki kullanımda kolaylık olsun diye yerel tarayıcıya kaydet
+    localStorage.setItem("guestName", buyerName);
+
     const link = document.getElementById("boughtLink").value.trim();
     const photoInput = document.getElementById("photoInput");
 
@@ -509,7 +533,7 @@
       fetch(`/api/gifts/bought/${currentGiftId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gift_link: link, gift_photo: base64Photo })
+        body: JSON.stringify({ buyer_name: buyerName, gift_link: link, gift_photo: base64Photo })
       }).then(() => { closeModal("boughtModal"); location.reload(); });
     };
 
