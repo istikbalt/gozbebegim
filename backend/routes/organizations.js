@@ -82,6 +82,36 @@ function getTemplatesForEvent(type, age, ageMilestone) {
   return [];
 }
 
+// GET /api/organizations/search - Veli adı/soyadı, e-posta veya telefon ile organizasyon ara
+router.get("/search", async (req, res) => {
+  const { q } = req.query;
+  if (!q || q.trim().length === 0) {
+    return res.json({ success: true, organizations: [] });
+  }
+
+  const searchTerm = `%${q.trim()}%`;
+  try {
+    const [orgs] = await pool.query(
+      `SELECT o.*, c.name AS child_name, c.gender AS child_gender, 
+              u.first_name AS parent_first_name, u.last_name AS parent_last_name
+       FROM organizations o 
+       JOIN children c ON o.child_id = c.id 
+       JOIN users u ON o.parent_id = u.id
+       WHERE u.first_name LIKE ? 
+          OR u.last_name LIKE ? 
+          OR u.email LIKE ? 
+          OR u.phone_number LIKE ?
+          OR CONCAT(u.first_name, ' ', u.last_name) LIKE ?
+       ORDER BY o.date DESC`,
+      [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm]
+    );
+    res.json({ success: true, organizations: orgs });
+  } catch (error) {
+    console.error("Search organizations error:", error);
+    res.status(500).json({ success: false, error: "Arama hatası oluştu." });
+  }
+});
+
 // GET /api/organizations/parent/:parentId - Annenin tüm organizasyonlarını listele
 router.get("/parent/:parentId", async (req, res) => {
   try {

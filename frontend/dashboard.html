@@ -161,6 +161,29 @@
     <a href="/create-organization" class="btn-create">[+ Yeni Organizasyon]</a>
   </div>
 
+  <!-- ARAMA BÖLÜMÜ -->
+  <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.01);">
+    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 10px; color: var(--pink-dark); display: flex; align-items: center; gap: 6px;">
+      🔍 Davet Listesi Bul
+    </h3>
+    <p style="font-size: 12px; color: var(--text-sec); margin-bottom: 12px;">
+      Elindeki davet linkini yapıştırabilir veya arkadaşlarının (Veli Adı/Soyadı, E-posta veya Telefon) bilgileriyle arama yapabilirsin.
+    </p>
+    <div style="display: flex; gap: 8px;">
+      <input type="text" id="searchInput" placeholder="Veli adı, e-posta, telefon veya davet linki..." style="flex: 1; padding: 10px 14px; border: var(--border); border-radius: 20px; font-family: inherit; font-size: 13.5px; outline: none; background: #fafafa; transition: all 0.2s;" />
+      <button onclick="performSearch()" style="background: var(--pink); color: #fff; border: none; padding: 10px 20px; border-radius: 20px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Ara</button>
+    </div>
+  </div>
+
+  <!-- ARAMA SONUÇLARI KONTEYNERI -->
+  <div id="searchResultsSection" style="display: none; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500;">Arama Sonuçları</h2>
+      <button onclick="clearSearch()" style="font-size: 12px; color: var(--pink-dark); background: var(--pink-light); border: 1px solid var(--pink-border); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-weight: 600;">Temizle</button>
+    </div>
+    <div class="card-list" id="searchResultsContainer"></div>
+  </div>
+
   <div class="card-list" id="orgsContainer">
     <!-- Organizasyon Kartları Burada Listelenecek -->
     <div style="text-align:center;padding:2rem;color:var(--text-sec)">Yükleniyor...</div>
@@ -266,6 +289,100 @@
       console.error("Copy error:", err);
     });
   }
+
+  function performSearch() {
+    const q = document.getElementById("searchInput").value.trim();
+    if (!q) {
+      clearSearch();
+      return;
+    }
+
+    // 1. Direct link / URL control
+    if (q.includes("/")) {
+      let path = q;
+      if (q.startsWith("http://") || q.startsWith("https://")) {
+        try {
+          const urlObj = new URL(q);
+          path = urlObj.pathname;
+        } catch(e) {}
+      } else if (q.includes("gozbebegim.com")) {
+        path = q.substring(q.indexOf("gozbebegim.com") + 14);
+      }
+      // If we have parentSlug and orgSlug
+      if (path.split("/").filter(p => p).length >= 2) {
+        window.location.href = path.startsWith("/") ? path : "/" + path;
+        return;
+      }
+    }
+
+    // 2. Database search
+    const resultsSection = document.getElementById("searchResultsSection");
+    const resultsContainer = document.getElementById("searchResultsContainer");
+    const orgsContainer = document.getElementById("orgsContainer");
+
+    resultsContainer.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-sec)">Aranıyor...</div>';
+    resultsSection.style.display = "block";
+    orgsContainer.style.display = "none";
+
+    fetch(`/api/organizations/search?q=${encodeURIComponent(q)}`)
+      .then(res => res.json())
+      .then(data => {
+        resultsContainer.innerHTML = "";
+        if (data.success && data.organizations.length > 0) {
+          const emojis = { "Doğum": "🍼", "Sünnet": "✂️", "Yaş Günü": "🎂", "Mezuniyet": "🎓" };
+          const classNames = { "Doğum": "theme-dogum", "Sünnet": "theme-sunnet", "Yaş Günü": "theme-yasgunu", "Mezuniyet": "theme-mezuniyet" };
+
+          data.organizations.forEach(org => {
+            const card = document.createElement("div");
+            const themeClass = classNames[org.type] || "theme-dogum";
+            const emoji = emojis[org.type] || "👶";
+            card.className = `org-card ${themeClass}`;
+
+            const dateStr = new Date(org.date).toLocaleDateString("tr-TR", {
+              day: "numeric", month: "long", year: "numeric"
+            });
+
+            card.innerHTML = `
+              <div class="org-header">
+                <div class="org-avatar">${emoji}</div>
+                <div class="org-title">
+                  <h3>${org.child_name}'in ${org.type} Listesi</h3>
+                  <p>👤 Veli: ${org.parent_first_name} ${org.parent_last_name} &nbsp;·&nbsp; 📍 ${org.city}</p>
+                  <p style="font-size: 11px; color: var(--text-sec); margin-top: 2px;">📅 Tarih: ${dateStr}</p>
+                </div>
+                <span class="org-badge">${org.type}</span>
+              </div>
+              <div class="org-footer" style="justify-content: flex-end;">
+                <a href="/${org.parent_slug}/${org.slug}" class="btn-view">Hediyeleri Gör &rarr;</a>
+              </div>
+            `;
+            resultsContainer.appendChild(card);
+          });
+        } else {
+          resultsContainer.innerHTML = `
+            <div style="text-align:center;padding:2rem;color:var(--text-sec)">
+              Aramanızla eşleşen herhangi bir aktif davet listesi bulunamadı.
+            </div>
+          `;
+        }
+      })
+      .catch(err => {
+        console.error("Search error:", err);
+        resultsContainer.innerHTML = '<div style="text-align:center;padding:2rem;color:red">Arama sırasında bir hata oluştu.</div>';
+      });
+  }
+
+  function clearSearch() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("searchResultsSection").style.display = "none";
+    document.getElementById("orgsContainer").style.display = "flex";
+  }
+
+  document.getElementById("searchInput").addEventListener("keypress", e => {
+    if (e.key === "Enter") {
+      performSearch();
+    }
+  });
 
   function logout() {
     localStorage.removeItem("user");
