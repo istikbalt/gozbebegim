@@ -175,8 +175,12 @@
         <input type="text" id="lastName" required placeholder="Demir" />
       </div>
       <div class="form-group">
+        <label for="email">E-posta Adresiniz</label>
+        <input type="email" id="email" placeholder="ayse@demir.com" />
+      </div>
+      <div class="form-group">
         <label for="phone">Telefon Numaranız</label>
-        <input type="tel" id="phone" required placeholder="0555 123 4567" />
+        <input type="tel" id="phone" placeholder="0555 123 4567" />
       </div>
       <div class="form-group">
         <label for="password">Şifreniz</label>
@@ -196,11 +200,18 @@
       e.preventDefault();
       const firstName = document.getElementById("firstName").value;
       const lastName = document.getElementById("lastName").value;
+      const email = document.getElementById("email").value;
       const phone = document.getElementById("phone").value;
       const password = document.getElementById("password").value;
       const errBox = document.getElementById("errorMsg");
 
       errBox.style.display = "none";
+
+      if (!email && !phone) {
+        errBox.textContent = "Kaydolmak için e-posta adresi veya telefon numaranızdan en az birini girmelisiniz.";
+        errBox.style.display = "block";
+        return;
+      }
 
       fetch("/api/auth/signup", {
         method: "POST",
@@ -208,7 +219,8 @@
         body: JSON.stringify({
           first_name: firstName,
           last_name: lastName,
-          phone_number: phone,
+          email: email || null,
+          phone_number: phone || null,
           password: password
         })
       })

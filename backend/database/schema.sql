@@ -7,7 +7,8 @@ USE `gozbebegim`;
 -- 1. Users table (Ebeveynler)
 CREATE TABLE IF NOT EXISTS `users` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `phone_number` VARCHAR(15) NOT NULL UNIQUE,
+  `phone_number` VARCHAR(15) DEFAULT NULL UNIQUE,
+  `email` VARCHAR(255) DEFAULT NULL UNIQUE,
   `password_hash` VARCHAR(255) NOT NULL,
   `first_name` VARCHAR(100) NOT NULL,
   `last_name` VARCHAR(100) NOT NULL,
@@ -58,6 +59,7 @@ CREATE TABLE IF NOT EXISTS `gifts` (
   `sub_category` VARCHAR(100) DEFAULT NULL,
   `buyer_name` VARCHAR(255) DEFAULT NULL,
   `buyer_phone` VARCHAR(15) DEFAULT NULL,
+  `buyer_user_id` INT DEFAULT NULL,
   `is_bought` TINYINT DEFAULT 0, -- 0: open, 1: reserved, 2: bought
   `is_anonymous` TINYINT(1) DEFAULT 0,
   `is_group` TINYINT(1) DEFAULT 0,
@@ -67,7 +69,8 @@ CREATE TABLE IF NOT EXISTS `gifts` (
   `gift_link` TEXT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (`org_id`) REFERENCES `organizations`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`org_id`) REFERENCES `organizations`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`buyer_user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 5. Gift Comments table (Hediye Altı Yorumlar)

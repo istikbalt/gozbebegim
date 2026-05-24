@@ -39,10 +39,10 @@ router.post("/", async (req, res) => {
 // POST /api/gifts/buy/:giftId - Hediyeyi Rezerve Et / Biri Alacak Olarak İşaretle (Aşama 1)
 router.post("/buy/:giftId", async (req, res) => {
   const { giftId } = req.params;
-  const { buyer_name, buyer_phone, is_anonymous } = req.body;
+  const { buyer_name, buyer_phone, buyer_user_id, is_anonymous } = req.body;
 
-  if (!buyer_name || !buyer_phone) {
-    return res.status(400).json({ success: false, error: "İsim ve telefon numarası doğrulaması zorunludur." });
+  if (!buyer_name) {
+    return res.status(400).json({ success: false, error: "İsim doğrulaması zorunludur." });
   }
 
   try {
@@ -71,9 +71,9 @@ router.post("/buy/:giftId", async (req, res) => {
 
       await pool.query(
         `UPDATE gifts 
-         SET group_current = ?, is_bought = ?, buyer_name = ?, buyer_phone = ?, is_anonymous = ?
+         SET group_current = ?, is_bought = ?, buyer_name = ?, buyer_phone = ?, buyer_user_id = ?, is_anonymous = ?
          WHERE id = ?`,
-        [newCurrent, isNowBought, newBuyerName, buyer_phone, is_anonymous ? 1 : 0, giftId]
+        [newCurrent, isNowBought, newBuyerName, buyer_phone || null, buyer_user_id || null, is_anonymous ? 1 : 0, giftId]
       );
 
       res.json({
@@ -85,9 +85,9 @@ router.post("/buy/:giftId", async (req, res) => {
       // Normal hediye için Rezerve Etme (Aşama 1 -> is_bought = 1)
       await pool.query(
         `UPDATE gifts 
-         SET is_bought = 1, buyer_name = ?, buyer_phone = ?, is_anonymous = ?
+         SET is_bought = 1, buyer_name = ?, buyer_phone = ?, buyer_user_id = ?, is_anonymous = ?
          WHERE id = ?`,
-        [buyer_name, buyer_phone, is_anonymous ? 1 : 0, giftId]
+        [buyer_name, buyer_phone || null, buyer_user_id || null, is_anonymous ? 1 : 0, giftId]
       );
 
       res.json({

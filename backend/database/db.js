@@ -27,6 +27,34 @@ const pool = mysql.createPool({
   } catch (err) {
     // Sütun zaten varsa hata yoksayılır
   }
+
+  try {
+    await pool.query("ALTER TABLE `users` ADD COLUMN `email` VARCHAR(255) DEFAULT NULL UNIQUE");
+    console.log("Database updated: added 'email' column to 'users' table.");
+  } catch (err) {
+    // Sütun veya kısıt zaten varsa hata yoksayılır
+  }
+
+  try {
+    await pool.query("ALTER TABLE `users` MODIFY COLUMN `phone_number` VARCHAR(15) DEFAULT NULL");
+    console.log("Database updated: modified 'phone_number' to be nullable in 'users' table.");
+  } catch (err) {
+    // Hata yoksayılır
+  }
+
+  try {
+    await pool.query("ALTER TABLE `gifts` ADD COLUMN `buyer_user_id` INT DEFAULT NULL");
+    console.log("Database updated: added 'buyer_user_id' column to 'gifts' table.");
+  } catch (err) {
+    // Hata yoksayılır
+  }
+
+  try {
+    await pool.query("ALTER TABLE `gifts` ADD FOREIGN KEY (`buyer_user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL");
+    console.log("Database updated: added foreign key for 'buyer_user_id' in 'gifts' table.");
+  } catch (err) {
+    // Hata yoksayılır
+  }
 })();
 
 module.exports = pool;

@@ -158,7 +158,7 @@
 
 <nav>
   <a class="nav-brand" href="/">göz<span>bebeğim</span>.com</a>
-  <a class="nav-link" href="/login">Giriş yap</a>
+  <a class="nav-link" id="navAuthLink" href="/login">Giriş yap</a>
 </nav>
 
 <div class="page">
@@ -264,16 +264,28 @@
     <!-- Adım 1: Bilgi gir -->
     <div class="modal-step active" id="buyStep1">
       <div class="modal-title">Hediye al</div>
-      <div class="modal-sub">Bu hediyeyi almak istediğinizi bildirin.</div>
+      <div class="modal-sub" id="buyModalSub">Lütfen bilgilerinizi girin. Platformumuzda misafir hesabı oluşturarak gelecekte kendi listelerinizi yönetebilirsiniz!</div>
       <div class="modal-gift-name" id="buyGiftName"></div>
-      <div class="form-group">
-        <label class="form-label">Adınız Soyadınız</label>
-        <input class="form-input" id="buyerName" type="text" placeholder="Örn: Mehmet Yıldız" />
+      
+      <!-- Giriş yapılmamışsa Ad/Soyad ve İletişim sor -->
+      <div id="buyGuestFields">
+        <div class="form-group">
+          <label class="form-label">Adınız Soyadınız</label>
+          <input class="form-input" id="buyerName" type="text" placeholder="Örn: Mehmet Yıldız" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-posta veya Telefon</label>
+          <input class="form-input" id="buyerContact" type="text" placeholder="ornek@mail.com veya 05XX XXX XX XX" />
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Telefon <span>(opsiyonel)</span></label>
-        <input class="form-input" id="buyerPhone" type="tel" placeholder="05XX XXX XX XX" />
+
+      <!-- Giriş yapılmışsa gösterilecek bilgi kartı -->
+      <div id="buyLoggedInFields" style="display:none; background: var(--pink-light); border: 1px solid var(--pink-border); padding: 12px; border-radius: var(--radius-md); margin-bottom: 1rem; text-align: left;">
+        <div style="font-weight: 600; color: var(--pink-dark); font-size: 14px; margin-bottom: 4px;">Aktif Oturum:</div>
+        <div id="buyLoggedInUser" style="font-size: 14px; font-weight: 500; color: var(--text);"></div>
+        <div style="font-size: 12px; color: var(--text-sec); margin-top: 4px;">Hesabınızla 1-tıkla hızlıca rezerve edin.</div>
       </div>
+
       <label class="form-check">
         <input type="checkbox" id="buyerAnon" />
         İsmim listede anonim görünsün
@@ -401,6 +413,14 @@
   const orgSlug = pathParts[1] || "zeynep-dogum-2025";
 
   window.addEventListener("DOMContentLoaded", () => {
+    // Aktif oturum kontrolü ve navbar güncellemesi
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    const navLink = document.getElementById("navAuthLink");
+    if (currentUser && navLink) {
+      navLink.textContent = "Hesabım";
+      navLink.href = "/dashboard";
+    }
+
     fetch(`/api/organizations/slug/${parentSlug}/${orgSlug}`)
       .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(data => { if (data.success) renderPage(data); })
@@ -416,7 +436,7 @@
       document.getElementById("buyStep1").classList.add("active");
       document.getElementById("buyStep2").classList.remove("active");
       document.getElementById("buyerName").value = "";
-      document.getElementById("buyerPhone").value = "";
+      document.getElementById("buyerContact").value = "";
       document.getElementById("buyerAnon").checked = false;
     }
   }
@@ -470,26 +490,132 @@
   function openBuyModal(giftId, giftName) {
     currentGiftId = giftId;
     document.getElementById("buyGiftName").textContent = giftName;
+    
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    if (currentUser) {
+      document.getElementById("buyGuestFields").style.display = "none";
+      document.getElementById("buyLoggedInFields").style.display = "block";
+      document.getElementById("buyLoggedInUser").textContent = `${currentUser.first_name} ${currentUser.last_name} (${currentUser.phone_number || currentUser.email})`;
+      document.getElementById("buyModalSub").textContent = "Hesabınız açık, onaylayarak bu hediyeyi hızlıca üzerinize rezerve edebilirsiniz.";
+    } else {
+      document.getElementById("buyGuestFields").style.display = "block";
+      document.getElementById("buyLoggedInFields").style.display = "none";
+      document.getElementById("buyerName").value = "";
+      document.getElementById("buyerContact").value = "";
+      document.getElementById("buyModalSub").textContent = "Giriş yapmadınız. Listede adınızın görünmesi için bilgilerinizi girerek misafir hesabı oluşturabilirsiniz.";
+    }
+    
     openModal("buyModal");
   }
   function submitBuy() {
-    const name = document.getElementById("buyerName").value.trim();
-    const phone = document.getElementById("buyerPhone").value.trim() || "0000000000";
     const anon = document.getElementById("buyerAnon").checked;
-    if (!name) { alert("Lütfen adınızı girin."); return; }
-    fetch(`/api/gifts/buy/${currentGiftId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ buyer_name: name, buyer_phone: phone, is_anonymous: anon })
-    }).then(r => r.json()).then(d => {
-      if (d.success) {
-        // Adım 2'ye geç
-        document.getElementById("buyStep1").classList.remove("active");
-        document.getElementById("buyStep2").classList.add("active");
-        // Sayfadaki hediye kartını güncelle
-        setTimeout(() => { closeModal("buyModal"); location.reload(); }, 3000);
-      } else { alert(d.error || "Bir hata oluştu."); }
-    });
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (currentUser) {
+      // Giriş yapılmış: doğrudan rezerve et
+      const buyerName = `${currentUser.first_name} ${currentUser.last_name}`;
+      const buyerPhone = currentUser.phone_number || currentUser.email || "";
+      const buyerUserId = currentUser.id;
+
+      fetch(`/api/gifts/buy/${currentGiftId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          buyer_name: buyerName,
+          buyer_phone: buyerPhone,
+          buyer_user_id: buyerUserId,
+          is_anonymous: anon
+        })
+      }).then(r => r.json()).then(d => {
+        if (d.success) {
+          document.getElementById("buyStep1").classList.remove("active");
+          document.getElementById("buyStep2").classList.add("active");
+          setTimeout(() => { closeModal("buyModal"); location.reload(); }, 2500);
+        } else {
+          alert(d.error || "Bir hata oluştu.");
+        }
+      });
+    } else {
+      // Giriş yapılmamış: Misafir kayıt olmalı
+      const fullName = document.getElementById("buyerName").value.trim();
+      const contact = document.getElementById("buyerContact").value.trim();
+
+      if (!fullName) {
+        alert("Lütfen adınızı ve soyadınızı girin.");
+        return;
+      }
+      if (!contact) {
+        alert("Lütfen e-posta adresinizi veya telefon numaranızı girin.");
+        return;
+      }
+
+      // Ad ve soyadı ayır
+      const parts = fullName.split(/\s+/);
+      const firstName = parts[0];
+      const lastName = parts.slice(1).join(" ") || " ";
+
+      const payload = {
+        first_name: firstName,
+        last_name: lastName
+      };
+
+      // Email mi telefon mu tespit et
+      if (contact.includes("@")) {
+        payload.email = contact;
+      } else {
+        payload.phone_number = contact;
+      }
+
+      // 1. Arka planda misafir kaydı/girişi yap
+      fetch("/api/auth/guest-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(authData => {
+        if (!authData.success) {
+          alert(authData.error || "Misafir kaydı yapılırken bir hata oluştu.");
+          return null;
+        }
+
+        // 2. Oturumu kaydet
+        localStorage.setItem("user", JSON.stringify(authData.user));
+        
+        // Navbar'ı güncelle
+        const navLink = document.getElementById("navAuthLink");
+        if (navLink) {
+          navLink.textContent = "Hesabım";
+          navLink.href = "/dashboard";
+        }
+
+        // 3. Hediyeyi rezerve et
+        return fetch(`/api/gifts/buy/${currentGiftId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            buyer_name: fullName,
+            buyer_phone: contact,
+            buyer_user_id: authData.user.id,
+            is_anonymous: anon
+          })
+        });
+      })
+      .then(r => r ? r.json() : null)
+      .then(giftData => {
+        if (giftData && giftData.success) {
+          document.getElementById("buyStep1").classList.remove("active");
+          document.getElementById("buyStep2").classList.add("active");
+          setTimeout(() => { closeModal("buyModal"); location.reload(); }, 2500);
+        } else if (giftData) {
+          alert(giftData.error || "Hediye rezerve edilirken bir hata oluştu.");
+        }
+      })
+      .catch(err => {
+        console.error("Reservation / Guest signup error:", err);
+        alert("İşlem gerçekleştirilemedi.");
+      });
+    }
   }
 
   // ── ALDIM ──
