@@ -240,11 +240,27 @@
   <div class="modal">
     <button class="modal-close" onclick="closeModal('msgModal')">✕</button>
     <div class="modal-title">Tebrik mesajı</div>
-    <div class="modal-sub">Aileden bilgileriniz görmeyecek, sadece adınız görünür.</div>
-    <div class="form-group">
-      <label class="form-label">Adınız Soyadınız</label>
-      <input class="form-input" id="msgName" type="text" placeholder="Örn: Ayşe Kaya" />
+    <div class="modal-sub" id="msgModalSub">Aileden bilgileriniz görmeyecek, sadece adınız görünür.</div>
+    
+    <!-- Giriş yapılmamışsa Ad/Soyad ve İletişim sor -->
+    <div id="msgGuestFields">
+      <div class="form-group">
+        <label class="form-label">Adınız Soyadınız</label>
+        <input class="form-input" id="msgName" type="text" placeholder="Örn: Ayşe Kaya" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">E-posta veya Telefon</label>
+        <input class="form-input" id="msgContact" type="text" placeholder="ornek@mail.com veya 05XX XXX XX XX" />
+      </div>
     </div>
+
+    <!-- Giriş yapılmışsa gösterilecek bilgi kartı -->
+    <div id="msgLoggedInFields" style="display:none; background: var(--pink-light); border: 1px solid var(--pink-border); padding: 12px; border-radius: var(--radius-md); margin-bottom: 1rem; text-align: left;">
+      <div style="font-weight: 600; color: var(--pink-dark); font-size: 13px; margin-bottom: 4px;">Aktif Oturum:</div>
+      <div id="msgLoggedInUser" style="font-size: 13px; font-weight: 500; color: var(--text);"></div>
+      <div style="font-size: 11px; color: var(--text-sec); margin-top: 4px;">Tebrik mesajınız bu isimle yayınlanacaktır.</div>
+    </div>
+
     <div class="form-group">
       <label class="form-label">Mesajınız</label>
       <input class="form-input" id="msgText" type="text" placeholder="Tebrik mesajınızı yazın..." />
@@ -439,6 +455,11 @@
       document.getElementById("buyerContact").value = "";
       document.getElementById("buyerAnon").checked = false;
     }
+    if (id === "msgModal") {
+      document.getElementById("msgText").value = "";
+      document.getElementById("msgName").value = "";
+      document.getElementById("msgContact").value = "";
+    }
   }
   // ESC ile kapat
   document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".modal-overlay.open").forEach(m => m.classList.remove("open")); });
@@ -450,40 +471,141 @@
   // ── MESAJ ──
   function openMsgModal() {
     const val = document.getElementById("genInput").value.trim();
-    if (!val) return;
     document.getElementById("msgText").value = val;
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    if (currentUser) {
+      document.getElementById("msgGuestFields").style.display = "none";
+      document.getElementById("msgLoggedInFields").style.display = "block";
+      document.getElementById("msgLoggedInUser").textContent = `${currentUser.first_name} ${currentUser.last_name}`;
+      document.getElementById("msgModalSub").textContent = "Hesabınız açık. Tebrik mesajınız bu profil altında yayınlanacaktır.";
+    } else {
+      document.getElementById("msgGuestFields").style.display = "block";
+      document.getElementById("msgLoggedInFields").style.display = "none";
+      document.getElementById("msgName").value = "";
+      document.getElementById("msgContact").value = "";
+      document.getElementById("msgModalSub").textContent = "Giriş yapmadınız. Mesaj panosuna yazabilmek için adınızı ve iletişim bilginizi girerek misafir hesabı oluşturabilirsiniz.";
+    }
+
     openModal("msgModal");
   }
   function submitMsg() {
-    const name = document.getElementById("msgName").value.trim();
     const msg = document.getElementById("msgText").value.trim();
-    if (!name || !msg) { alert("Lütfen adınızı ve mesajınızı girin."); return; }
-    fetch("/api/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ org_id: organizationId, user_name: name, message: msg })
-    }).then(r => r.json()).then(d => {
-      if (d.success) {
-        closeModal("msgModal");
-        document.getElementById("genInput").value = "";
-        document.getElementById("msgName").value = "";
-        // Yeni mesajı sayfaya ekle
-        const list = document.getElementById("msgList");
-        const div = document.createElement("div");
-        div.className = "msg-item";
-        const initials = name.substring(0, 2).toUpperCase();
-        div.innerHTML = `
-          <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
-          <div class="msg-body">
-            <div class="msg-top"><span class="msg-name">${name}</span><span class="msg-time">şimdi</span></div>
-            <div class="msg-text">${msg}</div>
-            <div class="msg-actions">
-              <button class="act-btn" onclick="toggleLike(this)">♡ <span>0</span></button>
-            </div>
-          </div>`;
-        list.appendChild(div);
+    if (!msg) { alert("Lütfen tebrik mesajınızı yazın."); return; }
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (currentUser) {
+      // Giriş yapılmış: doğrudan gönder
+      const name = `${currentUser.first_name} ${currentUser.last_name}`;
+      fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ org_id: organizationId, user_name: name, message: msg })
+      }).then(r => r.json()).then(d => {
+        if (d.success) {
+          closeModal("msgModal");
+          document.getElementById("genInput").value = "";
+          // Yeni mesajı sayfaya ekle
+          addMessageToDOM(name, msg, d.message_data.id);
+        } else {
+          alert(d.error || "Mesaj gönderilemedi.");
+        }
+      });
+    } else {
+      // Giriş yapılmamış: Misafir kayıt olmalı
+      const fullName = document.getElementById("msgName").value.trim();
+      const contact = document.getElementById("msgContact").value.trim();
+
+      if (!fullName) {
+        alert("Lütfen adınızı ve soyadınızı girin.");
+        return;
       }
-    });
+      if (!contact) {
+        alert("Mesaj bırakabilmek için lütfen e-posta veya telefon numaranızı girin.");
+        return;
+      }
+
+      // Ad ve soyadı ayır
+      const parts = fullName.split(/\s+/);
+      const firstName = parts[0];
+      const lastName = parts.slice(1).join(" ") || " ";
+
+      const payload = {
+        first_name: firstName,
+        last_name: lastName
+      };
+
+      // Email mi telefon mu tespit et
+      if (contact.includes("@")) {
+        payload.email = contact;
+      } else {
+        payload.phone_number = contact;
+      }
+
+      // 1. Misafir hesabı oluştur
+      fetch("/api/auth/guest-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(authData => {
+        if (!authData.success) {
+          alert(authData.error || "Misafir kaydı yapılırken bir hata oluştu.");
+          return null;
+        }
+
+        // 2. Oturumu kaydet
+        localStorage.setItem("user", JSON.stringify(authData.user));
+        
+        // Navbar'ı güncelle
+        const navLink = document.getElementById("navAuthLink");
+        if (navLink) {
+          navLink.textContent = "Hesabım";
+          navLink.href = "/dashboard";
+        }
+
+        // 3. Mesajı gönder
+        return fetch("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ org_id: organizationId, user_name: fullName, message: msg })
+        });
+      })
+      .then(r => r ? r.json() : null)
+      .then(d => {
+        if (d && d.success) {
+          closeModal("msgModal");
+          document.getElementById("genInput").value = "";
+          addMessageToDOM(fullName, msg, d.message_data.id);
+        } else if (d) {
+          alert(d.error || "Mesaj gönderilemedi.");
+        }
+      })
+      .catch(err => {
+        console.error("Message submit guest signup error:", err);
+        alert("İşlem gerçekleştirilemedi.");
+      });
+    }
+  }
+
+  function addMessageToDOM(name, msg, id) {
+    const list = document.getElementById("msgList");
+    if (!list) return;
+    const div = document.createElement("div");
+    div.className = "msg-item";
+    const initials = name.substring(0, 2).toUpperCase();
+    div.innerHTML = `
+      <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
+      <div class="msg-body">
+        <div class="msg-top"><span class="msg-name">${name}</span><span class="msg-time">şimdi</span></div>
+        <div class="msg-text">${msg}</div>
+        <div class="msg-actions">
+          <button class="act-btn" onclick="toggleLike(this)">♡ <span>0</span></button>
+        </div>
+      </div>`;
+    list.appendChild(div);
   }
 
   // ── HEDİYE AL ──
