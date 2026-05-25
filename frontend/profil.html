@@ -601,14 +601,40 @@
         <div id="openGiftsList"></div>
       </div>
       
-      <div class="gift-card dashed" style="margin-top: 12px;">
-        <div class="gift-main">
-          <div class="gift-icon g-open">＋</div>
-          <div class="gift-info">
-            <div class="gift-name" style="color:var(--text-ter)">Listede olmayan bir hediye aldınız mı?</div>
-            <div class="gift-by">Manuel ekleyin</div>
+      <div class="gift-card dashed" id="manualGiftCard" style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px; padding: 14px 18px; border: 2px dashed var(--pink-border); border-radius: var(--radius-md);">
+        <div id="manualGiftStatic" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="gift-icon g-open" style="font-size: 16px; background: var(--surface); border: var(--border); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--pink);">＋</div>
+            <div class="gift-info" style="text-align: left;">
+              <div class="gift-name" style="color:var(--text-ter); font-size: 13.5px; font-weight: 600;">Listede olmayan bir hediye aldınız mı?</div>
+              <div class="gift-by" style="font-size: 11px; color: var(--text-sec);">Manuel ekleyin</div>
+            </div>
           </div>
-          <button class="add-btn" onclick="openManualModal()">Ekle</button>
+          <button class="add-btn" onclick="showInlineManualForm()" style="background: var(--pink); color: #fff; border: none; border-radius: 12px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s;">Ekle</button>
+        </div>
+        
+        <!-- Inline Input Form (Hidden by default) -->
+        <div id="manualGiftForm" style="display: none; flex-direction: column; gap: 8px; width: 100%; text-align: left;">
+          <div style="font-size: 13px; font-weight: 600; color: var(--text);">Almak istediğiniz hediyeyi yazın:</div>
+          <input type="text" id="inlineGiftName" class="form-input" placeholder="Örn: Uçak oyuncağı" style="padding: 6px 12px; font-size: 13px; border-radius: var(--radius-sm); border: var(--border); width: 100%; box-sizing: border-box; background: var(--card-bg); color: var(--text);" />
+          
+          <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+            <span style="font-size: 12px; color: var(--text-sec);">Kategori:</span>
+            <select id="inlineGiftCategory" style="padding: 4px 8px; font-size: 12px; border-radius: 6px; border: var(--border); background: var(--card-bg); color: var(--text);">
+              <option value="Oyuncak">Oyuncak</option>
+              <option value="Kıyafet">Kıyafet</option>
+              <option value="Banyo">Banyo</option>
+              <option value="Uyku">Uyku</option>
+              <option value="Beslenme">Beslenme</option>
+              <option value="Ulaşım">Ulaşım</option>
+              <option value="Diğer" selected>Diğer</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="add-btn" onclick="submitInlineManual()" style="background: var(--pink); color: #fff; border: none; border-radius: 12px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer;">Kaydet</button>
+            <button class="add-btn" onclick="hideInlineManualForm()" style="background: none; border: var(--border); color: var(--text-sec); border-radius: 12px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">İptal</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1428,6 +1454,87 @@
       body: JSON.stringify({ org_id: organizationId, name, category: cat, buyer_name: buyer, buyer_phone: phone, is_anonymous: anon })
     }).then(r => r.json()).then(d => {
       if (d.success) { closeModal("manualModal"); location.reload(); }
+    });
+  }
+
+  function showInlineManualForm() {
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    if (!currentUser) {
+      const fullName = prompt("Listeye hediye ekleyebilmek için lütfen adınızı ve soyadınızı girin:");
+      if (!fullName || !fullName.trim()) return;
+
+      const parts = fullName.trim().split(/\s+/);
+      const firstName = parts[0];
+      const lastName = parts.slice(1).join(" ") || " ";
+
+      fetch("/api/auth/guest-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          email: `${firstName.toLowerCase()}-${Date.now()}@temp.com`
+        })
+      })
+      .then(r => r.json())
+      .then(authData => {
+        if (authData.success) {
+          localStorage.setItem("user", JSON.stringify(authData.user));
+          const navLink = document.getElementById("navAuthLink");
+          if (navLink) {
+            navLink.textContent = "Hesabım";
+            navLink.href = "/dashboard";
+          }
+          document.getElementById("manualGiftStatic").style.display = "none";
+          document.getElementById("manualGiftForm").style.display = "flex";
+          document.getElementById("inlineGiftName").focus();
+        } else {
+          alert(authData.error || "Misafir girişi başarısız.");
+        }
+      });
+    } else {
+      document.getElementById("manualGiftStatic").style.display = "none";
+      document.getElementById("manualGiftForm").style.display = "flex";
+      document.getElementById("inlineGiftName").focus();
+    }
+  }
+
+  function hideInlineManualForm() {
+    document.getElementById("manualGiftStatic").style.display = "flex";
+    document.getElementById("manualGiftForm").style.display = "none";
+    document.getElementById("inlineGiftName").value = "";
+  }
+
+  function submitInlineManual() {
+    const name = document.getElementById("inlineGiftName").value.trim();
+    const cat = document.getElementById("inlineGiftCategory").value;
+    if (!name) { alert("Lütfen hediye adını girin."); return; }
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    if (!currentUser) { alert("Oturum bulunamadı. Lütfen sayfayı yenileyip tekrar deneyin."); return; }
+
+    const buyerName = `${currentUser.first_name} ${currentUser.last_name}`;
+    const buyerPhone = currentUser.phone_number || "0000000000";
+
+    fetch("/api/gifts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        org_id: organizationId,
+        name,
+        category: cat,
+        buyer_name: buyerName,
+        buyer_phone: buyerPhone,
+        is_bought: 1, // Alınacak / Rezerve Edildi olarak kaydet
+        buyer_user_id: currentUser.id,
+        is_anonymous: false
+      })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) {
+        location.reload();
+      }
     });
   }
 

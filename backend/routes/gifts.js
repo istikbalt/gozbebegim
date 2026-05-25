@@ -4,7 +4,7 @@ const pool = require("../database/db");
 
 // POST /api/gifts - Manuel hediye ekleme (Misafir veya Ebeveyn listeye olmayan bir hediye eklediğinde)
 router.post("/", async (req, res) => {
-  const { org_id, name, category, buyer_name, buyer_phone, is_anonymous } = req.body;
+  const { org_id, name, category, buyer_name, buyer_phone, is_anonymous, is_bought, buyer_user_id } = req.body;
 
   if (!org_id || !name || !category) {
     return res.status(400).json({ success: false, error: "Organizasyon, hediye adı ve kategori zorunludur." });
@@ -12,16 +12,17 @@ router.post("/", async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      `INSERT INTO gifts (org_id, name, category, buyer_name, buyer_phone, is_bought, is_anonymous)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO gifts (org_id, name, category, buyer_name, buyer_phone, is_bought, is_anonymous, buyer_user_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         org_id,
         name,
         category,
         buyer_name || null,
         buyer_phone || null,
-        buyer_name ? 2 : 0, // Manuel girilmişse doğrudan "Alındı (2)" olarak işaretle
-        is_anonymous ? 1 : 0
+        is_bought !== undefined ? is_bought : (buyer_name ? 2 : 0),
+        is_anonymous ? 1 : 0,
+        buyer_user_id || null
       ]
     );
 
