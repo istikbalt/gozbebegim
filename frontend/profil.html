@@ -314,6 +314,117 @@
       }
     }
 
+    /* Gift Accordion Styles */
+    .gift-accordion-card {
+      border: var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      background: var(--card-bg);
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .gift-accordion-card:hover {
+      border-color: var(--pink-border);
+    }
+    .gift-acc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--card-bg);
+    }
+    .gift-acc-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+    .gift-acc-icon {
+      font-size: 14px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .gift-acc-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gift-acc-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .gift-acc-status-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+    .gift-acc-status-badge.status-done {
+      background: var(--green-bg);
+      color: var(--green-txt);
+    }
+    .gift-acc-status-badge.status-reserved {
+      background: #FFF3E0;
+      color: #E65100;
+    }
+    .gift-acc-status-badge.status-open {
+      background: #E8F5E9;
+      color: #2E7D32;
+    }
+    .gift-acc-status-badge.status-group {
+      background: var(--blue-bg);
+      color: #1E88E5;
+    }
+    .gift-acc-cat {
+      font-size: 11px;
+      color: var(--text-ter);
+      background: var(--surface);
+      padding: 2px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .gift-acc-chevron {
+      font-size: 10px;
+      color: var(--text-ter);
+      transition: transform 0.2s;
+    }
+    .gift-accordion-card.open .gift-acc-chevron {
+      transform: rotate(180deg);
+    }
+    .gift-acc-body {
+      border-top: var(--border);
+      background: var(--surface);
+      padding: 12px 14px;
+    }
+    .gift-acc-details-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .gift-acc-footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: var(--border);
+    }
+
     @media(max-width:480px) {
       .stats-row { grid-template-columns:repeat(2,1fr); }
       .info-grid { grid-template-columns:1fr; }
@@ -634,6 +745,14 @@
       .then(data => { if (data.success) renderPage(data); })
       .catch(() => loadMockData());
   });
+
+  function toggleGiftAccordion(headerEl) {
+    const card = headerEl.closest(".gift-accordion-card");
+    const body = card.querySelector(".gift-acc-body");
+    if (!body) return;
+    const isOpen = card.classList.toggle("open");
+    body.style.display = isOpen ? "block" : "none";
+  }
 
   // ── MODAL YÖNETİMİ ──
   function openModal(id) { document.getElementById(id).classList.add("open"); }
@@ -1255,7 +1374,7 @@
         boughtCount++;
         if (gift.buyer_name && !gift.is_anonymous) gift.buyer_name.split("·").forEach(n => buyers.add(n.trim()));
         const card = document.createElement("div");
-        card.className = "gift-card";
+        card.className = "gift-accordion-card";
         const gcListId = `gc-list-${gift.id}`;
         
         let photoHtml = "";
@@ -1290,33 +1409,47 @@
           `;
         }).join("");
 
+        const buyerText = gift.is_anonymous ? "🔒 Anonim" : `🔓 ${gift.buyer_name} aldı`;
+
         card.innerHTML = `
-          <div class="gift-main">
-            <div class="gift-icon g-done">✅</div>
-            <div class="gift-info">
-              <div class="gift-name">${gift.name}</div>
-              <div class="gift-by">${gift.is_anonymous ? "🔒 Anonim" : `🔓 ${gift.buyer_name} aldı`}</div>
+          <!-- Excel-like Thin Header -->
+          <div class="gift-acc-header" onclick="toggleGiftAccordion(this)">
+            <div class="gift-acc-left">
+              <span class="gift-acc-icon" style="background:var(--green-bg);">✅</span>
+              <span class="gift-acc-name">${gift.name}</span>
+            </div>
+            <div class="gift-acc-right">
+              <span class="gift-acc-status-badge status-done">Alındı</span>
+              <span class="gift-acc-cat">${gift.category}</span>
+              <span class="gift-acc-chevron">▼</span>
+            </div>
+          </div>
+          
+          <!-- Collapsible Body -->
+          <div class="gift-acc-body" style="display: none;">
+            <div class="gift-acc-details-row">
+              <div class="gift-by" style="font-weight: 600; color: var(--text-sec);">${buyerText}</div>
               ${photoHtml}
             </div>
-            <span class="gift-cat">${gift.category}</span>
-          </div>
-          <div class="gift-footer">
-            <button class="gift-act" onclick="toggleLike(this)">♡ <span>0</span></button>
-            <button class="gift-act" onclick="toggleComments(this)">💬 Yorumlar</button>
-            <button class="gift-act" onclick="openCommentModal(${gift.id},'${gift.name}',document.getElementById('${gcListId}'))">+ Yorum</button>
-            ${linkHtml}
-          </div>
-          <div class="gift-comments">
-            <div class="gc-list" id="${gcListId}">
-              ${commentsHtml}
+            <div class="gift-acc-footer-actions">
+              <button class="gift-act" onclick="toggleLike(this)">♡ <span>0</span></button>
+              <button class="gift-act" onclick="toggleComments(this)">💬 Yorumlar</button>
+              <button class="gift-act" onclick="openCommentModal(${gift.id},'${gift.name}',document.getElementById('${gcListId}'))">+ Yorum</button>
+              ${linkHtml}
             </div>
-          </div>`;
+            <div class="gift-comments" style="margin-top: 10px;">
+              <div class="gc-list" id="${gcListId}">
+                ${commentsHtml}
+              </div>
+            </div>
+          </div>
+        `;
         boughtList.appendChild(card);
       } else if (gift.is_bought === 1) {
         // Rezerve Edildi (Aşama 1 & 2)
         reservedCount++;
         const card = document.createElement("div");
-        card.className = "gift-card";
+        card.className = "gift-accordion-card";
         
         const isReservedByMe = currentUser && gift.buyer_user_id === currentUser.id;
         let actionBtn = "";
@@ -1328,52 +1461,90 @@
             </div>
           `;
           actionBtn = `
-            <button class="buy-btn" style="background:#4CAF50;" onclick="openBoughtModal(${gift.id},'${gift.name}')">Aldım! 🎉</button>
+            <button class="buy-btn" style="background:#4CAF50; margin-top: 10px;" onclick="openBoughtModal(${gift.id},'${gift.name}')">Aldım! 🎉</button>
           `;
         }
 
+        const buyerText = gift.is_anonymous ? "🔒 Anonim" : `🔓 ${gift.buyer_name} rezerve etti`;
+
         card.innerHTML = `
-          <div class="gift-main">
-            <div class="gift-icon g-reserved">🔵</div>
-            <div class="gift-info">
-              <div class="gift-name">${gift.name}</div>
-              <div class="gift-by" style="color:#e65100;font-weight:600;">Biri alacak (${gift.is_anonymous ? "🔒 Anonim" : `🔓 ${gift.buyer_name} rezerve etti`})</div>
+          <!-- Excel-like Thin Header -->
+          <div class="gift-acc-header" onclick="toggleGiftAccordion(this)">
+            <div class="gift-acc-left">
+              <span class="gift-acc-icon" style="background:#FFF3E0;color:#E65100;">🔵</span>
+              <span class="gift-acc-name">${gift.name}</span>
+            </div>
+            <div class="gift-acc-right">
+              <span class="gift-acc-status-badge status-reserved">Alınacak</span>
+              <span class="gift-acc-cat">${gift.category}</span>
+              <span class="gift-acc-chevron">▼</span>
+            </div>
+          </div>
+          
+          <!-- Collapsible Body -->
+          <div class="gift-acc-body" style="display: none;">
+            <div class="gift-acc-details-row">
+              <div class="gift-by" style="font-weight:600; color:#e65100;">${buyerText}</div>
               ${reminderBubble}
             </div>
-            <span class="gift-cat">${gift.category}</span>
             ${actionBtn}
-          </div>`;
+          </div>
+        `;
         openList.appendChild(card);
       } else {
         // Henüz Alınmadı
         openCount++;
         const card = document.createElement("div");
-        card.className = "gift-card";
+        card.className = "gift-accordion-card";
+        
+        let headerIcon = "○";
+        let headerIconStyle = "background:var(--surface);border:var(--border);";
+        let statusBadge = `<span class="gift-acc-status-badge status-open">Alınabilir</span>`;
+        let bodyHtml = "";
+
         if (gift.is_group) {
           const pct = Math.min(100, Math.floor((gift.group_current/gift.group_target)*100));
-          card.innerHTML = `
-            <div class="gift-main">
-              <div class="gift-icon g-group">👥</div>
-              <div class="gift-info">
-                <div class="gift-name">${gift.name}</div>
-                <div class="gift-by" style="color:var(--pink)">${gift.group_target} kişiden ${gift.group_current} katıldı</div>
-                <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-              </div>
-              <span class="gift-cat">${gift.category}</span>
-              <button class="buy-btn" onclick="openBuyModal(${gift.id},'${gift.name}')">Katıl</button>
-            </div>`;
+          headerIcon = "👥";
+          headerIconStyle = "background:var(--blue-bg);color:#1E88E5;";
+          statusBadge = `<span class="gift-acc-status-badge status-group">Grup Hediyesi</span>`;
+          bodyHtml = `
+            <div class="gift-acc-details-row">
+              <div class="gift-by" style="font-weight: 600; color: var(--pink);">${gift.group_target} kişiden ${gift.group_current} katıldı</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+            </div>
+            <button class="buy-btn" style="margin-top: 10px;" onclick="openBuyModal(${gift.id},'${gift.name}')">Katıl</button>
+          `;
         } else {
-          card.innerHTML = `
-            <div class="gift-main">
-              <div class="gift-icon g-open">○</div>
-              <div class="gift-info">
-                <div class="gift-name">${gift.name}</div>
-                <div class="gift-by" style="color:var(--text-ter)">Henüz alınmadı</div>
-              </div>
-              <span class="gift-cat">${gift.category}</span>
-              <button class="reserve-btn" onclick="openBuyModal(${gift.id},'${gift.name}')">Bunu ben alacağım</button>
-            </div>`;
+          headerIcon = "○";
+          headerIconStyle = "background:var(--surface);border:var(--border);";
+          statusBadge = `<span class="gift-acc-status-badge status-open">Alınabilir</span>`;
+          bodyHtml = `
+            <div class="gift-acc-details-row">
+              <div class="gift-by" style="color:var(--text-ter)">Henüz alınmadı</div>
+            </div>
+            <button class="reserve-btn" style="margin-top: 10px;" onclick="openBuyModal(${gift.id},'${gift.name}')">Bunu ben alacağım</button>
+          `;
         }
+
+        card.innerHTML = `
+          <!-- Excel-like Thin Header -->
+          <div class="gift-acc-header" onclick="toggleGiftAccordion(this)">
+            <div class="gift-acc-left">
+              <span class="gift-acc-icon" style="${headerIconStyle}">${headerIcon}</span>
+              <span class="gift-acc-name">${gift.name}</span>
+            </div>
+            <div class="gift-acc-right">
+              ${statusBadge}
+              <span class="gift-acc-cat">${gift.category}</span>
+              <span class="gift-acc-chevron">▼</span>
+            </div>
+          </div>
+          
+          <!-- Collapsible Body -->
+          <div class="gift-acc-body" style="display: none;">
+            ${bodyHtml}
+          </div>
+        `;
         openList.appendChild(card);
       }
     });
@@ -1752,7 +1923,8 @@
   }
 
   function toggleComments(btn) {
-    const box = btn.closest(".gift-card").querySelector(".gift-comments");
+    const card = btn.closest(".gift-accordion-card") || btn.closest(".gift-card");
+    const box = card ? card.querySelector(".gift-comments") : null;
     if (box) box.classList.toggle("open");
   }
 
