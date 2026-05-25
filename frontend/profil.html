@@ -301,17 +301,10 @@
       background: var(--pink-dark);
     }
     .profile-content-grid {
-      display: grid;
-      grid-template-columns: 1.35fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 1.5rem;
-      align-items: start;
       margin-top: 1rem;
-    }
-    @media(max-width:768px) {
-      .profile-content-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
     }
 
     /* Gift Accordion Styles */
@@ -425,6 +418,109 @@
       border-top: var(--border);
     }
 
+    /* Scrollable Panel & Message Accordion Styles */
+    .scrollable-panel {
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 6px;
+      margin-bottom: 12px;
+    }
+    .scrollable-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+    .scrollable-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .scrollable-panel::-webkit-scrollbar-thumb {
+      background: var(--pink-border);
+      border-radius: 10px;
+    }
+    .scrollable-panel::-webkit-scrollbar-thumb:hover {
+      background: var(--pink);
+    }
+    
+    .msg-accordion-card {
+      border: var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      background: var(--card-bg);
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .msg-accordion-card:hover {
+      border-color: var(--pink-border);
+    }
+    .msg-acc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--card-bg);
+    }
+    .msg-acc-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+    .msg-acc-icon {
+      font-size: 14px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: var(--pink-light);
+      color: var(--pink-dark);
+    }
+    .msg-acc-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .msg-acc-preview {
+      font-size: 13px;
+      color: var(--text-sec);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-left: 8px;
+      flex: 1;
+    }
+    .msg-acc-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .msg-acc-date {
+      font-size: 11px;
+      color: var(--text-ter);
+      background: var(--surface);
+      padding: 2px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .msg-acc-chevron {
+      font-size: 10px;
+      color: var(--text-ter);
+      transition: transform 0.2s;
+    }
+    .msg-accordion-card.open .msg-acc-chevron {
+      transform: rotate(180deg);
+    }
+    .msg-acc-body {
+      border-top: var(--border);
+      background: var(--surface);
+      padding: 12px 14px;
+    }
+
     @media(max-width:480px) {
       .stats-row { grid-template-columns:repeat(2,1fr); }
       .info-grid { grid-template-columns:1fr; }
@@ -481,14 +577,31 @@
   </div>
 
   <div class="profile-content-grid">
-    <!-- Hediye Listesi Kolonu -->
+    <!-- Genel Mesaj Panosu Kolonu (Üstte) -->
+    <div class="card">
+      <div class="sec-title"><div class="dot"></div> Genel mesajlar</div>
+      <div class="scrollable-panel">
+        <div class="msg-list" id="msgList"></div>
+      </div>
+      <div class="input-row">
+        <input type="text" id="genInput" placeholder="Tebrik mesajınızı yazın..." />
+        <button class="send-btn" onclick="openMsgModal()">Gönder</button>
+      </div>
+    </div>
+
+    <!-- Hediye Listesi Kolonu (Altta) -->
     <div class="card">
       <div class="sec-title"><div class="dot"></div> Hediye listesi</div>
-      <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">Alınanlar</div>
-      <div id="boughtGiftsList"></div>
-      <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin:1rem 0 8px;text-transform:uppercase">Henüz alınmayanlar</div>
-      <div id="openGiftsList"></div>
-      <div class="gift-card dashed">
+      
+      <div class="scrollable-panel">
+        <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">Alınanlar</div>
+        <div id="boughtGiftsList"></div>
+        
+        <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin:1rem 0 8px;text-transform:uppercase">Henüz alınmayanlar</div>
+        <div id="openGiftsList"></div>
+      </div>
+      
+      <div class="gift-card dashed" style="margin-top: 12px;">
         <div class="gift-main">
           <div class="gift-icon g-open">＋</div>
           <div class="gift-info">
@@ -497,16 +610,6 @@
           </div>
           <button class="add-btn" onclick="openManualModal()">Ekle</button>
         </div>
-      </div>
-    </div>
-
-    <!-- Genel Mesaj Panosu Kolonu -->
-    <div class="card">
-      <div class="sec-title"><div class="dot"></div> Genel mesajlar</div>
-      <div class="msg-list" id="msgList"></div>
-      <div class="input-row">
-        <input type="text" id="genInput" placeholder="Tebrik mesajınızı yazın..." />
-        <button class="send-btn" onclick="openMsgModal()">Gönder</button>
       </div>
     </div>
   </div>
@@ -754,6 +857,14 @@
     body.style.display = isOpen ? "block" : "none";
   }
 
+  function toggleMsgAccordion(headerEl) {
+    const card = headerEl.closest(".msg-accordion-card");
+    const body = card.querySelector(".msg-acc-body");
+    if (!body) return;
+    const isOpen = card.classList.toggle("open");
+    body.style.display = isOpen ? "block" : "none";
+  }
+
   // ── MODAL YÖNETİMİ ──
   function openModal(id) { document.getElementById(id).classList.add("open"); }
   function closeModal(id) {
@@ -910,36 +1021,50 @@
     const list = document.getElementById("msgList");
     if (!list) return;
     const div = document.createElement("div");
-    div.className = "msg-card-premium";
+    div.className = "msg-accordion-card";
     const initials = name.substring(0, 2).toUpperCase();
 
     // Yeni atıldığı için kesinlikle kullanıcıya aittir!
     const actionButtons = `
-      <button class="act-btn-like" style="margin-left: 10px; color: var(--pink);" onclick="startEditMessage(${id}, this)">✏️ Düzenle</button>
-      <button class="act-btn-like" style="margin-left: 10px; color: #E24B4A;" onclick="deleteMessage(${id}, this)">🗑️ Sil</button>
+      <button class="gift-act" style="color: var(--pink);" onclick="startEditMessage(${id}, this)">✏️ Düzenle</button>
+      <button class="gift-act" style="color: #E24B4A;" onclick="deleteMessage(${id}, this)">🗑️ Sil</button>
     `;
 
     div.innerHTML = `
-      <div class="msg-header-row">
-        <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
-        <div class="msg-meta-info">
-          <span class="msg-name">${name}</span>
-          <span class="msg-date">şimdi</span>
+      <!-- Excel-like Thin Header -->
+      <div class="msg-acc-header" onclick="toggleMsgAccordion(this)">
+        <div class="msg-acc-left">
+          <span class="msg-acc-icon">💬</span>
+          <span class="msg-acc-name">${name}</span>
+          <span class="msg-acc-preview">${msg}</span>
+        </div>
+        <div class="msg-acc-right">
+          <span class="msg-acc-date">şimdi</span>
+          <span class="msg-acc-chevron">▼</span>
         </div>
       </div>
-      <div class="msg-body" data-id="${id}">
-        <div class="msg-text">${msg}</div>
-      </div>
-      <div class="msg-actions-row">
-        <button class="act-btn-like" onclick="likeMessage(this,${id})">❤️ <span>0</span></button>
-        <button class="act-btn-comment" onclick="toggleCommentSection(${id})">💬 <span>0</span> Yorum</button>
-        ${actionButtons}
-      </div>
-      <div class="msg-comments-section" id="comments-section-${id}" style="display: none;">
-        <div class="msg-replies-list" id="replies-list-${id}"></div>
-        <div class="inline-comment-bar">
-          <input type="text" id="comment-input-${id}" placeholder="Bir yorum yaz..." onkeypress="handleCommentKeyPress(event, ${id})" />
-          <button onclick="submitInlineComment(${id})">Gönder</button>
+      
+      <!-- Collapsible Body -->
+      <div class="msg-acc-body" style="display: none;">
+        <div class="msg-body" data-id="${id}" style="margin-bottom: 12px;">
+          <div class="msg-text" style="font-size: 13.5px; line-height: 1.5; color: var(--text);">${msg}</div>
+        </div>
+        
+        <div class="gift-acc-footer-actions" style="margin-top: 0; padding-top: 0; border-top: none; gap: 14px;">
+          <button class="gift-act" onclick="likeMessage(this,${id})">❤️ <span>0</span></button>
+          <button class="gift-act" onclick="toggleCommentSection(${id})">💬 <span>0</span> Yorum</button>
+          ${actionButtons}
+        </div>
+        
+        <!-- Yorumlar Bölümü -->
+        <div class="msg-comments-section" id="comments-section-${id}" style="display: none; margin-top: 12px;">
+          <div class="msg-replies-list" id="replies-list-${id}" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          
+          <!-- Inline Comment Input Bar -->
+          <div class="inline-comment-bar" style="margin-top: 8px;">
+            <input type="text" id="comment-input-${id}" placeholder="Bir yorum yaz..." onkeypress="handleCommentKeyPress(event, ${id})" style="font-size: 12px;" />
+            <button onclick="submitInlineComment(${id})" style="font-size: 12px; padding: 4px 10px;">Gönder</button>
+          </div>
         </div>
       </div>
     `;
@@ -1567,15 +1692,15 @@
 
     roots.forEach(msg => {
       const div = document.createElement("div");
-      div.className = "msg-card-premium";
+      div.className = "msg-accordion-card";
       const initials = msg.user_name.substring(0,2).toUpperCase();
       const msgReplies = replies.filter(r => r.parent_id === msg.id);
 
       let actionButtons = "";
       if (currentUser && msg.user_name === currentUserName) {
         actionButtons = `
-          <button class="act-btn-like" style="margin-left: 10px; color: var(--pink);" onclick="startEditMessage(${msg.id}, this)">✏️ Düzenle</button>
-          <button class="act-btn-like" style="margin-left: 10px; color: #E24B4A;" onclick="deleteMessage(${msg.id}, this)">🗑️ Sil</button>
+          <button class="gift-act" style="color: var(--pink);" onclick="startEditMessage(${msg.id}, this)">✏️ Düzenle</button>
+          <button class="gift-act" style="color: #E24B4A;" onclick="deleteMessage(${msg.id}, this)">🗑️ Sil</button>
         `;
       }
 
@@ -1604,32 +1729,42 @@
       }).join("");
 
       div.innerHTML = `
-        <div class="msg-header-row">
-          <div class="avatar" style="background:var(--pink-light);color:var(--pink-dark)">${initials}</div>
-          <div class="msg-meta-info">
-            <span class="msg-name">${msg.user_name}</span>
-            <span class="msg-date">Tebrik Mesajı</span>
+        <!-- Excel-like Thin Header -->
+        <div class="msg-acc-header" onclick="toggleMsgAccordion(this)">
+          <div class="msg-acc-left">
+            <span class="msg-acc-icon">💬</span>
+            <span class="msg-acc-name">${msg.user_name}</span>
+            <span class="msg-acc-preview">${msg.message}</span>
           </div>
-        </div>
-        <div class="msg-body" data-id="${msg.id}">
-          <div class="msg-text">${msg.message}</div>
-        </div>
-        <div class="msg-actions-row">
-          <button class="act-btn-like" onclick="likeMessage(this,${msg.id})">❤️ <span>${msg.likes||0}</span></button>
-          <button class="act-btn-comment" onclick="toggleCommentSection(${msg.id})">💬 <span>${msgReplies.length}</span> Yorum</button>
-          ${actionButtons}
+          <div class="msg-acc-right">
+            <span class="msg-acc-date">Tebrik</span>
+            <span class="msg-acc-chevron">▼</span>
+          </div>
         </div>
         
-        <!-- Yorumlar Bölümü -->
-        <div class="msg-comments-section" id="comments-section-${msg.id}" style="display: none;">
-          <div class="msg-replies-list" id="replies-list-${msg.id}">
-            ${repliesHtml}
+        <!-- Collapsible Body -->
+        <div class="msg-acc-body" style="display: none;">
+          <div class="msg-body" data-id="${msg.id}" style="margin-bottom: 12px;">
+            <div class="msg-text" style="font-size: 13.5px; line-height: 1.5; color: var(--text);">${msg.message}</div>
           </div>
           
-          <!-- Inline Comment Input Bar -->
-          <div class="inline-comment-bar">
-            <input type="text" id="comment-input-${msg.id}" placeholder="Bir yorum yaz..." onkeypress="handleCommentKeyPress(event, ${msg.id})" />
-            <button onclick="submitInlineComment(${msg.id})">Gönder</button>
+          <div class="gift-acc-footer-actions" style="margin-top: 0; padding-top: 0; border-top: none; gap: 14px;">
+            <button class="gift-act" onclick="likeMessage(this,${msg.id})">❤️ <span>${msg.likes||0}</span></button>
+            <button class="gift-act" onclick="toggleCommentSection(${msg.id})">💬 <span>${msgReplies.length}</span> Yorum</button>
+            ${actionButtons}
+          </div>
+          
+          <!-- Yorumlar Bölümü -->
+          <div class="msg-comments-section" id="comments-section-${msg.id}" style="display: none; margin-top: 12px;">
+            <div class="msg-replies-list" id="replies-list-${msg.id}" style="display: flex; flex-direction: column; gap: 8px;">
+              ${repliesHtml}
+            </div>
+            
+            <!-- Inline Comment Input Bar -->
+            <div class="inline-comment-bar" style="margin-top: 8px;">
+              <input type="text" id="comment-input-${msg.id}" placeholder="Bir yorum yaz..." onkeypress="handleCommentKeyPress(event, ${msg.id})" style="font-size: 12px;" />
+              <button onclick="submitInlineComment(${msg.id})" style="font-size: 12px; padding: 4px 10px;">Gönder</button>
+            </div>
           </div>
         </div>
       `;
@@ -1815,7 +1950,7 @@
       method: "DELETE"
     }).then(r => r.json()).then(d => {
       if (d.success) {
-        const msgItem = btn.closest(".msg-card-premium") || btn.closest(".reply-bubble");
+        const msgItem = btn.closest(".msg-accordion-card") || btn.closest(".reply-bubble");
         if (msgItem.classList.contains("reply-bubble")) {
           const list = msgItem.closest(".msg-replies-list");
           if (list) {
