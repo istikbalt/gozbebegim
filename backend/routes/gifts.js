@@ -163,4 +163,35 @@ router.post("/comment/:giftId", async (req, res) => {
   }
 });
 
+// PUT /api/gifts/comment/:commentId - Hediye altı yorumu düzenle
+router.put("/comment/:commentId", async (req, res) => {
+  const { commentId } = req.params;
+  const { comment } = req.body;
+
+  if (!comment) {
+    return res.status(400).json({ success: false, error: "Yorum boş bırakılamaz." });
+  }
+
+  try {
+    await pool.query("UPDATE gift_comments SET comment = ? WHERE id = ?", [comment, commentId]);
+    res.json({ success: true, message: "Yorum başarıyla güncellendi." });
+  } catch (error) {
+    console.error("Edit gift comment error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası." });
+  }
+});
+
+// DELETE /api/gifts/comment/:commentId - Hediye altı yorumu sil
+router.delete("/comment/:commentId", async (req, res) => {
+  const { commentId } = req.params;
+
+  try {
+    await pool.query("DELETE FROM gift_comments WHERE id = ?", [commentId]);
+    res.json({ success: true, message: "Yorum başarıyla silindi." });
+  } catch (error) {
+    console.error("Delete gift comment error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası." });
+  }
+});
+
 module.exports = router;

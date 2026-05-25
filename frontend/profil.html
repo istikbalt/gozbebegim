@@ -300,6 +300,19 @@
     .inline-comment-bar button:hover {
       background: var(--pink-dark);
     }
+    .profile-content-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+      margin-top: 1rem;
+    }
+    @media(max-width:768px) {
+      .profile-content-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
 
     @media(max-width:480px) {
       .stats-row { grid-template-columns:repeat(2,1fr); }
@@ -356,29 +369,33 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="sec-title"><div class="dot"></div> Genel mesajlar</div>
-    <div class="msg-list" id="msgList"></div>
-    <div class="input-row">
-      <input type="text" id="genInput" placeholder="Tebrik mesajınızı yazın..." />
-      <button class="send-btn" onclick="openMsgModal()">Gönder</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="sec-title"><div class="dot"></div> Hediye listesi</div>
-    <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">Alınanlar</div>
-    <div id="boughtGiftsList"></div>
-    <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin:1rem 0 8px;text-transform:uppercase">Henüz alınmayanlar</div>
-    <div id="openGiftsList"></div>
-    <div class="gift-card dashed">
-      <div class="gift-main">
-        <div class="gift-icon g-open">＋</div>
-        <div class="gift-info">
-          <div class="gift-name" style="color:var(--text-ter)">Listede olmayan bir hediye aldınız mı?</div>
-          <div class="gift-by">Manuel ekleyin</div>
+  <div class="profile-content-grid">
+    <!-- Hediye Listesi Kolonu -->
+    <div class="card">
+      <div class="sec-title"><div class="dot"></div> Hediye listesi</div>
+      <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">Alınanlar</div>
+      <div id="boughtGiftsList"></div>
+      <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin:1rem 0 8px;text-transform:uppercase">Henüz alınmayanlar</div>
+      <div id="openGiftsList"></div>
+      <div class="gift-card dashed">
+        <div class="gift-main">
+          <div class="gift-icon g-open">＋</div>
+          <div class="gift-info">
+            <div class="gift-name" style="color:var(--text-ter)">Listede olmayan bir hediye aldınız mı?</div>
+            <div class="gift-by">Manuel ekleyin</div>
+          </div>
+          <button class="add-btn" onclick="openManualModal()">Ekle</button>
         </div>
-        <button class="add-btn" onclick="openManualModal()">Ekle</button>
+      </div>
+    </div>
+
+    <!-- Genel Mesaj Panosu Kolonu -->
+    <div class="card">
+      <div class="sec-title"><div class="dot"></div> Genel mesajlar</div>
+      <div class="msg-list" id="msgList"></div>
+      <div class="input-row">
+        <input type="text" id="genInput" placeholder="Tebrik mesajınızı yazın..." />
+        <button class="send-btn" onclick="openMsgModal()">Gönder</button>
       </div>
     </div>
   </div>
@@ -796,10 +813,10 @@
       </div>
       <div class="msg-actions-row">
         <button class="act-btn-like" onclick="likeMessage(this,${id})">❤️ <span>0</span></button>
-        <button class="act-btn-comment" onclick="focusCommentInput(${id})">💬 <span>0</span> Yorum</button>
+        <button class="act-btn-comment" onclick="toggleCommentSection(${id})">💬 <span>0</span> Yorum</button>
         ${actionButtons}
       </div>
-      <div class="msg-comments-section">
+      <div class="msg-comments-section" id="comments-section-${id}" style="display: none;">
         <div class="msg-replies-list" id="replies-list-${id}"></div>
         <div class="inline-comment-bar">
           <input type="text" id="comment-input-${id}" placeholder="Bir yorum yaz..." onkeypress="handleCommentKeyPress(event, ${id})" />
@@ -1043,7 +1060,19 @@
           if (currentCommentGiftEl) {
             const div = document.createElement("div");
             div.className = "gc-item";
-            div.innerHTML = `<div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${name.substring(0,2).toUpperCase()}</div><div class="gc-text"><strong>${name}</strong>${comment}<em>şimdi</em></div>`;
+            div.dataset.commentId = d.comment.id;
+            div.innerHTML = `
+              <div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${name.substring(0,2).toUpperCase()}</div>
+              <div class="gc-text" style="flex:1;">
+                <strong>${name}</strong>
+                <span class="comment-msg-text">${comment}</span>
+                <em>şimdi</em>
+              </div>
+              <div class="gc-actions" style="margin-left: auto; display: flex; gap: 8px; font-size: 11px;">
+                <span class="reply-act" style="cursor:pointer; color:var(--pink);" onclick="startEditGiftComment(${d.comment.id}, this)">Düzenle</span>
+                <span class="reply-act delete" style="cursor:pointer; color:#E24B4A;" onclick="deleteGiftComment(${d.comment.id}, this)">Sil</span>
+              </div>
+            `;
             currentCommentGiftEl.appendChild(div);
           }
         }
@@ -1116,7 +1145,19 @@
           if (currentCommentGiftEl) {
             const div = document.createElement("div");
             div.className = "gc-item";
-            div.innerHTML = `<div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${fullName.substring(0,2).toUpperCase()}</div><div class="gc-text"><strong>${fullName}</strong>${comment}<em>şimdi</em></div>`;
+            div.dataset.commentId = d.comment.id;
+            div.innerHTML = `
+              <div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${fullName.substring(0,2).toUpperCase()}</div>
+              <div class="gc-text" style="flex:1;">
+                <strong>${fullName}</strong>
+                <span class="comment-msg-text">${comment}</span>
+                <em>şimdi</em>
+              </div>
+              <div class="gc-actions" style="margin-left: auto; display: flex; gap: 8px; font-size: 11px;">
+                <span class="reply-act" style="cursor:pointer; color:var(--pink);" onclick="startEditGiftComment(${d.comment.id}, this)">Düzenle</span>
+                <span class="reply-act delete" style="cursor:pointer; color:#E24B4A;" onclick="deleteGiftComment(${d.comment.id}, this)">Sil</span>
+              </div>
+            `;
             currentCommentGiftEl.appendChild(div);
           }
         }
@@ -1205,6 +1246,9 @@
     let boughtCount = 0, openCount = 0, reservedCount = 0;
     const buyers = new Set();
 
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    const currentUserName = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : "";
+
     gifts.forEach(gift => {
       if (gift.is_bought === 2) {
         // Alındı (Aşama 3)
@@ -1224,6 +1268,28 @@
           linkHtml = `<a class="gift-act" href="${gift.gift_link}" target="_blank" style="color:var(--pink);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:3px;">🔗 Ürünü İncele</a>`;
         }
 
+        const commentsHtml = (gift.comments||[]).map(c => {
+          let commentActions = "";
+          if (currentUser && c.user_name === currentUserName) {
+            commentActions = `
+              <div class="gc-actions" style="margin-left: auto; display: flex; gap: 8px; font-size: 11px;">
+                <span class="reply-act" style="cursor:pointer; color:var(--pink);" onclick="startEditGiftComment(${c.id}, this)">Düzenle</span>
+                <span class="reply-act delete" style="cursor:pointer; color:#E24B4A;" onclick="deleteGiftComment(${c.id}, this)">Sil</span>
+              </div>
+            `;
+          }
+          return `
+            <div class="gc-item" data-comment-id="${c.id}">
+              <div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${c.user_name.substring(0,2).toUpperCase()}</div>
+              <div class="gc-text" style="flex:1;">
+                <strong>${c.user_name}</strong>
+                <span class="comment-msg-text">${c.comment}</span>
+              </div>
+              ${commentActions}
+            </div>
+          `;
+        }).join("");
+
         card.innerHTML = `
           <div class="gift-main">
             <div class="gift-icon g-done">✅</div>
@@ -1242,7 +1308,7 @@
           </div>
           <div class="gift-comments">
             <div class="gc-list" id="${gcListId}">
-              ${(gift.comments||[]).map(c=>`<div class="gc-item"><div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${c.user_name.substring(0,2).toUpperCase()}</div><div class="gc-text"><strong>${c.user_name}</strong>${c.comment}</div></div>`).join("")}
+              ${commentsHtml}
             </div>
           </div>`;
         boughtList.appendChild(card);
@@ -1366,12 +1432,12 @@
         </div>
         <div class="msg-actions-row">
           <button class="act-btn-like" onclick="likeMessage(this,${msg.id})">❤️ <span>${msg.likes||0}</span></button>
-          <button class="act-btn-comment" onclick="focusCommentInput(${msg.id})">💬 <span>${msgReplies.length}</span> Yorum</button>
+          <button class="act-btn-comment" onclick="toggleCommentSection(${msg.id})">💬 <span>${msgReplies.length}</span> Yorum</button>
           ${actionButtons}
         </div>
         
         <!-- Yorumlar Bölümü -->
-        <div class="msg-comments-section">
+        <div class="msg-comments-section" id="comments-section-${msg.id}" style="display: none;">
           <div class="msg-replies-list" id="replies-list-${msg.id}">
             ${repliesHtml}
           </div>
@@ -1387,9 +1453,16 @@
     });
   }
 
-  function focusCommentInput(msgId) {
-    const el = document.getElementById(`comment-input-${msgId}`);
-    if (el) el.focus();
+  function toggleCommentSection(msgId) {
+    const section = document.getElementById(`comments-section-${msgId}`);
+    if (!section) return;
+    if (section.style.display === "none" || !section.style.display) {
+      section.style.display = "flex";
+      const el = document.getElementById(`comment-input-${msgId}`);
+      if (el) el.focus();
+    } else {
+      section.style.display = "none";
+    }
   }
 
   function handleCommentKeyPress(event, msgId) {
@@ -1415,6 +1488,11 @@
           input.value = "";
           // Yorumu DOM listesine ekle
           appendInlineCommentToDOM(msgId, name, text, d.message_data.id);
+          // Yorum sayısını güncelle
+          const countSpan = document.querySelector(`button[onclick*="toggleCommentSection(${msgId})"] span`);
+          if (countSpan) {
+            countSpan.textContent = (parseInt(countSpan.textContent) || 0) + 1;
+          }
         }
       });
     };
@@ -1554,7 +1632,95 @@
     }).then(r => r.json()).then(d => {
       if (d.success) {
         const msgItem = btn.closest(".msg-card-premium") || btn.closest(".reply-bubble");
+        if (msgItem.classList.contains("reply-bubble")) {
+          const list = msgItem.closest(".msg-replies-list");
+          if (list) {
+            const parentMsgId = list.id.replace("replies-list-", "");
+            const countSpan = document.querySelector(`button[onclick*="toggleCommentSection(${parentMsgId})"] span`);
+            if (countSpan) {
+              countSpan.textContent = Math.max(0, (parseInt(countSpan.textContent) || 0) - 1);
+            }
+          }
+        }
         msgItem.remove();
+      }
+    });
+  }
+
+  function startEditGiftComment(commentId, btn) {
+    const gcItem = btn.closest("[data-comment-id]");
+    const textEl = gcItem.querySelector(".comment-msg-text");
+    const originalText = textEl.textContent.trim();
+
+    if (gcItem.dataset.editing) return;
+    gcItem.dataset.editing = "1";
+
+    const editContainer = document.createElement("div");
+    editContainer.style.display = "flex";
+    editContainer.style.flexDirection = "column";
+    editContainer.style.gap = "6px";
+    editContainer.style.marginTop = "6px";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = originalText;
+    input.className = "form-input";
+    input.style.padding = "4px 8px";
+    input.style.fontSize = "12px";
+
+    const buttonRow = document.createElement("div");
+    buttonRow.style.display = "flex";
+    buttonRow.style.gap = "6px";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.textContent = "Kaydet";
+    saveBtn.className = "modal-btn-primary";
+    saveBtn.style.padding = "3px 8px";
+    saveBtn.style.fontSize = "10px";
+    saveBtn.style.borderRadius = "8px";
+    saveBtn.onclick = () => {
+      const newText = input.value.trim();
+      if (!newText) return;
+      fetch(`/api/gifts/comment/${commentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ comment: newText })
+      }).then(r => r.json()).then(d => {
+        if (d.success) {
+          textEl.textContent = newText;
+          editContainer.remove();
+          delete gcItem.dataset.editing;
+        }
+      });
+    };
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.textContent = "İptal";
+    cancelBtn.className = "modal-btn-ghost";
+    cancelBtn.style.padding = "3px 8px";
+    cancelBtn.style.fontSize = "10px";
+    cancelBtn.style.borderRadius = "8px";
+    cancelBtn.onclick = () => {
+      editContainer.remove();
+      delete gcItem.dataset.editing;
+    };
+
+    buttonRow.appendChild(saveBtn);
+    buttonRow.appendChild(cancelBtn);
+    editContainer.appendChild(input);
+    editContainer.appendChild(buttonRow);
+
+    textEl.after(editContainer);
+  }
+
+  function deleteGiftComment(commentId, btn) {
+    if (!confirm("Bu yorumu silmek istediğinize emin misiniz?")) return;
+    fetch(`/api/gifts/comment/${commentId}`, {
+      method: "DELETE"
+    }).then(r => r.json()).then(d => {
+      if (d.success) {
+        const gcItem = btn.closest(".gc-item");
+        if (gcItem) gcItem.remove();
       }
     });
   }
