@@ -1317,18 +1317,31 @@
         reservedCount++;
         const card = document.createElement("div");
         card.className = "gift-card";
+        
+        const isReservedByMe = currentUser && gift.buyer_user_id === currentUser.id;
+        let actionBtn = "";
+        let reminderBubble = "";
+        if (isReservedByMe) {
+          reminderBubble = `
+            <div class="reminder-bubble" style="margin-top:6px;font-size:11px;padding:6px 10px;background:#FFF8E1;border:1px solid #FFE082;border-radius:var(--radius-sm);color:#795548;">
+              ⏰ Lütfen satın aldıktan sonra yandaki <strong>"Aldım!"</strong> butonuna basın.
+            </div>
+          `;
+          actionBtn = `
+            <button class="buy-btn" style="background:#4CAF50;" onclick="openBoughtModal(${gift.id},'${gift.name}')">Aldım! 🎉</button>
+          `;
+        }
+
         card.innerHTML = `
           <div class="gift-main">
             <div class="gift-icon g-reserved">🔵</div>
             <div class="gift-info">
               <div class="gift-name">${gift.name}</div>
               <div class="gift-by" style="color:#e65100;font-weight:600;">Biri alacak (${gift.is_anonymous ? "🔒 Anonim" : `🔓 ${gift.buyer_name} rezerve etti`})</div>
-              <div class="reminder-bubble" style="margin-top:6px;font-size:11px;padding:6px 10px;background:#FFF8E1;border:1px solid #FFE082;border-radius:var(--radius-sm);color:#795548;">
-                ⏰ Lütfen satın aldıktan sonra yandaki <strong>"Aldım!"</strong> butonuna basın.
-              </div>
+              ${reminderBubble}
             </div>
             <span class="gift-cat">${gift.category}</span>
-            <button class="buy-btn" style="background:#4CAF50;" onclick="openBoughtModal(${gift.id},'${gift.name}')">Aldım! 🎉</button>
+            ${actionBtn}
           </div>`;
         openList.appendChild(card);
       } else {
