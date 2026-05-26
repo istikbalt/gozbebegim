@@ -106,7 +106,7 @@ router.post("/buy/:giftId", async (req, res) => {
 // POST /api/gifts/bought/:giftId - Hediyenin Alındığını/Satın Alındığını Doğrula (Aşama 3)
 router.post("/bought/:giftId", async (req, res) => {
   const { giftId } = req.params;
-  const { gift_link, gift_photo } = req.body;
+  const { gift_link, gift_photo, buyer_name, is_anonymous } = req.body;
 
   try {
     const [gifts] = await pool.query("SELECT * FROM gifts WHERE id = ?", [giftId]);
@@ -114,13 +114,23 @@ router.post("/bought/:giftId", async (req, res) => {
       return res.status(404).json({ success: false, error: "Hediye bulunamadı." });
     }
 
-    // Alındı (2) durumuna çek ve link/fotoğrafı kaydet
-    await pool.query(
-      `UPDATE gifts 
-       SET is_bought = 2, gift_link = ?, gift_photo = ?
-       WHERE id = ?`,
-      [gift_link || null, gift_photo || null, giftId]
-    );
+    // Alındı (2) durumuna çek, link/fotoğrafı kaydet, ve opsiyonel olarak ismi/anonimliği güncelle
+    let query = "UPDATE gifts SET is_bought = 2, gift_link = ?, gift_photo = ?";
+    const params = [gift_link || null, gift_photo || null];
+
+    if (buyer_name) {
+      query += ", buyer_name = ?";
+      params.push(buyer_name);
+    }
+    if (typeof is_anonymous !== "undefined") {
+      query += ", is_anonymous = ?";
+      params.push(is_anonymous ? 1 : 0);
+    }
+
+    query += " WHERE id = ?";
+    params.push(giftId);
+
+    await pool.query(query, params);
 
     res.json({
       success: true,

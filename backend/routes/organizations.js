@@ -169,29 +169,14 @@ router.get("/slug/:parentSlug/:orgSlug", async (req, res) => {
       comments = gc;
     }
 
-    // Sürpriz modu aktif mi kontrol et (Etkinlik gününün sonuna kadar sürpriz gizli kalır)
-    const eventDate = new Date(org.date);
-    eventDate.setHours(23, 59, 59, 999);
-    const isSurpriseActive = org.surprise_mode && (eventDate > new Date());
-
-    // Hediyeleri yorumlarıyla birleştir (Sürpriz modu aktifse isimleri ve yorumları maskele)
+    // Hediyeleri yorumlarıyla birleştir (Misafir anonim/sürpriz seçtiyse ismi sürpriz olarak göster)
     const giftsWithComments = gifts.map(g => {
       const maskedGift = { ...g };
-      if (isSurpriseActive && g.is_bought) {
-        maskedGift.buyer_name = "🎁 Sürpriz Alındı";
-        maskedGift.is_anonymous = 1;
+      if (g.is_bought && g.is_anonymous) {
+        maskedGift.buyer_name = "🎁 Sürpriz Misafir";
       }
 
-      const filteredComments = comments.filter(c => c.gift_id === g.id).map(c => {
-        if (isSurpriseActive) {
-          return {
-            ...c,
-            user_name: "🎁 Sürpriz Misafir",
-            comment: "Bu yorum sürpriz modu nedeniyle gizlenmiştir. 🤫"
-          };
-        }
-        return c;
-      });
+      const filteredComments = comments.filter(c => c.gift_id === g.id);
 
       return {
         ...maskedGift,

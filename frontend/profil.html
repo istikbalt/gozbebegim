@@ -617,7 +617,7 @@
     <div class="card">
       <div class="sec-title" style="display: flex; gap: 15px; border-bottom: var(--border); padding-bottom: 8px; margin-bottom: 12px; cursor: pointer; justify-content: flex-start; text-align: left;">
         <span id="tabNeeds" onclick="switchGiftsTab('needs')" style="font-weight: 700; font-size: 14px; color: var(--pink); border-bottom: 2px solid var(--pink); padding-bottom: 4px; display: flex; align-items: center; gap: 4px;">🎁 İhtiyaç Listesi</span>
-        <span id="tabGold" onclick="switchGiftsTab('gold')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 4px; display: flex; align-items: center; gap: 4px;">🪙 Altın & EFT Takı Köşesi</span>
+        <span id="tabGold" onclick="switchGiftsTab('gold')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 4px; display: none; align-items: center; gap: 4px;">🪙 Altın & EFT Takı Köşesi</span>
       </div>
       
       <div class="scrollable-panel">
@@ -797,9 +797,9 @@
         <div style="font-size: 12px; color: var(--text-sec); margin-top: 4px;">Hesabınızla 1-tıkla hızlıca rezerve edin.</div>
       </div>
 
-      <label class="form-check">
-        <input type="checkbox" id="buyerAnon" />
-        İsmim listede anonim görünsün
+      <label class="form-check" style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--pink-dark); cursor: pointer; margin: 10px 0;">
+        <input type="checkbox" id="buyerAnon" style="width: 16px; height: 16px; margin: 0;" />
+        Sürpriz Hediye 🎁 (İsmimi ebeveynden gizle)
       </label>
       <div class="modal-actions">
         <button class="modal-btn-ghost" onclick="closeModal('buyModal')">İptal</button>
@@ -845,6 +845,10 @@
       <label class="form-label">Ya da link paylaşın <span>(opsiyonel)</span></label>
       <input class="form-input" id="boughtLink" type="url" placeholder="https://trendyol.com/..." />
     </div>
+    <label class="form-check" style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--pink-dark); cursor: pointer; margin-top: 10px; margin-bottom: 10px;">
+      <input type="checkbox" id="boughtAnon" style="width: 16px; height: 16px; margin: 0;" />
+      Sürpriz Hediye 🎁 (İsmimi ebeveynden gizle)
+    </label>
     <div class="modal-actions">
       <button class="modal-btn-ghost" onclick="closeModal('boughtModal')">Atla</button>
       <button class="modal-btn-primary" onclick="submitBought()">Paylaş</button>
@@ -1618,12 +1622,18 @@
 
     const link = document.getElementById("boughtLink").value.trim();
     const photoInput = document.getElementById("photoInput");
+    const anon = document.getElementById("boughtAnon").checked;
 
     const sendData = (base64Photo) => {
       fetch(`/api/gifts/bought/${currentGiftId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ buyer_name: buyerName, gift_link: link, gift_photo: base64Photo })
+        body: JSON.stringify({ 
+          buyer_name: buyerName, 
+          gift_link: link, 
+          gift_photo: base64Photo,
+          is_anonymous: anon 
+        })
       }).then(() => { closeModal("boughtModal"); location.reload(); });
     };
 
