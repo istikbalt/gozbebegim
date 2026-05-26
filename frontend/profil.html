@@ -1664,6 +1664,7 @@
     if (!comment) { alert("Lütfen yorumunuzu yazın."); return; }
 
     const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    const parentId = window.pendingCommentParentId || null;
 
     if (currentUser) {
       // Giriş yapılmış: doğrudan gönder
@@ -1671,28 +1672,11 @@
       fetch(`/api/gifts/comment/${currentCommentGiftId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_name: name, comment })
+        body: JSON.stringify({ user_name: name, comment, parent_id: parentId })
       }).then(r => r.json()).then(d => {
         if (d.success) {
           closeModal("commentModal");
-          if (currentCommentGiftEl) {
-            const div = document.createElement("div");
-            div.className = "gc-item";
-            div.dataset.commentId = d.comment.id;
-            div.innerHTML = `
-              <div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${name.substring(0,2).toUpperCase()}</div>
-              <div class="gc-text" style="flex:1;">
-                <strong>${name}</strong>
-                <span class="comment-msg-text">${comment}</span>
-                <em>şimdi</em>
-              </div>
-              <div class="gc-actions" style="margin-left: auto; display: flex; gap: 8px; font-size: 11px;">
-                <span class="reply-act" style="cursor:pointer; color:var(--pink);" onclick="startEditGiftComment(${d.comment.id}, this)">Düzenle</span>
-                <span class="reply-act delete" style="cursor:pointer; color:#E24B4A;" onclick="deleteGiftComment(${d.comment.id}, this)">Sil</span>
-              </div>
-            `;
-            currentCommentGiftEl.appendChild(div);
-          }
+          refreshPageData();
         }
       });
     } else {
@@ -1719,7 +1703,6 @@
         last_name: lastName
       };
 
-      // Email mi telefon mu tespit et
       if (contact.includes("@")) {
         payload.email = contact;
       } else {
@@ -1753,31 +1736,14 @@
         return fetch(`/api/gifts/comment/${currentCommentGiftId}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_name: fullName, comment })
+          body: JSON.stringify({ user_name: fullName, comment, parent_id: parentId })
         });
       })
       .then(r => r ? r.json() : null)
       .then(d => {
         if (d && d.success) {
           closeModal("commentModal");
-          if (currentCommentGiftEl) {
-            const div = document.createElement("div");
-            div.className = "gc-item";
-            div.dataset.commentId = d.comment.id;
-            div.innerHTML = `
-              <div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${fullName.substring(0,2).toUpperCase()}</div>
-              <div class="gc-text" style="flex:1;">
-                <strong>${fullName}</strong>
-                <span class="comment-msg-text">${comment}</span>
-                <em>şimdi</em>
-              </div>
-              <div class="gc-actions" style="margin-left: auto; display: flex; gap: 8px; font-size: 11px;">
-                <span class="reply-act" style="cursor:pointer; color:var(--pink);" onclick="startEditGiftComment(${d.comment.id}, this)">Düzenle</span>
-                <span class="reply-act delete" style="cursor:pointer; color:#E24B4A;" onclick="deleteGiftComment(${d.comment.id}, this)">Sil</span>
-              </div>
-            `;
-            currentCommentGiftEl.appendChild(div);
-          }
+          refreshPageData();
         }
       })
       .catch(err => {
@@ -1786,6 +1752,120 @@
       });
     }
   }
+
+  // ── CEP YORUMLARI & SOSYAL CHAT ETKİLEŞİMİ ──
+  let currentCommentReplyToId = {}; // Map of giftId -> commentId they are replying to
+
+  window.setReplyCommentState = function(commentId, authorName, giftId) {
+    currentCommentReplyToId[giftId] = commentId;
+    
+    const indicator = document.getElementById(`reply-indicator-${giftId}`);
+    const nameSpan = document.getElementById(`reply-target-name-${giftId}`);
+    if (indicator && nameSpan) {
+      nameSpan.textContent = authorName;
+      indicator.style.display = "flex";
+    }
+    
+    const input = document.getElementById(`gc-input-${giftId}`);
+    if (input) {
+      input.focus();
+      input.placeholder = `@${authorName} kullanıcısına cevap yaz...`;
+      if (!input.value.startsWith(`@${authorName}`)) {
+        input.value = `@${authorName} ` + input.value.trim();
+      }
+    }
+  };
+
+  window.cancelReplyCommentState = function(giftId) {
+    delete currentCommentReplyToId[giftId];
+    
+    const indicator = document.getElementById(`reply-indicator-${giftId}`);
+    if (indicator) {
+      indicator.style.display = "none";
+    }
+    
+    const input = document.getElementById(`gc-input-${giftId}`);
+    if (input) {
+      input.placeholder = "Yorum yaz...";
+    }
+  };
+
+  // Heart and Laugh reactions
+  window.reactToComment = function(commentId, type, giftId) {
+    fetch(`/api/gifts/comment/${commentId}/react`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) {
+        const likeSpan = document.getElementById(`react-like-${commentId}`);
+        const laughSpan = document.getElementById(`react-laugh-${commentId}`);
+        if (likeSpan && type === 'like') likeSpan.textContent = d.likes;
+        if (laughSpan && type === 'laugh') laughSpan.textContent = d.laughs;
+      }
+    })
+    .catch(err => console.error("Reaction failed:", err));
+  };
+
+  // Handle inline submission
+  window.submitGiftComment = function(giftId) {
+    const input = document.getElementById(`gc-input-${giftId}`);
+    const comment = input ? input.value.trim() : "";
+    if (!comment) return;
+
+    const parentId = currentCommentReplyToId[giftId] || null;
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (currentUser) {
+      const name = `${currentUser.first_name} ${currentUser.last_name}`;
+      fetch(`/api/gifts/comment/${giftId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_name: name, comment, parent_id: parentId })
+      })
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          input.value = "";
+          cancelReplyCommentState(giftId);
+          refreshPageData();
+        }
+      });
+    } else {
+      // Not logged in: open the guest login/register modal
+      currentCommentGiftId = giftId;
+      currentCommentGiftEl = document.getElementById(`gc-list-${giftId}`);
+      
+      window.pendingCommentText = comment;
+      window.pendingCommentParentId = parentId;
+
+      document.getElementById("commentGiftName").textContent = "Hediye Yorumu";
+      document.getElementById("commentText").value = comment;
+      document.getElementById("commentGuestFields").style.display = "block";
+      document.getElementById("commentLoggedInFields").style.display = "none";
+      document.getElementById("commentName").value = "";
+      document.getElementById("commentContact").value = "";
+
+      openModal("commentModal");
+    }
+  };
+
+  // Helper to re-fetch and render the organization slug data dynamically
+  window.refreshPageData = function() {
+    const pathParts = window.location.pathname.split("/").filter(p => p);
+    const parentSlug = pathParts[0] || "ayse-demir";
+    const orgSlug = pathParts[1] || "zeynep-dogum-2025";
+    
+    fetch(`/api/organizations/slug/${parentSlug}/${orgSlug}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          renderGifts(data.gifts);
+        }
+      });
+  };
 
   // ── MANUEL HEDİYE ──
   function openManualModal() { openModal("manualModal"); }
@@ -1987,27 +2067,83 @@
           linkHtml = `<a class="gift-act" href="${gift.gift_link}" target="_blank" style="color:var(--pink);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:3px;">🔗 Ürünü İncele</a>`;
         }
 
-        const commentsHtml = (gift.comments||[]).map(c => {
-          let commentActions = "";
-          if (currentUser && c.user_name === currentUserName) {
-            commentActions = `
-              <div class="gc-actions" style="margin-left: auto; display: flex; gap: 8px; font-size: 11px;">
-                <span class="reply-act" style="cursor:pointer; color:var(--pink);" onclick="startEditGiftComment(${c.id}, this)">Düzenle</span>
-                <span class="reply-act delete" style="cursor:pointer; color:#E24B4A;" onclick="deleteGiftComment(${c.id}, this)">Sil</span>
-              </div>
+        // Build threaded comment structure
+        const commentList = gift.comments || [];
+        const parentComments = commentList.filter(c => !c.parent_id);
+        const childComments = commentList.filter(c => c.parent_id);
+        let commentsHtml = "";
+
+        parentComments.forEach(p => {
+          let parentActions = "";
+          if (currentUser && p.user_name === currentUserName) {
+            parentActions = `
+              <span class="reply-act" style="cursor:pointer;" onclick="startEditGiftComment(${p.id}, this)">Düzenle</span>
+              <span class="reply-act delete" style="cursor:pointer; color:#E24B4A;" onclick="deleteGiftComment(${p.id}, this)">Sil</span>
             `;
           }
-          return `
-            <div class="gc-item" data-comment-id="${c.id}">
-              <div class="gc-avatar" style="background:var(--surface);color:var(--text-sec)">${c.user_name.substring(0,2).toUpperCase()}</div>
-              <div class="gc-text" style="flex:1;">
-                <strong>${c.user_name}</strong>
-                <span class="comment-msg-text">${c.comment}</span>
+
+          commentsHtml += `
+            <div class="gc-item" data-comment-id="${p.id}" style="border: var(--border); border-radius: 12px; padding: 12px; background: white; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.01);">
+              <div style="display: flex; gap: 10px; align-items: flex-start; width: 100%;">
+                <div class="gc-avatar" style="background:var(--surface);color:var(--text-sec); flex-shrink:0; font-weight:700; font-size:12px;">${p.user_name.substring(0,2).toUpperCase()}</div>
+                <div class="gc-text" style="flex:1; text-align: left;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; width:100%;">
+                    <strong style="font-size: 13.5px; color: var(--text);">${p.user_name}</strong>
+                    <div class="gc-actions" style="display: flex; gap: 8px; font-size: 11px; color: var(--text-sec);">
+                      ${parentActions}
+                    </div>
+                  </div>
+                  <span class="comment-msg-text" style="font-size: 13.5px; color: var(--text); display: block; margin-top: 4px; line-height: 1.5;">${p.comment}</span>
+                  
+                  <!-- Reaction Bar & Reply -->
+                  <div style="display: flex; align-items: center; gap: 14px; margin-top: 8px; font-size: 11.5px; color: var(--text-sec);">
+                    <span onclick="reactToComment(${p.id}, 'like', ${gift.id})" style="cursor: pointer; display: inline-flex; align-items: center; gap: 3px; font-weight: 600;">❤️ <span id="react-like-${p.id}">${p.likes || 0}</span></span>
+                    <span onclick="reactToComment(${p.id}, 'laugh', ${gift.id})" style="cursor: pointer; display: inline-flex; align-items: center; gap: 3px; font-weight: 600;">😂 <span id="react-laugh-${p.id}">${p.laughs || 0}</span></span>
+                    <span onclick="setReplyCommentState(${p.id}, '${p.user_name}', ${gift.id})" style="cursor: pointer; color: var(--pink); font-weight: 700;">Cevapla</span>
+                  </div>
+                </div>
               </div>
-              ${commentActions}
             </div>
           `;
-        }).join("");
+
+          const replies = childComments.filter(c => c.parent_id === p.id);
+          replies.forEach(r => {
+            let childActions = "";
+            if (currentUser && r.user_name === currentUserName) {
+              childActions = `
+                <span class="reply-act" style="cursor:pointer;" onclick="startEditGiftComment(${r.id}, this)">Düzenle</span>
+                <span class="reply-act delete" style="cursor:pointer; color:#E24B4A;" onclick="deleteGiftComment(${r.id}, this)">Sil</span>
+              `;
+            }
+
+            commentsHtml += `
+              <div class="gc-item gc-reply" data-comment-id="${r.id}" style="border: var(--border); border-radius: 12px; padding: 10px 12px; background: #faf5f7; margin-left: 2.25rem; margin-bottom: 8px; border-left: 3px solid var(--pink-border);">
+                <div style="display: flex; gap: 10px; align-items: flex-start; width: 100%;">
+                  <div class="gc-avatar" style="background:white; color:var(--text-sec); border: var(--border); flex-shrink:0; font-weight:700; font-size:11px;">${r.user_name.substring(0,2).toUpperCase()}</div>
+                  <div class="gc-text" style="flex:1; text-align: left;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; width:100%;">
+                      <div style="display: flex; align-items: center; gap: 5px;">
+                        <strong style="font-size: 13px; color: var(--text);">${r.user_name}</strong>
+                        <span style="font-size: 10.5px; color: var(--text-ter); font-weight:600;">cevapladı</span>
+                      </div>
+                      <div class="gc-actions" style="display: flex; gap: 8px; font-size: 11px; color: var(--text-sec);">
+                        ${childActions}
+                      </div>
+                    </div>
+                    <span class="comment-msg-text" style="font-size: 13px; color: var(--text); display: block; margin-top: 4px; line-height: 1.5;">${r.comment}</span>
+                    
+                    <!-- Reaction Bar -->
+                    <div style="display: flex; align-items: center; gap: 14px; margin-top: 6px; font-size: 11px; color: var(--text-sec);">
+                      <span onclick="reactToComment(${r.id}, 'like', ${gift.id})" style="cursor: pointer; display: inline-flex; align-items: center; gap: 3px; font-weight: 600;">❤️ <span id="react-like-${r.id}">${r.likes || 0}</span></span>
+                      <span onclick="reactToComment(${r.id}, 'laugh', ${gift.id})" style="cursor: pointer; display: inline-flex; align-items: center; gap: 3px; font-weight: 600;">😂 <span id="react-laugh-${r.id}">${r.laughs || 0}</span></span>
+                      <span onclick="setReplyCommentState(${p.id}, '${r.user_name}', ${gift.id})" style="cursor: pointer; color: var(--pink); font-weight: 700;">Cevapla</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+        });
 
         const buyerText = gift.is_anonymous ? "🔒 Anonim" : `🔓 ${gift.buyer_name} aldı`;
 
@@ -2034,12 +2170,29 @@
             <div class="gift-acc-footer-actions">
               <button class="gift-act" onclick="toggleLike(this)">♡ <span>0</span></button>
               <button class="gift-act" onclick="toggleComments(this)">💬 Yorumlar</button>
-              <button class="gift-act" onclick="openCommentModal(${gift.id},'${gift.name}',document.getElementById('${gcListId}'))">+ Yorum</button>
               ${linkHtml}
             </div>
-            <div class="gift-comments" style="margin-top: 10px;">
-              <div class="gc-list" id="${gcListId}">
-                ${commentsHtml}
+            
+            <div class="gift-comments" style="margin-top: 12px; background: #fdfafb; border: var(--border); border-radius: 12px; padding: 12px;">
+              <div style="font-size: 12.5px; font-weight: 700; color: var(--pink-dark); margin-bottom: 8px; text-align: left; display: flex; align-items: center; gap: 4px;">
+                💬 Yorumlar (${gift.comments ? gift.comments.length : 0})
+              </div>
+              <div class="gc-list" id="${gcListId}" style="display: flex; flex-direction: column; gap: 4px;">
+                ${commentsHtml || '<div style="font-size: 12.5px; color: var(--text-ter); text-align: center; padding: 10px 0;">Henüz yorum yapılmamış. İlk yorumu siz yazın!</div>'}
+              </div>
+              
+              <!-- Embedded Comment Form -->
+              <div class="gc-input-box-container" style="margin-top: 12px; border-top: var(--border); padding-top: 10px; text-align: left;">
+                <!-- Replying indicator -->
+                <div id="reply-indicator-${gift.id}" style="display: none; align-items: center; justify-content: space-between; background: var(--pink-light); border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; font-size: 11.5px; color: var(--pink-dark); font-weight: 700;">
+                  <span>@<span id="reply-target-name-${gift.id}">User</span> kullanıcısına cevap veriliyor...</span>
+                  <span onclick="cancelReplyCommentState(${gift.id})" style="cursor: pointer; font-size: 14px; font-weight: 700; color: var(--pink-dark);">✕</span>
+                </div>
+                
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <input type="text" id="gc-input-${gift.id}" placeholder="Yorum yaz..." style="flex: 1; padding: 8px 12px; font-size: 13px; border-radius: var(--radius-md); border: var(--border); background: white; outline: none; box-sizing: border-box; height: 38px; color: var(--text);" />
+                  <button type="button" onclick="submitGiftComment(${gift.id})" style="background: var(--pink); color: white; border: none; border-radius: var(--radius-md); padding: 0 16px; font-size: 13px; font-weight: 700; height: 38px; cursor: pointer; transition: all 0.2s;">Gönder</button>
+                </div>
               </div>
             </div>
           </div>

@@ -132,10 +132,10 @@ router.post("/bought/:giftId", async (req, res) => {
   }
 });
 
-// POST /api/gifts/comment/:giftId - Hediyenin altına mikro yorum yaz
+// POST /api/gifts/comment/:giftId - Hediyenin altına mikro yorum yaz (veya cevap yaz)
 router.post("/comment/:giftId", async (req, res) => {
   const { giftId } = req.params;
-  const { user_name, comment } = req.body;
+  const { user_name, comment, parent_id } = req.body;
 
   if (!user_name || !comment) {
     return res.status(400).json({ success: false, error: "İsim ve yorum boş bırakılamaz." });
@@ -143,8 +143,8 @@ router.post("/comment/:giftId", async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      "INSERT INTO gift_comments (gift_id, user_name, comment) VALUES (?, ?, ?)",
-      [giftId, user_name, comment]
+      "INSERT INTO gift_comments (gift_id, user_name, comment, parent_id) VALUES (?, ?, ?, ?)",
+      [giftId, user_name, comment, parent_id || null]
     );
 
     res.status(201).json({
@@ -155,11 +155,45 @@ router.post("/comment/:giftId", async (req, res) => {
         gift_id: Number(giftId),
         user_name,
         comment,
+        parent_id: parent_id ? Number(parent_id) : null,
+        likes: 0,
+        laughs: 0,
         created_at: new Date()
       }
     });
   } catch (error) {
     console.error("Add gift comment error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası." });
+  }
+});
+
+// POST /api/gifts/comment/:commentId/react - Hediye altı yoruma tepki ekle (like veya laugh)
+router.post("/comment/:commentId/react", async (req, res) => {
+  const { commentId } = req.params;
+  const { type } = req.body; // 'like' veya 'laugh'
+
+  if (type !== "like" && type !== "laugh") {
+    return res.status(400).json({ success: false, error: "Geçersiz tepki tipi." });
+  }
+
+  const column = type === "like" ? "likes" : "laughs";
+  try {
+    await pool.query(`UPDATE gift_comments SET ${column} = ${column} + 1 WHERE id = ?`, [commentId]);
+    
+    // Get updated counts to return
+    const [rows] = await pool.query(`SELECT likes, laughs FROM gift_comments WHERE id = ?`, [commentId]);
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, error: "Yorum bulunamadı." });
+    }
+    
+    res.json({ 
+      success: true, 
+      message: "Tepki eklendi.", 
+      likes: rows[0].likes, 
+      laughs: rows[0].laughs 
+    });
+  } catch (error) {
+    console.error("Add gift comment reaction error:", error);
     res.status(500).json({ success: false, error: "Sunucu hatası." });
   }
 });
