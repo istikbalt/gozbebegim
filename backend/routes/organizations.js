@@ -350,4 +350,19 @@ router.post("/", async (req, res) => {
   }
 });
 
+// PUT /api/organizations/iban/:orgId - IBAN bilgilerini güncelle
+router.put("/iban/:orgId", async (req, res) => {
+  const { iban, iban_name } = req.body;
+  try {
+    await pool.query(
+      "UPDATE organizations SET iban = ?, iban_name = ? WHERE id = ?",
+      [iban || null, iban_name || null, req.params.orgId]
+    );
+    res.json({ success: true, message: "IBAN bilgileri başarıyla güncellendi. 🎉" });
+  } catch (error) {
+    console.error("Update IBAN error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası." });
+  }
+});
+
 module.exports = router;

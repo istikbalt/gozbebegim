@@ -144,6 +144,31 @@
       color: var(--text-sec); font-size: 14px;
     }
     .empty-state p { margin-bottom: 1.5rem; }
+
+    /* Form Elements inside Dashboard */
+    .form-group {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .form-group label {
+      font-size: 13px; font-weight: 600; color: var(--text);
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 10px 14px; border: var(--border); border-radius: 8px;
+      font-family: 'Nunito', sans-serif; font-size: 14px;
+      background: #fafafa; outline: none;
+      transition: all 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--pink); background: #fff;
+    }
+    
+    /* Gifting and Gifting Buttons */
+    .taki-btn {
+      transition: all 0.2s;
+    }
+    .taki-btn:hover {
+      border-color: var(--pink-border);
+    }
   </style>
 </head>
 <body>
@@ -161,32 +186,177 @@
     <a href="/create-organization" class="btn-create">[+ Yeni Organizasyon]</a>
   </div>
 
-  <!-- ARAMA BÖLÜMÜ -->
-  <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.01);">
-    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 10px; color: var(--pink-dark); display: flex; align-items: center; gap: 6px;">
-      🔍 Davet Listesi Bul
-    </h3>
-    <p style="font-size: 12px; color: var(--text-sec); margin-bottom: 12px;">
-      Elindeki davet linkini yapıştırabilir veya arkadaşlarının (Veli Adı/Soyadı, E-posta veya Telefon) bilgileriyle arama yapabilirsin.
-    </p>
-    <div style="display: flex; gap: 8px;">
-      <input type="text" id="searchInput" placeholder="Veli adı, e-posta, telefon veya davet linki..." style="flex: 1; padding: 10px 14px; border: var(--border); border-radius: 20px; font-family: inherit; font-size: 13.5px; outline: none; background: #fafafa; transition: all 0.2s;" />
-      <button onclick="performSearch()" style="background: var(--pink); color: #fff; border: none; padding: 10px 20px; border-radius: 20px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Ara</button>
+  <!-- Premium Tab Navigation -->
+  <div style="display: flex; gap: 15px; border-bottom: var(--border); padding-bottom: 8px; margin-bottom: 1.5rem; cursor: pointer; justify-content: flex-start; text-align: left;">
+    <span id="tabLists" onclick="switchDashboardTab('lists')" style="font-weight: 700; font-size: 14px; color: var(--pink); border-bottom: 2px solid var(--pink); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">🎁 Listelerim</span>
+    <span id="tabChest" onclick="switchDashboardTab('chest')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">🪙 Takı Sandığı</span>
+    <span id="tabAi" onclick="switchDashboardTab('ai')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">🤖 AI Hediye Asistanı</span>
+    <span id="tabCircles" onclick="switchDashboardTab('circles')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">👥 Aile Çemberim</span>
+  </div>
+
+  <!-- 1. Listelerim Bölümü -->
+  <div id="sectionLists">
+    <!-- ARAMA BÖLÜMÜ -->
+    <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.01);">
+      <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 10px; color: var(--pink-dark); display: flex; align-items: center; gap: 6px;">
+        🔍 Davet Listesi Bul
+      </h3>
+      <p style="font-size: 12px; color: var(--text-sec); margin-bottom: 12px;">
+        Elindeki davet linkini yapıştırabilir veya arkadaşlarının (Veli Adı/Soyadı, E-posta veya Telefon) bilgileriyle arama yapabilirsin.
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="searchInput" placeholder="Veli adı, e-posta, telefon veya davet linki..." style="flex: 1; padding: 10px 14px; border: var(--border); border-radius: 20px; font-family: inherit; font-size: 13.5px; outline: none; background: #fafafa; transition: all 0.2s;" />
+        <button onclick="performSearch()" style="background: var(--pink); color: #fff; border: none; padding: 10px 20px; border-radius: 20px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Ara</button>
+      </div>
+    </div>
+
+    <!-- ARAMA SONUÇLARI KONTEYNERI -->
+    <div id="searchResultsSection" style="display: none; margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500;">Arama Sonuçları</h2>
+        <button onclick="clearSearch()" style="font-size: 12px; color: var(--pink-dark); background: var(--pink-light); border: 1px solid var(--pink-border); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-weight: 600;">Temizle</button>
+      </div>
+      <div class="card-list" id="searchResultsContainer"></div>
+    </div>
+
+    <div class="card-list" id="orgsContainer">
+      <!-- Organizasyon Kartları Burada Listelenecek -->
+      <div style="text-align:center;padding:2rem;color:var(--text-sec)">Yükleniyor...</div>
     </div>
   </div>
 
-  <!-- ARAMA SONUÇLARI KONTEYNERI -->
-  <div id="searchResultsSection" style="display: none; margin-bottom: 2rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-      <h2 style="font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500;">Arama Sonuçları</h2>
-      <button onclick="clearSearch()" style="font-size: 12px; color: var(--pink-dark); background: var(--pink-light); border: 1px solid var(--pink-border); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-weight: 600;">Temizle</button>
+  <!-- 2. Takı Sandığı Bölümü -->
+  <div id="sectionChest" style="display: none; flex-direction: column; gap: 1.25rem;">
+    <!-- Rapor Kartı -->
+    <div style="background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CD 100%); border: 1.5px solid #FFEBAA; border-radius: var(--radius-lg); padding: 1.5rem; text-align: left; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+      <div style="font-size: 12px; color: #856404; font-weight: 700; text-transform: uppercase;">Dijital Takı Sandığı Toplamı</div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 5px;">
+        <div style="background: rgba(255,255,255,0.6); border-radius: var(--radius-md); padding: 10px; text-align: center;">
+          <div style="font-size: 20px;">🪙</div>
+          <div style="font-size: 11px; color: #856404; font-weight: 600; margin-top: 4px;">Çeyrek Altın</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text);" id="sumCeyrek">0 Adet</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.6); border-radius: var(--radius-md); padding: 10px; text-align: center;">
+          <div style="font-size: 20px;">🪙</div>
+          <div style="font-size: 11px; color: #856404; font-weight: 600; margin-top: 4px;">Gram Altın</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text);" id="sumGram">0 Adet</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.6); border-radius: var(--radius-md); padding: 10px; text-align: center;">
+          <div style="font-size: 20px;">💸</div>
+          <div style="font-size: 11px; color: #856404; font-weight: 600; margin-top: 4px;">Toplam Nakit</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text);" id="sumNakit">0 TL</div>
+        </div>
+      </div>
     </div>
-    <div class="card-list" id="searchResultsContainer"></div>
+
+    <!-- IBAN Ayarları Kartı -->
+    <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 8px;">
+      <h3 style="font-size: 14px; font-weight: 700; color: var(--text);">💳 EFT/Havale Alıcı Hesap (IBAN) Tanımla</h3>
+      <div style="font-size: 11px; color: var(--text-sec); margin-bottom: 6px;">Misafirlerinizin altın veya nakit takı gönderebilmesi için IBAN hesabınızı tanımlayın.</div>
+      <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 11px; font-weight: 600;">İlgili Organizasyon Seçin</label>
+        <select id="ibanOrgSelect" style="padding: 8px 12px; font-size: 13px; border-radius: 8px; border: var(--border); background: var(--input-bg);"></select>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;">
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 600;">Alıcı Ad Soyad</label>
+          <input type="text" id="ibanNameInput" placeholder="Örn: Ayşe Demir" style="padding: 8px 12px; font-size: 13px; border-radius: 8px; border: var(--border);" />
+        </div>
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 600;">IBAN Numarası</label>
+          <input type="text" id="ibanTextInput" placeholder="TR..." style="padding: 8px 12px; font-size: 13px; border-radius: 8px; border: var(--border);" />
+        </div>
+      </div>
+      <button onclick="saveIbanSettings()" style="background: var(--pink); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 12.5px; font-weight: 700; margin-top: 8px; cursor: pointer; align-self: flex-end;">Bilgileri Kaydet</button>
+    </div>
+
+    <!-- Gelen Bildirimler Listesi -->
+    <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 10px;">
+      <h3 style="font-size: 14px; font-weight: 700; color: var(--text);">📋 Gelen EFT / Takı Bildirimleri</h3>
+      <div id="takiListContainer" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="text-align: center; color: var(--text-sec); font-size: 12px; padding: 20px;">Yükleniyor...</div>
+      </div>
+    </div>
   </div>
 
-  <div class="card-list" id="orgsContainer">
-    <!-- Organizasyon Kartları Burada Listelenecek -->
-    <div style="text-align:center;padding:2rem;color:var(--text-sec)">Yükleniyor...</div>
+  <!-- 3. AI Hediye Öneri Bölümü -->
+  <div id="sectionAi" style="display: none; flex-direction: column; gap: 1.25rem;">
+    <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 12px;">
+      <h3 style="font-size: 15px; font-weight: 700; color: var(--pink-dark); display: flex; align-items: center; gap: 6px;">
+        🤖 AI Hediye Asistanı
+      </h3>
+      <div style="font-size: 12px; color: var(--text-sec); line-height: 1.5;">
+        Çocuğunuzun yaşına, ilgi alanlarına ve bütçenize göre Google Gemini AI ile mükemmel 10 hediye önerisini saniyeler içinde üretin! Beğendiğiniz hediyeleri tek tıkla ihtiyaç listenize ekleyin.
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 600;">Eklenecek Liste</label>
+          <select id="aiOrgSelect" style="padding: 8px 12px; font-size: 13px; border-radius: 8px; border: var(--border); background: var(--input-bg);"></select>
+        </div>
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="font-size: 11px; font-weight: 600;">Bütçe Limiti (TL)</label>
+          <input type="number" id="aiBudget" placeholder="Örn: 800" style="padding: 8px 12px; font-size: 13px; border-radius: 8px; border: var(--border);" />
+        </div>
+      </div>
+      <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 11px; font-weight: 600;">Çocuğun İlgi Alanları / Hobileri</label>
+        <input type="text" id="aiInterest" placeholder="Örn: lego, bilim, boyama, uzay..." style="padding: 8px 12px; font-size: 13px; border-radius: 8px; border: var(--border);" />
+      </div>
+      
+      <button onclick="getAISuggestions()" style="background: var(--pink); color: white; border: none; padding: 10px; border-radius: 20px; font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: center; margin-top: 6px;">
+        AI Hediye Önerilerini Getir ✨
+      </button>
+    </div>
+
+    <!-- AI Öneriler Sonuç Paneli -->
+    <div id="aiResultsBox" style="display: none; background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: var(--border); padding-bottom: 8px;">
+        <h4 style="font-size: 14px; font-weight: 700; color: var(--text);">🤖 AI Önerileri</h4>
+        <span style="font-size: 11px; color: var(--pink-dark); background: var(--pink-light); padding: 3px 8px; border-radius: 12px; font-weight: 700;" id="aiEngineLabel">AI Engine</span>
+      </div>
+      <div id="aiSuggestionsContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </div>
+  </div>
+
+  <!-- 4. Aile Çemberi Bölümü -->
+  <div id="sectionCircles" style="display: none; flex-direction: column; gap: 1.25rem;">
+    <!-- Çember Kur / Katıl -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <!-- Çember Oluştur -->
+      <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 8px;">
+        <h3 style="font-size: 14px; font-weight: 700; color: var(--pink-dark);">👥 Yeni Çember Kur</h3>
+        <p style="font-size: 11px; color: var(--text-sec); margin-bottom: 4px;">Yakın akrabaları toplayıp hediyeleşmeyi koordine edin.</p>
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <input type="text" id="circleNameInput" placeholder="Örn: Demir Ailesi" style="padding: 8px 12px; font-size: 13px; border-radius: 8px; border: var(--border);" />
+        </div>
+        <button onclick="createCircle()" style="background: var(--pink); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 12.5px; font-weight: 700; margin-top: 6px; cursor: pointer;">Kur</button>
+      </div>
+
+      <!-- Çembere Katıl -->
+      <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 8px;">
+        <h3 style="font-size: 14px; font-weight: 700; color: var(--pink-dark);">🔑 Çembere Katıl</h3>
+        <p style="font-size: 11px; color: var(--text-sec); margin-bottom: 4px;">Yakınlarınızın kurduğu çembere davet koduyla katılın.</p>
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+          <input type="text" id="circleJoinCode" placeholder="Örn: FAM928" style="padding: 8px 12px; font-size: 13px; border-radius: 8px; border: var(--border);" />
+        </div>
+        <button onclick="joinCircle()" style="background: var(--pink); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 12.5px; font-weight: 700; margin-top: 6px; cursor: pointer;">Katıl</button>
+      </div>
+    </div>
+
+    <!-- Aktif Çemberler Listesi -->
+    <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 10px;">
+      <h3 style="font-size: 14px; font-weight: 700; color: var(--text);">👥 Dahil Olduğum Aile Çemberleri</h3>
+      <div id="circlesListContainer" style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="text-align: center; color: var(--text-sec); font-size: 12px; padding: 20px;">Yükleniyor...</div>
+      </div>
+    </div>
+
+    <!-- Ortak Aile Takvimi (Etkinlikler) -->
+    <div id="circleCalendarBox" style="display: none; background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 10px;">
+      <h3 style="font-size: 14px; font-weight: 700; color: var(--text); border-bottom: var(--border); padding-bottom: 8px;" id="circleCalendarTitle">📅 Aile Ortak Etkinlik Takvimi</h3>
+      <div id="circleEventsContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </div>
   </div>
 </div>
 
@@ -200,12 +370,16 @@
 
   document.getElementById("welcomeTitle").textContent = `Hoş geldin, ${user.first_name}! 👋`;
 
+  let activeDashboardTab = "lists";
+  let myOrganizations = [];
+
   // Sayfa açıldığında organizasyonları yükle
   window.addEventListener("DOMContentLoaded", () => {
     fetch(`/api/organizations/parent/${user.id}`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
+          myOrganizations = data.organizations;
           renderOrganizations(data.organizations);
         } else {
           showEmptyState();
@@ -383,6 +557,469 @@
       performSearch();
     }
   });
+
+  function switchDashboardTab(tab) {
+    activeDashboardTab = tab;
+    
+    document.querySelectorAll('[id^="tab"]').forEach(el => {
+      el.style.color = "var(--text-sec)";
+      el.style.borderBottom = "none";
+      el.style.fontWeight = "600";
+    });
+
+    const activeEl = document.getElementById("tab" + tab.charAt(0).toUpperCase() + tab.slice(1));
+    if (activeEl) {
+      activeEl.style.color = "var(--pink)";
+      activeEl.style.borderBottom = "2px solid var(--pink)";
+      activeEl.style.fontWeight = "700";
+    }
+
+    document.getElementById("sectionLists").style.display = tab === "lists" ? "block" : "none";
+    document.getElementById("sectionChest").style.display = tab === "chest" ? "flex" : "none";
+    document.getElementById("sectionAi").style.display = tab === "ai" ? "flex" : "none";
+    document.getElementById("sectionCircles").style.display = tab === "circles" ? "flex" : "none";
+
+    if (tab === "chest") {
+      loadChestDetails();
+    } else if (tab === "ai") {
+      populateOrgDropdown("aiOrgSelect");
+    } else if (tab === "circles") {
+      loadCircles();
+    }
+  }
+
+  function populateOrgDropdown(selectId) {
+    const select = document.getElementById(selectId);
+    select.innerHTML = "";
+    if (myOrganizations.length === 0) {
+      select.innerHTML = '<option value="">Önce bir organizasyon oluşturun</option>';
+      return;
+    }
+    myOrganizations.forEach(org => {
+      const option = document.createElement("option");
+      option.value = org.id;
+      option.textContent = `${org.child_name}'in ${org.type} Listesi`;
+      option.setAttribute("data-age", org.child_age || 0);
+      option.setAttribute("data-gender", org.child_gender || "Bilinmiyor");
+      select.appendChild(option);
+    });
+  }
+
+  // ── IBAN SETTINGS & TAKİ LISTING ──
+  function loadChestDetails() {
+    populateOrgDropdown("ibanOrgSelect");
+    const select = document.getElementById("ibanOrgSelect");
+    if (select.value) {
+      loadIbanForOrg(select.value);
+      loadTakiGiftsForOrg(select.value);
+    }
+    select.onchange = function() {
+      loadIbanForOrg(this.value);
+      loadTakiGiftsForOrg(this.value);
+    };
+  }
+
+  function loadIbanForOrg(orgId) {
+    const org = myOrganizations.find(o => o.id == orgId);
+    if (org) {
+      document.getElementById("ibanNameInput").value = org.iban_name || "";
+      document.getElementById("ibanTextInput").value = org.iban || "";
+    }
+  }
+
+  function saveIbanSettings() {
+    const orgId = document.getElementById("ibanOrgSelect").value;
+    const name = document.getElementById("ibanNameInput").value.trim();
+    const iban = document.getElementById("ibanTextInput").value.trim();
+
+    if (!orgId) return;
+
+    fetch(`/api/organizations/iban/${orgId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ iban, iban_name: name })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        const org = myOrganizations.find(o => o.id == orgId);
+        if (org) {
+          org.iban = iban;
+          org.iban_name = name;
+        }
+      } else {
+        alert(data.error || "Güncellenemedi.");
+      }
+    })
+    .catch(err => {
+      console.error("Save IBAN error:", err);
+      alert("Bağlantı hatası.");
+    });
+  }
+
+  function loadTakiGiftsForOrg(orgId) {
+    const container = document.getElementById("takiListContainer");
+    container.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12px; padding: 20px;">Yükleniyor...</div>';
+
+    fetch(`/api/gifting/org/${orgId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        renderTakiGifts(data.gifts);
+      } else {
+        container.innerHTML = '<div style="text-align: center; color: red; font-size: 12px; padding: 20px;">Hata oluştu.</div>';
+      }
+    })
+    .catch(err => {
+      console.error("Load taki error:", err);
+      container.innerHTML = '<div style="text-align: center; color: red; font-size: 12px; padding: 20px;">Bağlantı hatası.</div>';
+    });
+  }
+
+  function renderTakiGifts(gifts) {
+    const container = document.getElementById("takiListContainer");
+    container.innerHTML = "";
+
+    let countCeyrek = 0;
+    let countGram = 0;
+    let sumNakit = 0;
+
+    if (gifts.length === 0) {
+      container.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12.5px; padding: 20px;">Henüz bu listeye gelen takı veya nakit bildirimi bulunmuyor.</div>';
+      updateTakiStats(0, 0, 0);
+      return;
+    }
+
+    gifts.forEach(g => {
+      const item = document.createElement("div");
+      item.style.border = "var(--border)";
+      item.style.borderRadius = "10px";
+      item.style.padding = "12px";
+      item.style.background = "#fafafa";
+      item.style.display = "flex";
+      item.style.alignItems = "center";
+      item.style.justifyContent = "space-between";
+      item.style.marginBottom = "8px";
+
+      const isPending = g.status === "Pending";
+      
+      if (g.status === "Confirmed") {
+        if (g.gift_type === "Ceyrek Altin") countCeyrek++;
+        else if (g.gift_type === "Gram Altin") countGram++;
+        else if (g.gift_type === "Nakit Para") sumNakit += Number(g.amount || 0);
+      }
+
+      const typeLabel = g.gift_type === "Ceyrek Altin" ? "🪙 Çeyrek Altın" : g.gift_type === "Gram Altin" ? "🪙 Gram Altın" : `💸 Nakit Para (${g.amount} TL)`;
+      const buyerLabel = g.is_anonymous ? "🤫 Anonim Misafir" : `${g.buyer_name} (${g.buyer_phone})`;
+
+      let actionHtml = "";
+      if (isPending) {
+        actionHtml = `
+          <div style="display: flex; gap: 6px;">
+            <button onclick="confirmTaki(${g.id}, ${g.org_id})" style="background: green; color: white; border: none; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">✓ Onayla</button>
+            <button onclick="deleteTaki(${g.id}, ${g.org_id})" style="background: #E24B4A; color: white; border: none; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">Reddet</button>
+          </div>
+        `;
+      } else {
+        actionHtml = `<span style="font-size: 11.5px; font-weight: 700; color: green; background: #e2f0d9; padding: 4px 10px; border-radius: 12px;">💎 Sandıkta</span>`;
+      }
+
+      item.innerHTML = `
+        <div style="text-align: left; display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-size: 13.5px; font-weight: 700; color: var(--text);">${typeLabel}</div>
+          <div style="font-size: 11.5px; color: var(--text-sec);">${buyerLabel}</div>
+          <div style="font-size: 10px; color: var(--text-sec);">${new Date(g.created_at).toLocaleString("tr-TR")}</div>
+        </div>
+        ${actionHtml}
+      `;
+      container.appendChild(item);
+    });
+
+    updateTakiStats(countCeyrek, countGram, sumNakit);
+  }
+
+  function updateTakiStats(ceyrek, gram, nakit) {
+    document.getElementById("sumCeyrek").textContent = ceyrek + " Adet";
+    document.getElementById("sumGram").textContent = gram + " Adet";
+    document.getElementById("sumNakit").textContent = nakit + " TL";
+  }
+
+  function confirmTaki(giftId, orgId) {
+    fetch(`/api/gifting/confirm/${giftId}`, { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        loadTakiGiftsForOrg(orgId);
+      }
+    });
+  }
+
+  function deleteTaki(giftId, orgId) {
+    if (confirm("Bu bildirimi reddetmek ve silmek istediğinize emin misiniz?")) {
+      fetch(`/api/gifting/${giftId}`, { method: "DELETE" })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message);
+          loadTakiGiftsForOrg(orgId);
+        }
+      });
+    }
+  }
+
+  // ── AI ASSISTANT ──
+  function getAISuggestions() {
+    const orgSelect = document.getElementById("aiOrgSelect");
+    const orgId = orgSelect.value;
+    if (!orgId) { alert("Lütfen önce bir organizasyon listesi seçin."); return; }
+
+    const selectedOption = orgSelect.options[orgSelect.selectedIndex];
+    const age = selectedOption.getAttribute("data-age");
+    const gender = selectedOption.getAttribute("data-gender");
+    const budget = document.getElementById("aiBudget").value.trim();
+    const interest = document.getElementById("aiInterest").value.trim();
+
+    const resultsBox = document.getElementById("aiResultsBox");
+    const container = document.getElementById("aiSuggestionsContainer");
+
+    resultsBox.style.display = "block";
+    container.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12.5px; padding: 20px;">AI en uygun premium hediye önerilerini analiz ediyor... 🤖🚀</div>';
+
+    fetch("/api/ai/suggest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ age, gender, budget: budget ? Number(budget) : null, interest })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById("aiEngineLabel").textContent = data.source;
+        renderAISuggestions(data.suggestions, orgId);
+      } else {
+        container.innerHTML = '<div style="text-align: center; color: red; font-size: 12px; padding: 20px;">Öneriler yüklenemedi.</div>';
+      }
+    })
+    .catch(err => {
+      console.error("AI error:", err);
+      container.innerHTML = '<div style="text-align: center; color: red; font-size: 12px; padding: 20px;">Bağlantı hatası.</div>';
+    });
+  }
+
+  function renderAISuggestions(suggestions, orgId) {
+    const container = document.getElementById("aiSuggestionsContainer");
+    container.innerHTML = "";
+
+    if (suggestions.length === 0) {
+      container.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12px; padding: 20px;">Uygun hediye önerisi bulunamadı.</div>';
+      return;
+    }
+
+    suggestions.forEach(s => {
+      const card = document.createElement("div");
+      card.style.border = "var(--border)";
+      card.style.borderRadius = "12px";
+      card.style.padding = "12px";
+      card.style.background = "#fcf8f9";
+      card.style.display = "flex";
+      card.style.flexDirection = "column";
+      card.style.gap = "8px";
+      card.style.textAlign = "left";
+      card.style.marginBottom = "8px";
+
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-size: 11px; font-weight: 700; color: var(--pink); text-transform: uppercase;">${s.category}</span>
+            <strong style="font-size: 14px; color: var(--text);">${s.name}</strong>
+          </div>
+          <span style="font-size: 13px; font-weight: 700; color: var(--text-sec); white-space: nowrap;">~ ${s.price_estimate} TL</span>
+        </div>
+        <p style="font-size: 11.5px; color: var(--text-sec); line-height: 1.5; margin: 2px 0 4px;">${s.description}</p>
+        
+        <div style="display: flex; gap: 8px; margin-top: 4px;">
+          <button onclick="addAiGiftToList(${orgId}, '${s.name.replace(/'/g, "\\'")}', '${s.category}')" class="btn-create" style="padding: 6px 14px; font-size: 11.5px; display: flex; align-items: center; gap: 4px; box-shadow: none;">
+            ＋ Listeme Ekle
+          </button>
+          <a href="${s.search_link}" target="_blank" style="font-size: 11.5px; text-decoration: none; color: var(--text-sec); border: var(--border); padding: 5px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; background: white;">
+            🛍️ Trendyol'da Ara
+          </a>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function addAiGiftToList(orgId, name, category) {
+    fetch("/api/gifts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ org_id: orgId, name, category, is_bought: 0 })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert(`"${name}" başarıyla ihtiyaç listenize eklendi! 🎉`);
+      } else {
+        alert(data.error || "Eklenemedi.");
+      }
+    })
+    .catch(() => alert("Hata oluştu."));
+  }
+
+  // ── FAMILY CIRCLES ──
+  function loadCircles() {
+    const container = document.getElementById("circlesListContainer");
+    container.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12px; padding: 20px;">Yükleniyor...</div>';
+
+    fetch(`/api/circles/user/${user.id}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        renderCircles(data.circles);
+      } else {
+        container.innerHTML = '<div style="text-align: center; color: red; font-size: 12px; padding: 20px;">Hata oluştu.</div>';
+      }
+    });
+  }
+
+  function renderCircles(circles) {
+    const container = document.getElementById("circlesListContainer");
+    container.innerHTML = "";
+
+    if (circles.length === 0) {
+      container.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12.5px; padding: 20px;">Henüz dahil olduğunuz bir Aile Çemberi bulunmuyor. Yeni bir tane kurabilir veya davet koduyla katılabilirsiniz!</div>';
+      document.getElementById("circleCalendarBox").style.display = "none";
+      return;
+    }
+
+    circles.forEach(c => {
+      const card = document.createElement("div");
+      card.style.border = "var(--border)";
+      card.style.borderRadius = "12px";
+      card.style.padding = "12.5px";
+      card.style.background = "#fff";
+      card.style.display = "flex";
+      card.style.flexDirection = "column";
+      card.style.gap = "8px";
+      card.style.textAlign = "left";
+      card.style.marginBottom = "10px";
+
+      const membersNames = c.members.map(m => `${m.first_name} (${m.role === 'Admin' ? 'Kurucu' : 'Üye'})`).join(" · ");
+      const shareUrl = `https://wa.me/?text=${encodeURIComponent(`gözbebeğim.com Aile Çemberimize katıl! Davet Kodumuz: ${c.invite_code}`)}`;
+
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <strong style="font-size: 15px; color: var(--text);">${c.name}</strong>
+          <span style="font-size: 11px; background: var(--pink-light); color: var(--pink-dark); font-weight: 700; padding: 4px 10px; border-radius: 12px; font-family: monospace;">KOD: ${c.invite_code}</span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-sec); line-height: 1.4;">
+          <strong>Üyeler:</strong> ${membersNames || "Sadece siz"}
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 4px;">
+          <button onclick="loadCircleCalendar(${c.id}, '${c.name.replace(/'/g, "\\'")}')" class="btn-create" style="padding: 6px 14px; font-size: 11.5px; box-shadow: none;">
+            📅 Ortak Takvimi Gör
+          </button>
+          <a href="${shareUrl}" target="_blank" style="font-size: 11.5px; text-decoration: none; color: #25D366; border: 1.5px solid #25D366; padding: 5px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; background: white; font-weight: 700;">
+            🟢 Kodu WhatsApp'ta Paylaş
+          </a>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function createCircle() {
+    const name = document.getElementById("circleNameInput").value.trim();
+    if (!name) { alert("Lütfen çember adını girin."); return; }
+
+    fetch("/api/circles", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ creator_id: user.id, name })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        document.getElementById("circleNameInput").value = "";
+        loadCircles();
+      } else {
+        alert(data.error);
+      }
+    });
+  }
+
+  function joinCircle() {
+    const code = document.getElementById("circleJoinCode").value.trim();
+    if (!code) { alert("Lütfen davet kodunu girin."); return; }
+
+    fetch("/api/circles/join", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: user.id, invite_code: code })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        document.getElementById("circleJoinCode").value = "";
+        loadCircles();
+      } else {
+        alert(data.error);
+      }
+    });
+  }
+
+  function loadCircleCalendar(circleId, name) {
+    const calendarBox = document.getElementById("circleCalendarBox");
+    const container = document.getElementById("circleEventsContainer");
+
+    calendarBox.style.display = "block";
+    document.getElementById("circleCalendarTitle").textContent = `📅 ${name} — Ortak Aile Takvimi`;
+    container.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12px; padding: 20px;">Takvim yükleniyor...</div>';
+
+    calendarBox.scrollIntoView({ behavior: "smooth" });
+
+    fetch(`/api/circles/events/${circleId}`)
+    .then(res => res.json())
+    .then(data => {
+      container.innerHTML = "";
+      if (data.success && data.events.length > 0) {
+        const emojis = { "Doğum": "🍼", "Sünnet": "✂️", "Yaş Günü": "🎂", "Mezuniyet": "🎓" };
+        
+        data.events.forEach(e => {
+          const item = document.createElement("div");
+          item.style.border = "var(--border)";
+          item.style.borderRadius = "10px";
+          item.style.padding = "10px 14px";
+          item.style.background = "#fff";
+          item.style.display = "flex";
+          item.style.alignItems = "center";
+          item.style.justifyContent = "space-between";
+          item.style.marginBottom = "8px";
+
+          const formattedDate = new Date(e.date).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+          const emoji = emojis[e.type] || "👶";
+
+          item.innerHTML = `
+            <div style="text-align: left; display: flex; flex-direction: column; gap: 3px;">
+              <strong style="font-size: 13.5px; color: var(--text);">${emoji} ${e.child_name}'in ${e.type} Günü</strong>
+              <span style="font-size: 11.5px; color: var(--text-sec);">👪 Veli: ${e.parent_first_name} ${e.parent_last_name} · 📍 ${e.city}</span>
+            </div>
+            <div style="text-align: right; display: flex; flex-direction: column; gap: 3px; align-items: flex-end;">
+              <span style="font-size: 12px; font-weight: 700; color: var(--pink);">${formattedDate}</span>
+              <a href="/${e.parent_slug}/${e.slug}" style="font-size: 10px; font-weight: 700; color: var(--pink-dark); text-decoration: none; background: var(--pink-light); padding: 3px 8px; border-radius: 10px;">Listeyi Gör &rarr;</a>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      } else {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-sec); font-size: 12.5px; padding: 20px;">Bu aile çemberinde yaklaşan bir çocuk tören veya etkinlik kaydı bulunmuyor.</div>';
+      }
+    });
+  }
 
   function logout() {
     localStorage.removeItem("user");

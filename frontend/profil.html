@@ -618,14 +618,79 @@
 
     <!-- Hediye Listesi Kolonu (Altta) -->
     <div class="card">
-      <div class="sec-title"><div class="dot"></div> Hediye listesi</div>
+      <div class="sec-title" style="display: flex; gap: 15px; border-bottom: var(--border); padding-bottom: 8px; margin-bottom: 12px; cursor: pointer; justify-content: flex-start; text-align: left;">
+        <span id="tabNeeds" onclick="switchGiftsTab('needs')" style="font-weight: 700; font-size: 14px; color: var(--pink); border-bottom: 2px solid var(--pink); padding-bottom: 4px; display: flex; align-items: center; gap: 4px;">🎁 İhtiyaç Listesi</span>
+        <span id="tabGold" onclick="switchGiftsTab('gold')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 4px; display: flex; align-items: center; gap: 4px;">🪙 Altın & EFT Takı Köşesi</span>
+      </div>
       
       <div class="scrollable-panel">
-        <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">Alınanlar</div>
-        <div id="boughtGiftsList"></div>
-        
-        <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin:1rem 0 8px;text-transform:uppercase">Henüz alınmayanlar</div>
-        <div id="openGiftsList"></div>
+        <!-- Needs List Container -->
+        <div id="needsListContainer">
+          <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase">Alınanlar</div>
+          <div id="boughtGiftsList"></div>
+          
+          <div style="font-size:11px;color:var(--text-ter);font-weight:600;letter-spacing:.5px;margin:1rem 0 8px;text-transform:uppercase">Henüz alınmayanlar</div>
+          <div id="openGiftsList"></div>
+        </div>
+
+        <!-- Gifting (Takı Köşesi) Arayüzü -->
+        <div id="goldGiftingSection" style="display: none; flex-direction: column; gap: 1rem;">
+          <div style="font-size: 12.5px; color: var(--text-sec); text-align: left; line-height: 1.6;">
+            Türkiye'nin köklü adetlerinden olan takı törenini dijitalleştiriyoruz. Buradan ebeveynin IBAN'ına EFT/Havale göndererek dijital çeyrek altın, gram altın veya dilediğiniz nakit tutarda hediye bildirebilirsiniz.
+          </div>
+          
+          <!-- Takı Türü Seçimi -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px;">
+            <button type="button" class="taki-btn selected" onclick="selectTaki('Ceyrek Altin')" style="background: var(--pink-light); border: 1.5px solid var(--pink-border); color: var(--pink-dark); padding: 12px 6px; border-radius: var(--radius-md); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; box-shadow: none;">
+              <span style="font-size: 20px;">🪙</span>
+              <span>Çeyrek Altın</span>
+            </button>
+            <button type="button" class="taki-btn" onclick="selectTaki('Gram Altin')" style="background: var(--input-bg); border: var(--border); color: var(--text-sec); padding: 12px 6px; border-radius: var(--radius-md); font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+              <span style="font-size: 20px;">🪙</span>
+              <span>Gram Altın</span>
+            </button>
+            <button type="button" class="taki-btn" onclick="selectTaki('Nakit Para')" style="background: var(--input-bg); border: var(--border); color: var(--text-sec); padding: 12px 6px; border-radius: var(--radius-md); font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
+              <span style="font-size: 20px;">💸</span>
+              <span>EFT / Havale</span>
+            </button>
+          </div>
+
+          <!-- Tutar Girişi -->
+          <div class="form-group" id="takiAmountGroup" style="display: none; text-align: left; display: flex; flex-direction: column; gap: 4px;">
+            <label class="form-label" style="font-size: 12px; font-weight: 600;">Gönderilecek Nakit Tutar (TL)</label>
+            <input class="form-input" id="takiAmount" type="number" placeholder="Örn: 500" style="padding: 8px 12px; font-size: 13px;" />
+          </div>
+
+          <!-- IBAN Bilgisi Raporu -->
+          <div id="takiIbanBox" style="background: var(--comments-bg); border: var(--border); border-radius: var(--radius-md); padding: 12px; text-align: left; display: flex; flex-direction: column; gap: 6px; transition: background-color 0.4s ease, border-color 0.4s ease;">
+            <div style="font-size: 10px; color: var(--text-sec); font-weight: 700; text-transform: uppercase;">Havale / EFT Alıcı Bilgileri</div>
+            <div style="font-size: 13px; font-weight: 700; color: var(--text);" id="takiIbanName">Yükleniyor...</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #fff; border: var(--border); border-radius: 6px; padding: 6px 10px; margin-top: 4px; transition: border-color 0.4s ease;">
+              <span id="takiIbanText" style="font-family: monospace; font-size: 13px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%;">TR00...</span>
+              <button onclick="copyTakiIban()" style="background: var(--pink-light); border: none; color: var(--pink-dark); font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: background-color 0.4s ease;">Kopyala</button>
+            </div>
+          </div>
+
+          <!-- Misafir Formu -->
+          <div style="display: flex; flex-direction: column; gap: 10px; text-align: left; margin-top: 6px;">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+              <label class="form-label" style="font-size: 12px; font-weight: 600;">Adınız Soyadınız</label>
+              <input class="form-input" id="takiName" type="text" placeholder="Örn: Merve Koç" style="padding: 8px 12px; font-size: 13px;" />
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+              <label class="form-label" style="font-size: 12px; font-weight: 600;">Telefon Numarası</label>
+              <input class="form-input" id="takiPhone" type="text" placeholder="Örn: 0532..." style="padding: 8px 12px; font-size: 13px;" />
+            </div>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+              <input type="checkbox" id="takiAnon" />
+              İsmimi ebeveynden gizle (Anonim hediye yap)
+            </label>
+          </div>
+
+          <button type="button" class="btn-submit" onclick="submitTaki()" style="width: 100%; padding: 12px; font-size: 14px; border-radius: 20px; margin-top: 0.5rem; background: var(--pink); color: white; border: none; font-weight: 700; cursor: pointer; transition: background-color 0.4s ease;">
+            EFT/Havale Yapıldı, Bildir ✨
+          </button>
+        </div>
       </div>
       
       <div class="gift-card dashed" id="manualGiftCard" style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px; padding: 14px 18px; border: 2px dashed var(--pink-border); border-radius: var(--radius-md);">
@@ -1239,6 +1304,144 @@
         alert("İşlem gerçekleştirilemedi.");
       });
     }
+  }
+
+  // ── GOLD GIFTING (TAKİ KÖŞESİ) FONKSİYONLARI ──
+  let selectedTakiType = "Ceyrek Altin";
+
+  function switchGiftsTab(tab) {
+    const tabNeeds = document.getElementById("tabNeeds");
+    const tabGold = document.getElementById("tabGold");
+    const needsListContainer = document.getElementById("needsListContainer");
+    const goldSection = document.getElementById("goldGiftingSection");
+    const manualCard = document.getElementById("manualGiftCard");
+
+    if (tab === "needs") {
+      tabNeeds.style.color = "var(--pink)";
+      tabNeeds.style.borderBottom = "2px solid var(--pink)";
+      tabNeeds.style.fontWeight = "700";
+
+      tabGold.style.color = "var(--text-sec)";
+      tabGold.style.borderBottom = "none";
+      tabGold.style.fontWeight = "600";
+
+      if (needsListContainer) needsListContainer.style.display = "block";
+      if (manualCard) manualCard.style.display = "flex";
+      if (goldSection) goldSection.style.display = "none";
+    } else {
+      tabGold.style.color = "var(--pink)";
+      tabGold.style.borderBottom = "2px solid var(--pink)";
+      tabGold.style.fontWeight = "700";
+
+      tabNeeds.style.color = "var(--text-sec)";
+      tabNeeds.style.borderBottom = "none";
+      tabNeeds.style.fontWeight = "600";
+
+      if (needsListContainer) needsListContainer.style.display = "none";
+      if (manualCard) manualCard.style.display = "none";
+      if (goldSection) goldSection.style.display = "flex";
+
+      // Oturum açılmışsa bilgileri doldur
+      const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+      if (currentUser) {
+        document.getElementById("takiName").value = `${currentUser.first_name} ${currentUser.last_name}`;
+        document.getElementById("takiPhone").value = currentUser.phone_number || "";
+      }
+
+      // IBAN bilgilerini yükle
+      if (orgData) {
+        if (orgData.iban) {
+          document.getElementById("takiIbanBox").style.display = "flex";
+          document.getElementById("takiIbanName").textContent = orgData.iban_name || "Ebeveyn Alıcı Hesabı";
+          document.getElementById("takiIbanText").textContent = orgData.iban;
+        } else {
+          document.getElementById("takiIbanBox").innerHTML = `
+            <div style="font-size:12px;color:var(--text-sec);text-align:center;padding:15px;background:rgba(0,0,0,0.02);border-radius:8px;width:100%;">
+              Ebeveyn henüz IBAN bilgisi eklememiş. Dilerseniz İhtiyaç Listesinden bir hediye alabilirsiniz. 🎁
+            </div>
+          `;
+        }
+      }
+    }
+  }
+
+  function selectTaki(type) {
+    selectedTakiType = type;
+    document.querySelectorAll(".taki-btn").forEach(btn => {
+      btn.style.background = "var(--input-bg)";
+      btn.style.border = "var(--border)";
+      btn.style.color = "var(--text-sec)";
+      btn.style.fontWeight = "600";
+    });
+
+    const activeBtn = event.currentTarget;
+    activeBtn.style.background = "var(--pink-light)";
+    activeBtn.style.border = "1.5px solid var(--pink-border)";
+    activeBtn.style.color = "var(--pink-dark)";
+    activeBtn.style.fontWeight = "700";
+
+    const amountGroup = document.getElementById("takiAmountGroup");
+    if (type === "Nakit Para") {
+      amountGroup.style.display = "flex";
+    } else {
+      amountGroup.style.display = "none";
+    }
+  }
+
+  function copyTakiIban() {
+    const ibanText = document.getElementById("takiIbanText").textContent;
+    if (ibanText && !ibanText.includes("TR00")) {
+      navigator.clipboard.writeText(ibanText).then(() => {
+        alert("IBAN panoya kopyalandı! Banka uygulamanızdan transfer edebilirsiniz. 📋");
+      });
+    }
+  }
+
+  function submitTaki() {
+    const name = document.getElementById("takiName").value.trim();
+    const phone = document.getElementById("takiPhone").value.trim();
+    const anon = document.getElementById("takiAnon").checked;
+    const amount = document.getElementById("takiAmount").value;
+
+    if (!name || !phone) {
+      alert("Lütfen adınızı ve telefon numaranızı girin.");
+      return;
+    }
+
+    if (selectedTakiType === "Nakit Para" && (!amount || Number(amount) <= 0)) {
+      alert("Lütfen geçerli bir nakit tutar girin.");
+      return;
+    }
+
+    const payload = {
+      org_id: organizationId,
+      buyer_name: name,
+      buyer_phone: phone,
+      gift_type: selectedTakiType,
+      amount: selectedTakiType === "Nakit Para" ? Number(amount) : null,
+      is_anonymous: anon ? 1 : 0
+    };
+
+    fetch("/api/gifting", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        document.getElementById("takiAmount").value = "";
+        document.getElementById("takiAnon").checked = false;
+        switchGiftsTab("needs");
+      } else {
+        alert(data.error || "Bildirim iletilemedi.");
+      }
+    })
+    .catch(err => {
+      console.error("Gifting submit error:", err);
+      alert("Bağlantı hatası oluştu.");
+    });
   }
 
   function addMessageToDOM(name, msg, id) {
