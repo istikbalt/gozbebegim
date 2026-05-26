@@ -140,6 +140,21 @@
       .radio-group { grid-template-columns: repeat(2, 1fr); }
       .child-grid { grid-template-columns: 1fr; }
     }
+
+    /* Switch / Toggle Button */
+    .switch input:checked + .slider {
+      background-color: var(--pink);
+    }
+    .switch .slider:before {
+      position: absolute; content: "";
+      height: 16px; width: 16px;
+      left: 4px; bottom: 4px;
+      background-color: white;
+      transition: .4s; border-radius: 50%;
+    }
+    .switch input:checked + .slider:before {
+      transform: translateX(20px);
+    }
   </style>
 </head>
 <body>
@@ -233,6 +248,61 @@
         <input type="text" id="hospital" placeholder="Acıbadem Maslak Hastanesi" />
       </div>
 
+      <!-- Sürpriz Modu Toggle -->
+      <div class="form-group" style="flex-direction: row; align-items: center; justify-content: space-between; border: var(--border); border-radius: var(--radius-md); padding: 16px; background: var(--input-bg); transition: background-color 0.4s ease, border-color 0.4s ease;">
+        <div style="display: flex; flex-direction: column; gap: 4px; max-width: 80%;">
+          <label style="font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            🎁 Sürpriz Modu'nu Aktifleştir
+          </label>
+          <span style="font-size: 12px; color: var(--text-sec);">
+            Hediyeyi kimin aldığını ve yazılan tebrik notunu tören anına kadar gizler. Heyecanı son ana kadar koruyun!
+          </span>
+        </div>
+        <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; flex-shrink: 0;">
+          <input type="checkbox" id="surpriseMode" style="opacity: 0; width: 0; height: 0;">
+          <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px;"></span>
+        </label>
+      </div>
+
+      <!-- Hastane Ziyaret ve Çiçek Bilgileri (Collapsible Section) -->
+      <div style="border: var(--border); border-radius: var(--radius-lg); overflow: hidden; background: #fff; transition: border-color 0.4s ease;">
+        <div id="hospitalHeader" style="padding: 16px; background: var(--pink-light); cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-weight: 600; font-size: 14px; color: var(--pink-dark); transition: background-color 0.4s ease;">
+          <span style="display: flex; align-items: center; gap: 8px;">🏥 Hastane Ziyaret & Çiçek Sipariş Detayları (İsteğe Bağlı)</span>
+          <span id="hospitalArrow" style="transition: transform 0.3s; transform: rotate(0deg);">▼</span>
+        </div>
+        <div id="hospitalFields" style="display: none; padding: 16px; flex-direction: column; gap: 1.2rem; border-top: var(--border);">
+          <div style="font-size: 12px; color: var(--text-sec); margin-bottom: 4px;">
+            Hastanedeki misafirleriniz için oda numarası, ziyaret saatleri gibi bilgileri girin ve doğrudan oda konumunu / çiçek sipariş linkinizi paylaşın.
+          </div>
+          
+          <div class="form-group">
+            <label for="hospitalNameInput">Ziyaret Edilecek Hastane Adı</label>
+            <input type="text" id="hospitalNameInput" placeholder="Örn: Maslak Acıbadem Hastanesi" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label for="hospitalRoom">Oda Numarası</label>
+              <input type="text" id="hospitalRoom" placeholder="Örn: Kat 4, Oda 402" />
+            </div>
+            <div class="form-group">
+              <label for="visitHours">Ziyaret Saatleri</label>
+              <input type="text" id="visitHours" placeholder="Örn: 13:00 - 18:00" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="mapsLink">Google Harita Konumu Linki (Maps URL)</label>
+            <input type="url" id="mapsLink" placeholder="Örn: https://maps.app.goo.gl/..." />
+          </div>
+
+          <div class="form-group">
+            <label for="flowerLink">Çiçek/Bağış Sipariş Linki (Misafirleriniz çiçek gönderebilsin)</label>
+            <input type="url" id="flowerLink" placeholder="Örn: https://www.ciceksepeti.com/..." />
+          </div>
+        </div>
+      </div>
+
       <!-- 4. Not -->
       <div class="form-group">
         <label for="notes">Misafirlere Özel Aile Notu (İsteğe bağlı)</label>
@@ -254,7 +324,11 @@
 
   // Cinsiyet seçildiğinde form renklerini dinamik olarak güncelle (Mavi/Pembe geri bildirim)
   document.getElementById("newChildGender").addEventListener("change", function(e) {
-    if (e.target.value === "Erkek") {
+    updateTheme(e.target.value);
+  });
+
+  function updateTheme(gender) {
+    if (gender === "Erkek") {
       document.documentElement.style.setProperty("--pink", "#3A86C8");
       document.documentElement.style.setProperty("--pink-dark", "#1C5A90");
       document.documentElement.style.setProperty("--pink-light", "#E6F1FB");
@@ -275,6 +349,40 @@
       document.documentElement.style.setProperty("--border", "0.5px solid #e8e0e4");
       document.documentElement.style.setProperty("--nav-bg", "rgba(253, 248, 250, 0.92)");
       document.documentElement.style.setProperty("--input-bg", "#fafafa");
+    }
+  }
+
+  // Sayfa Yüklendiğinde Mevcut Çocukları Çek
+  fetch(`/api/auth/children/${user.id}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.children && data.children.length > 0) {
+        const select = document.getElementById("childSelect");
+        select.innerHTML = '<option value="new">+ Yeni Çocuk Ekle</option>';
+        data.children.forEach(c => {
+          const option = document.createElement("option");
+          option.value = c.id;
+          option.textContent = `${c.name} (${c.age ? c.age + ' Yaş, ' : ''}${c.gender})`;
+          option.setAttribute("data-gender", c.gender);
+          select.appendChild(option);
+        });
+        // İlk çocuğu seç
+        select.value = data.children[0].id;
+        toggleChildInput(select);
+      }
+    })
+    .catch(err => console.error("Error fetching children:", err));
+
+  // Collapsible Hospital Fields Toggle
+  document.getElementById("hospitalHeader").addEventListener("click", function() {
+    const fields = document.getElementById("hospitalFields");
+    const arrow = document.getElementById("hospitalArrow");
+    if (fields.style.display === "none" || !fields.style.display) {
+      fields.style.display = "flex";
+      arrow.style.transform = "rotate(180deg)";
+    } else {
+      fields.style.display = "none";
+      arrow.style.transform = "rotate(0deg)";
     }
   });
 
@@ -315,10 +423,15 @@
       fields.style.display = "grid";
       newName.required = true;
       newAge.required = true;
+      const newChildGender = document.getElementById("newChildGender").value;
+      updateTheme(newChildGender);
     } else {
       fields.style.display = "none";
       newName.required = false;
       newAge.required = false;
+      const selectedOption = select.options[select.selectedIndex];
+      const gender = selectedOption.getAttribute("data-gender");
+      updateTheme(gender);
     }
   }
 
@@ -336,14 +449,27 @@
     const hospital = document.getElementById("hospital").value;
     const notes = document.getElementById("notes").value;
 
+    const surpriseMode = document.getElementById("surpriseMode").checked;
+    const hospitalName = document.getElementById("hospitalNameInput").value;
+    const hospitalRoom = document.getElementById("hospitalRoom").value;
+    const visitHours = document.getElementById("visitHours").value;
+    const mapsLink = document.getElementById("mapsLink").value;
+    const flowerLink = document.getElementById("flowerLink").value;
+
     const payload = {
       parent_id: user.id,
       type,
       date,
       city,
-      hospital,
+      hospital: hospitalName || hospital, // back-compatibility
       notes,
-      age_milestone: ageMilestone ? Number(ageMilestone) : null
+      age_milestone: ageMilestone ? Number(ageMilestone) : null,
+      surprise_mode: surpriseMode ? 1 : 0,
+      hospital_name: hospitalName || null,
+      hospital_room: hospitalRoom || null,
+      visit_hours: visitHours || null,
+      maps_link: mapsLink || null,
+      flower_link: flowerLink || null
     };
 
     if (childSelect === "new") {

@@ -23,12 +23,14 @@ app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
 // Statik Dosyalar (assets vb. için)
 app.use(express.static(path.join(__dirname, "..", "frontend")));
+app.use("/uploads", express.static(path.join(__dirname, "..", "frontend", "uploads")));
 
 // API Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/organizations", require("./routes/organizations"));
 app.use("/api/gifts", require("./routes/gifts"));
 app.use("/api/messages", require("./routes/messages"));
+app.use("/api/upload", require("./routes/upload"));
 
 // --- CLEAN HTML ROUTES (Ugly .html uzantılarını gizlemek için) ---
 app.get("/login", (req, res) => {

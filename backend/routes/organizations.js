@@ -168,25 +168,67 @@ router.get("/slug/:parentSlug/:orgSlug", async (req, res) => {
       comments = gc;
     }
 
-    // Hediyeleri yorumlarıyla birleştir
+    // Sürpriz modu aktif mi kontrol et (Etkinlik gününün sonuna kadar sürpriz gizli kalır)
+    const eventDate = new Date(org.date);
+    eventDate.setHours(23, 59, 59, 999);
+    const isSurpriseActive = org.surprise_mode && (eventDate > new Date());
+
+    // Hediyeleri yorumlarıyla birleştir (Sürpriz modu aktifse isimleri ve yorumları maskele)
     const giftsWithComments = gifts.map(g => {
+      const maskedGift = { ...g };
+      if (isSurpriseActive && g.is_bought) {
+        maskedGift.buyer_name = "🎁 Sürpriz Alındı";
+        maskedGift.is_anonymous = 1;
+      }
+
+      const filteredComments = comments.filter(c => c.gift_id === g.id).map(c => {
+        if (isSurpriseActive) {
+          return {
+            ...c,
+            user_name: "🎁 Sürpriz Misafir",
+            comment: "Bu yorum sürpriz modu nedeniyle gizlenmiştir. 🤫"
+          };
+        }
+        return c;
+      });
+
       return {
-        ...g,
-        comments: comments.filter(c => c.gift_id === g.id)
+        ...maskedGift,
+        comments: filteredComments
       };
     });
 
-    // Pano genel tebrik mesajlarını getir
+    // Pano genel tebrik mesajlarını getir (Zaman kapsülü kilitliyse içeriği maskele)
     const [messages] = await pool.query(
       "SELECT * FROM general_messages WHERE org_id = ? ORDER BY created_at DESC",
       [org.id]
     );
 
+    const maskedMessages = messages.map(m => {
+      const isLocked = m.is_time_capsule && m.unlock_date && (new Date(m.unlock_date) > new Date());
+      if (isLocked) {
+        return {
+          id: m.id,
+          org_id: m.org_id,
+          user_name: m.user_name,
+          parent_id: m.parent_id,
+          likes: m.likes,
+          is_time_capsule: m.is_time_capsule,
+          unlock_date: m.unlock_date,
+          media_type: m.media_type,
+          created_at: m.created_at,
+          message: "⏳ Bu tebrik mesajı bir Zaman Kapsülü'dür! Geleceğe gönderildi ve kilitlendi. 🤫",
+          media_url: null
+        };
+      }
+      return m;
+    });
+
     res.json({
       success: true,
       organization: org,
       gifts: giftsWithComments,
-      messages: messages
+      messages: maskedMessages
     });
   } catch (error) {
     console.error("Fetch org by slug error:", error);
@@ -207,7 +249,13 @@ router.post("/", async (req, res) => {
     city,
     hospital,
     notes,
-    age_milestone      // Tören anındaki yaş dönemi (Yaş günü/Sünnet için kaç yaşında olduğu)
+    age_milestone,     // Tören anındaki yaş dönemi (Yaş günü/Sünnet için kaç yaşında olduğu)
+    surprise_mode,     // Sürpriz modu (açılış tarihine kadar isimleri gizler)
+    hospital_name,     // Hastane Modu detayları
+    hospital_room,
+    visit_hours,
+    maps_link,
+    flower_link
   } = req.body;
 
   if (!parent_id || !type || !date || !city) {
@@ -267,9 +315,9 @@ router.post("/", async (req, res) => {
 
     // 2. Organizasyonu ekle
     const [orgResult] = await connection.query(
-      `INSERT INTO organizations (parent_id, child_id, type, slug, parent_slug, title, date, city, hospital, notes, age_milestone)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [parent_id, finalChildId, type, slug, parentSlug, title, date, city, hospital || null, notes || null, age_milestone || null]
+      `INSERT INTO organizations (parent_id, child_id, type, slug, parent_slug, title, date, city, hospital, notes, age_milestone, surprise_mode, hospital_name, hospital_room, visit_hours, maps_link, flower_link)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [parent_id, finalChildId, type, slug, parentSlug, title, date, city, hospital || null, notes || null, age_milestone || null, surprise_mode ? 1 : 0, hospital_name || null, hospital_room || null, visit_hours || null, maps_link || null, flower_link || null]
     );
     const orgId = orgResult.insertId;
 

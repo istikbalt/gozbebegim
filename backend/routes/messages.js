@@ -4,7 +4,7 @@ const pool = require("../database/db");
 
 // POST /api/messages - Genel pano tebrik mesajı ekleme
 router.post("/", async (req, res) => {
-  const { org_id, user_name, message, parent_id } = req.body;
+  const { org_id, user_name, message, parent_id, is_time_capsule, unlock_date, media_url, media_type } = req.body;
 
   if (!org_id || !user_name || !message) {
     return res.status(400).json({ success: false, error: "Eksik bilgi girdiniz." });
@@ -12,8 +12,19 @@ router.post("/", async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      "INSERT INTO general_messages (org_id, user_name, message, parent_id, likes) VALUES (?, ?, ?, ?, 0)",
-      [org_id, user_name, message, parent_id || null]
+      `INSERT INTO general_messages 
+       (org_id, user_name, message, parent_id, likes, is_time_capsule, unlock_date, media_url, media_type) 
+       VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?)`,
+      [
+        org_id,
+        user_name,
+        message,
+        parent_id || null,
+        is_time_capsule ? 1 : 0,
+        unlock_date || null,
+        media_url || null,
+        media_type || 'Text'
+      ]
     );
 
     res.status(201).json({
@@ -26,6 +37,10 @@ router.post("/", async (req, res) => {
         message,
         parent_id: parent_id || null,
         likes: 0,
+        is_time_capsule: is_time_capsule ? 1 : 0,
+        unlock_date: unlock_date || null,
+        media_url: media_url || null,
+        media_type: media_type || 'Text',
         created_at: new Date()
       }
     });

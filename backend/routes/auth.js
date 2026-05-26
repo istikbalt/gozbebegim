@@ -168,4 +168,18 @@ router.post("/guest-signup", async (req, res) => {
   }
 });
 
+// GET /api/auth/children/:parentId - Ebeveynin tüm çocuklarını listele
+router.get("/children/:parentId", async (req, res) => {
+  try {
+    const [children] = await pool.query(
+      "SELECT * FROM children WHERE parent_id = ? ORDER BY name ASC",
+      [req.params.parentId]
+    );
+    res.json({ success: true, children });
+  } catch (error) {
+    console.error("Fetch children error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası." });
+  }
+});
+
 module.exports = router;

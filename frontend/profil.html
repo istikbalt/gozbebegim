@@ -576,6 +576,33 @@
     </div>
   </div>
 
+  <!-- Hastane Ziyaret & Çiçek Siparişi Kartı -->
+  <div class="card" id="hospitalCard" style="display: none; background: linear-gradient(135deg, var(--pink-light) 0%, #ffffff 100%); border: 1.5px solid var(--pink-border); margin-top: 1rem; transition: background-color 0.4s ease, border-color 0.4s ease;">
+    <div class="pinned-label" style="display: flex; align-items: center; gap: 8px;">🏥 Ziyaretçi & Hastane Bilgileri</div>
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+      <div style="font-size: 15px; font-weight: 700; color: var(--pink-dark);" id="displayHospitalName">—</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="background: rgba(255,255,255,0.7); border: var(--border); border-radius: var(--radius-md); padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-size: 11px; color: var(--text-sec); font-weight: 600;">Oda Numarası</span>
+          <span style="font-size: 14px; font-weight: 700; color: var(--text);" id="displayHospitalRoom">—</span>
+        </div>
+        <div style="background: rgba(255,255,255,0.7); border: var(--border); border-radius: var(--radius-md); padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-size: 11px; color: var(--text-sec); font-weight: 600;">Ziyaret Saatleri</span>
+          <span style="font-size: 14px; font-weight: 700; color: var(--text);" id="displayVisitHours">—</span>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+        <a id="btnMaps" href="#" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; background: var(--pink); color: white; border-radius: 20px; font-size: 13px; font-weight: 600; text-decoration: none; text-align: center; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+          📍 Haritada Aç
+        </a>
+        <a id="btnFlower" href="#" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; background: white; color: var(--pink-dark); border: 1.5px solid var(--pink-border); border-radius: 20px; font-size: 13px; font-weight: 600; text-decoration: none; text-align: center; transition: all 0.2s;">
+          🌸 Çiçek / Bağış Gönder
+        </a>
+      </div>
+    </div>
+  </div>
+
   <div class="profile-content-grid">
     <!-- Genel Mesaj Panosu Kolonu (Üstte) -->
     <div class="card">
@@ -677,7 +704,51 @@
       <label class="form-label">Mesajınız</label>
       <input class="form-input" id="msgText" type="text" placeholder="Tebrik mesajınızı yazın..." />
     </div>
-    <div class="modal-actions">
+
+    <!-- Premium Medya Yükleme (Video/Ses/Fotoğraf) -->
+    <div class="form-group" style="margin-top: 1rem;">
+      <label class="form-label" style="display: flex; align-items: center; gap: 6px;">
+        🎥 Medya Ekle (Video / Ses / Fotoğraf - Maks 15MB)
+      </label>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <label for="msgMediaFile" style="cursor: pointer; padding: 8px 16px; background: var(--pink-light); color: var(--pink-dark); border: 1.5px dashed var(--pink-border); border-radius: var(--radius-md); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;">
+            📁 Dosya Seç veya Video Çek
+          </label>
+          <input type="file" id="msgMediaFile" accept="video/*,image/*,audio/*" capture="user" style="display: none;" onchange="handleMediaUpload(this)" />
+          <span id="mediaUploadStatus" style="font-size: 12px; color: var(--text-sec);">Medya seçilmedi (Maks 15 sn tebrik videosu)</span>
+        </div>
+        
+        <!-- Yükleme İlerleme Çubuğu -->
+        <div id="mediaProgressContainer" style="display: none; width: 100%; height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden;">
+          <div id="mediaProgressBar" style="width: 0%; height: 100%; background: var(--pink); transition: width 0.3s;"></div>
+        </div>
+
+        <!-- Medya Önizleme Alanı -->
+        <div id="mediaPreviewContainer" style="display: none; border: var(--border); border-radius: var(--radius-md); overflow: hidden; background: #fafafa; padding: 8px; text-align: center; position: relative;">
+          <button type="button" onclick="clearUploadedMedia()" style="position: absolute; top: 4px; right: 4px; border: none; background: rgba(0,0,0,0.6); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 10px; z-index: 10;">✕</button>
+          <div id="mediaPreviewContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zaman Kapsülü (Time Capsule) Seçeneği -->
+    <div class="form-group" style="flex-direction: row; align-items: center; justify-content: space-between; border: var(--border); border-radius: var(--radius-md); padding: 12px; background: var(--comments-bg); margin-top: 1rem; transition: background-color 0.4s ease, border-color 0.4s ease;">
+      <div style="display: flex; flex-direction: column; gap: 2px; max-width: 80%; text-align: left;">
+        <label style="font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+          ⏳ 18 Yaş Zaman Kapsülü Yap
+        </label>
+        <span style="font-size: 11px; color: var(--text-sec);">
+          Bu mesaj ve video, çocuğun 18. yaş gününe kadar kilitli kalır, o gün açılır!
+        </span>
+      </div>
+      <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; flex-shrink: 0;">
+        <input type="checkbox" id="msgTimeCapsule" style="opacity: 0; width: 0; height: 0;">
+        <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px;"></span>
+      </label>
+    </div>
+
+    <div class="modal-actions" style="margin-top: 1.5rem;">
       <button class="modal-btn-ghost" onclick="closeModal('msgModal')">İptal</button>
       <button class="modal-btn-primary" onclick="submitMsg()">Gönder</button>
     </div>
@@ -851,6 +922,9 @@
 <!-- ══════════════ JAVASCRIPT ══════════════ -->
 <script>
   let organizationId = null;
+  let orgData = null;
+  let uploadedMediaUrl = null;
+  let uploadedMediaType = "Text";
   let currentGiftId = null;
   let currentCommentGiftId = null;
   let currentCommentGiftEl = null;
@@ -907,6 +981,8 @@
       document.getElementById("msgText").value = "";
       document.getElementById("msgName").value = "";
       document.getElementById("msgContact").value = "";
+      document.getElementById("msgTimeCapsule").checked = false;
+      clearUploadedMedia();
     }
     if (id === "commentModal") {
       document.getElementById("commentText").value = "";
@@ -920,6 +996,105 @@
   document.querySelectorAll(".modal-overlay").forEach(overlay => {
     overlay.addEventListener("click", e => { if (e.target === overlay) overlay.classList.remove("open"); });
   });
+
+  // ── MEDYA YÜKLEME FONKSİYONLARI ──
+  function handleMediaUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+      alert("Dosya boyutu çok büyük! Maksimum limit 15MB'tır.");
+      input.value = "";
+      return;
+    }
+
+    const statusSpan = document.getElementById("mediaUploadStatus");
+    const progressContainer = document.getElementById("mediaProgressContainer");
+    const progressBar = document.getElementById("mediaProgressBar");
+    
+    statusSpan.textContent = "Yükleniyor...";
+    statusSpan.style.color = "var(--pink)";
+    progressContainer.style.display = "block";
+    progressBar.style.width = "10%";
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload", true);
+
+    xhr.upload.onprogress = function(e) {
+      if (e.lengthComputable) {
+        const percent = Math.round((e.loaded / e.total) * 100);
+        progressBar.style.width = percent + "%";
+        statusSpan.textContent = `Yükleniyor (%${percent})...`;
+      }
+    };
+
+    xhr.onload = function() {
+      progressContainer.style.display = "none";
+      if (xhr.status === 200 || xhr.status === 201) {
+        const res = JSON.parse(xhr.responseText);
+        if (res.success) {
+          uploadedMediaUrl = res.url;
+          uploadedMediaType = res.media_type;
+
+          statusSpan.textContent = "Yükleme Başarılı! 🎉";
+          statusSpan.style.color = "green";
+          showMediaPreview(res.url, res.media_type);
+        } else {
+          statusSpan.textContent = res.error || "Yükleme başarısız.";
+          statusSpan.style.color = "red";
+          alert(res.error || "Yükleme başarısız oldu.");
+        }
+      } else {
+        statusSpan.textContent = "Yükleme sırasında hata oluştu.";
+        statusSpan.style.color = "red";
+        alert("Dosya yüklenirken sunucu hatası oluştu.");
+      }
+    };
+
+    xhr.onerror = function() {
+      progressContainer.style.display = "none";
+      statusSpan.textContent = "Bağlantı hatası.";
+      statusSpan.style.color = "red";
+      alert("Yükleme sırasında bağlantı hatası oluştu.");
+    };
+
+    xhr.send(formData);
+  }
+
+  function showMediaPreview(url, type) {
+    const previewContainer = document.getElementById("mediaPreviewContainer");
+    const contentDiv = document.getElementById("mediaPreviewContent");
+    
+    previewContainer.style.display = "block";
+    contentDiv.innerHTML = "";
+
+    if (type === "Video") {
+      contentDiv.innerHTML = `<video src="${url}" controls style="max-width: 100%; max-height: 150px; border-radius: var(--radius-md);"></video>`;
+    } else if (type === "Image") {
+      contentDiv.innerHTML = `<img src="${url}" style="max-width: 100%; max-height: 150px; border-radius: var(--radius-md); object-fit: contain;" />`;
+    } else if (type === "Audio") {
+      contentDiv.innerHTML = `<audio src="${url}" controls style="width: 100%;"></audio>`;
+    }
+  }
+
+  function clearUploadedMedia() {
+    uploadedMediaUrl = null;
+    uploadedMediaType = "Text";
+    const mediaInput = document.getElementById("msgMediaFile");
+    if (mediaInput) mediaInput.value = "";
+    const statusSpan = document.getElementById("mediaUploadStatus");
+    if (statusSpan) {
+      statusSpan.textContent = "Medya seçilmedi (Maks 15 sn tebrik videosu)";
+      statusSpan.style.color = "var(--text-sec)";
+    }
+    const previewContainer = document.getElementById("mediaPreviewContainer");
+    if (previewContainer) previewContainer.style.display = "none";
+    const previewContent = document.getElementById("mediaPreviewContent");
+    if (previewContent) previewContent.style.display = "";
+  }
 
   // ── MESAJ ──
   function openMsgModal() {
@@ -946,21 +1121,43 @@
     const msg = document.getElementById("msgText").value.trim();
     if (!msg) { alert("Lütfen tebrik mesajınızı yazın."); return; }
 
+    const isTimeCapsule = document.getElementById("msgTimeCapsule").checked;
+    let unlockDate = null;
+    if (isTimeCapsule && orgData) {
+      const eventDate = new Date(orgData.date);
+      let yearsToAdd = 18;
+      const currentAge = orgData.age_milestone || orgData.child_age || 0;
+      if (currentAge < 18) {
+        yearsToAdd = 18 - currentAge;
+      }
+      eventDate.setFullYear(eventDate.getFullYear() + yearsToAdd);
+      unlockDate = eventDate.toISOString().split("T")[0];
+    }
+
+    const payload = {
+      org_id: organizationId,
+      message: msg,
+      is_time_capsule: isTimeCapsule ? 1 : 0,
+      unlock_date: unlockDate,
+      media_url: uploadedMediaUrl,
+      media_type: uploadedMediaType
+    };
+
     const currentUser = JSON.parse(localStorage.getItem("user") || "null");
 
     if (currentUser) {
       // Giriş yapılmış: doğrudan gönder
       const name = `${currentUser.first_name} ${currentUser.last_name}`;
+      payload.user_name = name;
       fetch("/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ org_id: organizationId, user_name: name, message: msg })
+        body: JSON.stringify(payload)
       }).then(r => r.json()).then(d => {
         if (d.success) {
           closeModal("msgModal");
           document.getElementById("genInput").value = "";
-          // Yeni mesajı sayfaya ekle
-          addMessageToDOM(name, msg, d.message_data.id);
+          location.reload();
         } else {
           alert(d.error || "Mesaj gönderilemedi.");
         }
@@ -984,23 +1181,23 @@
       const firstName = parts[0];
       const lastName = parts.slice(1).join(" ") || " ";
 
-      const payload = {
+      const guestPayload = {
         first_name: firstName,
         last_name: lastName
       };
 
       // Email mi telefon mu tespit et
       if (contact.includes("@")) {
-        payload.email = contact;
+        guestPayload.email = contact;
       } else {
-        payload.phone_number = contact;
+        guestPayload.phone_number = contact;
       }
 
       // 1. Misafir hesabı oluştur
       fetch("/api/auth/guest-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(guestPayload)
       })
       .then(r => r.json())
       .then(authData => {
@@ -1020,10 +1217,11 @@
         }
 
         // 3. Mesajı gönder
+        payload.user_name = fullName;
         return fetch("/api/messages", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ org_id: organizationId, user_name: fullName, message: msg })
+          body: JSON.stringify(payload)
         });
       })
       .then(r => r ? r.json() : null)
@@ -1031,7 +1229,7 @@
         if (d && d.success) {
           closeModal("msgModal");
           document.getElementById("genInput").value = "";
-          addMessageToDOM(fullName, msg, d.message_data.id);
+          location.reload();
         } else if (d) {
           alert(d.error || "Mesaj gönderilemedi.");
         }
@@ -1542,6 +1740,7 @@
   function renderPage(data) {
     const org = data.organization;
     organizationId = org.id;
+    orgData = org;
     giftsData = data.gifts;
 
     if (org.child_gender === "Erkek") {
@@ -1574,9 +1773,36 @@
     document.getElementById("infoChildName").textContent = org.child_name;
     document.getElementById("infoGender").textContent = org.child_gender === "Kız" ? "Kız 🩷" : org.child_gender === "Erkek" ? "Erkek 💙" : "👶";
     document.getElementById("infoDate").textContent = formattedDate;
-    document.getElementById("infoLocation").textContent = org.hospital || "Ev / Salon";
+    document.getElementById("infoLocation").textContent = org.hospital_name || org.hospital || "Ev / Salon";
     document.getElementById("infoParent1").textContent = `${org.parent_first_name} ${org.parent_last_name}`;
-    document.getElementById("infoNote").textContent = org.family_note || "—";
+    document.getElementById("infoNote").textContent = org.notes || org.family_note || "—";
+
+    // Ziyaret & Hastane Bilgileri Güncelleme
+    const hospCard = document.getElementById("hospitalCard");
+    if (org.hospital_name) {
+      hospCard.style.display = "block";
+      document.getElementById("displayHospitalName").textContent = org.hospital_name;
+      document.getElementById("displayHospitalRoom").textContent = org.hospital_room || "—";
+      document.getElementById("displayVisitHours").textContent = org.visit_hours || "—";
+      
+      const btnMaps = document.getElementById("btnMaps");
+      if (org.maps_link) {
+        btnMaps.href = org.maps_link;
+        btnMaps.style.display = "flex";
+      } else {
+        btnMaps.style.display = "none";
+      }
+      
+      const btnFlower = document.getElementById("btnFlower");
+      if (org.flower_link) {
+        btnFlower.href = org.flower_link;
+        btnFlower.style.display = "flex";
+      } else {
+        btnFlower.style.display = "none";
+      }
+    } else {
+      hospCard.style.display = "none";
+    }
 
     const ageLabel = document.getElementById("infoAgeLabel");
     const ageVal = document.getElementById("infoAgeVal");
@@ -1835,13 +2061,50 @@
         `;
       }).join("");
 
+      // Medya ve Zaman Kapsülü Kontrolleri
+      let mediaHtml = "";
+      if (msg.media_url) {
+        if (msg.media_type === "Video") {
+          mediaHtml = `<video src="${msg.media_url}" controls style="max-width:100%; border-radius: var(--radius-md); max-height: 250px; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);"></video>`;
+        } else if (msg.media_type === "Image") {
+          mediaHtml = `<img src="${msg.media_url}" style="max-width:100%; border-radius: var(--radius-md); max-height: 250px; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;" onclick="window.open('${msg.media_url}', '_blank')" />`;
+        } else if (msg.media_type === "Audio") {
+          mediaHtml = `<audio src="${msg.media_url}" controls style="width:100%; margin-top: 10px;"></audio>`;
+        }
+      }
+
+      let timeCapsuleHtml = "";
+      const isLocked = msg.is_time_capsule && msg.unlock_date && (new Date(msg.unlock_date) > new Date());
+      
+      if (isLocked) {
+        timeCapsuleHtml = `
+          <div style="background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CD 100%); border: 1.5px dashed #FFEBAA; border-radius: var(--radius-md); padding: 16px; margin: 10px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
+            <div style="font-size: 28px;">🔒⏳</div>
+            <div style="font-size: 13.5px; font-weight: 700; color: #856404;">Bu Mesaj Zaman Kapsülü Olarak Kilitlenmiştir!</div>
+            <div style="font-size: 12px; color: #856404; opacity: 0.8;">Çocuğumuz 18 yaşına gelene kadar bu mesaj ve yüklenen tüm medyalar gizli kalacaktır.</div>
+            <div style="font-size: 11px; background: rgba(0,0,0,0.05); padding: 4px 10px; border-radius: 12px; font-weight: 700; margin-top: 4px; color: #856404;">
+              Açılış Tarihi: ${new Date(msg.unlock_date).toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' })}
+            </div>
+          </div>
+        `;
+      } else if (msg.is_time_capsule) {
+        timeCapsuleHtml = `
+          <div style="font-size: 11px; background: #e2f0d9; color: #385723; padding: 4px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px; font-weight: 700; margin-top: 8px; margin-bottom: 8px;">
+            🔓 Zaman Kapsülü Açıldı!
+          </div>
+        `;
+      }
+
+      const previewText = isLocked ? "⏳ Geleceğe Kilitli Mektup" : msg.message;
+      const bodyText = isLocked ? "" : msg.message;
+
       div.innerHTML = `
         <!-- Excel-like Thin Header -->
         <div class="msg-acc-header" onclick="toggleMsgAccordion(this)">
           <div class="msg-acc-left">
-            <span class="msg-acc-icon">💬</span>
+            <span class="msg-acc-icon">${isLocked ? "🔒" : "💬"}</span>
             <span class="msg-acc-name">${msg.user_name}</span>
-            <span class="msg-acc-preview">${msg.message}</span>
+            <span class="msg-acc-preview">${previewText}</span>
           </div>
           <div class="msg-acc-right">
             <span class="msg-acc-date">❤️ ${msg.likes||0} · 💬 ${msgReplies.length}</span>
@@ -1852,7 +2115,9 @@
         <!-- Collapsible Body -->
         <div class="msg-acc-body" style="display: none;">
           <div class="msg-body" data-id="${msg.id}" style="margin-bottom: 12px;">
-            <div class="msg-text" style="font-size: 13.5px; line-height: 1.5; color: var(--text);">${msg.message}</div>
+            <div class="msg-text" style="font-size: 13.5px; line-height: 1.5; color: var(--text);">${bodyText}</div>
+            ${timeCapsuleHtml}
+            ${mediaHtml}
           </div>
           
           <div class="gift-acc-footer-actions" style="margin-top: 0; padding-top: 0; border-top: none; gap: 14px;">
