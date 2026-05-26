@@ -1,0 +1,279 @@
+/**
+ * gözbebeğim — profil sayfası tasarım önizlemesi
+ * Orijinal: ../profil.html (değiştirilmedi)
+ * Kullanım: profil-preview.html ile birlikte aynı klasörde tutun.
+ * Canlıya almak için bu dosyaları profil.html'e kopyalamayın; önce localhost'ta test edin.
+ */
+
+:root {
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --border: 1px solid #eadde3;
+  --shadow-sm: 0 2px 10px rgba(153, 53, 86, 0.06);
+  --shadow-md: 0 8px 28px rgba(153, 53, 86, 0.08);
+  --shadow-lg: 0 20px 48px rgba(153, 53, 86, 0.12);
+  --bg: #fff9fb;
+  --text-sec: #5c5c5c;
+  --text-ter: #9a9a9a;
+  --surface: #f7f1f4;
+  --nav-bg: rgba(255, 249, 251, 0.94);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+nav {
+  height: 56px;
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-link {
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--card-bg);
+}
+
+.nav-link:hover {
+  border-color: var(--pink-border);
+}
+
+.page {
+  max-width: 680px;
+  padding: 0 1.25rem 3.5rem;
+}
+
+.cover {
+  height: 148px;
+  background: linear-gradient(125deg, var(--cover-start) 0%, var(--cover-mid) 45%, var(--cover-end) 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  font-size: 34px;
+  border-width: 4px;
+  background: linear-gradient(145deg, var(--pink), var(--pink-dark));
+  box-shadow: 0 4px 16px rgba(212, 83, 126, 0.35);
+}
+
+.profile-meta h1 {
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+  letter-spacing: -0.01em;
+}
+
+.active-badge {
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border-width: 1px;
+  box-shadow: var(--shadow-sm);
+}
+
+.stats-row {
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.stat-card {
+  border-radius: var(--radius-md);
+  padding: 0.85rem 0.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--pink-border);
+}
+
+.card {
+  border-radius: var(--radius-lg);
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.info-box {
+  padding: 11px 13px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.info-box:hover {
+  border-color: var(--pink-border);
+  background: var(--pink-light);
+}
+
+.url-bar {
+  gap: 10px;
+  padding: 0.75rem 1.1rem;
+  background: var(--card-bg);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+}
+
+.url-bar:hover {
+  border-color: var(--pink-border);
+  box-shadow: var(--shadow-md);
+}
+
+.gift-card {
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gift-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.modal-overlay {
+  background: rgba(26, 26, 26, 0.42);
+  backdrop-filter: blur(8px);
+}
+
+.modal {
+  max-width: 440px;
+  padding: 1.85rem;
+  animation: modalInPreview 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: var(--shadow-lg);
+  border: var(--border);
+}
+
+@keyframes modalInPreview {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.msg-card-premium {
+  padding: 1.35rem;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.msg-card-premium:hover {
+  border-color: var(--pink-border);
+  box-shadow: var(--shadow-lg);
+}
+
+.gift-accordion-card,
+.msg-accordion-card {
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gift-accordion-card:hover,
+.msg-accordion-card:hover {
+  border-color: var(--pink-border);
+  box-shadow: var(--shadow-md);
+}
+
+.gift-accordion-card.open,
+.msg-accordion-card.open {
+  border-color: var(--pink-border);
+  box-shadow: var(--shadow-md);
+}
+
+.gift-acc-body,
+.msg-acc-body {
+  background: linear-gradient(180deg, var(--surface) 0%, var(--card-bg) 100%);
+}
+
+.send-btn {
+  padding: 9px 20px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(212, 83, 126, 0.25);
+  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.send-btn:hover {
+  transform: translateY(-1px);
+}
+
+.modal-btn-primary {
+  box-shadow: 0 4px 14px rgba(212, 83, 126, 0.28);
+}
+
+.modal-btn-primary:hover {
+  transform: translateY(-1px);
+}
+
+.buy-btn,
+.reserve-btn {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.buy-btn:hover,
+.reserve-btn:hover {
+  transform: translateY(-1px);
+}
+
+.pinned-label {
+  box-shadow: var(--shadow-sm);
+}
+
+.photo-upload-area {
+  background: var(--bg);
+}
+
+.act-btn.liked,
+.gift-act.liked {
+  font-weight: 700;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .cover {
+    height: 120px;
+  }
+
+  .profile-avatar {
+    width: 72px;
+    height: 72px;
+    font-size: 30px;
+  }
+
+  .scrollable-panel {
+    height: 320px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card:hover,
+  .send-btn:hover,
+  .buy-btn:hover,
+  .reserve-btn:hover,
+  .modal-btn-primary:hover {
+    transform: none;
+  }
+}

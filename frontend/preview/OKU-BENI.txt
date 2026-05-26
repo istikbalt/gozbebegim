@@ -1,0 +1,32 @@
+gözbebeğim — profil tasarım önizlemesi
+=====================================
+
+Bu klasördeki dosyalar ORİJİNAL profil.html dosyasını değiştirmez.
+
+Dosyalar:
+  profil-preview.html  →  profil.html kopyası + önizleme CSS bağlantısı
+  profil-preview.css   →  sadece görsel iyileştirmeler (ek katman)
+
+Nasıl test edilir:
+  1. Backend'i başlatın:
+     cd D:\Projects\gozbebegim\backend
+     node server.js
+
+  2. Tarayıcıda AÇMAYIN: file:///.../profil-preview.html
+     Bunun yerine sunucuya profil-preview route eklenmediyse,
+     geçici olarak profil-preview.html içeriğini manuel test için
+     localhost üzerinden deneyebilirsiniz.
+
+  En doğru test: profil-preview.html dosyasını bir kez
+  http://localhost:5001/... slug URL ile açmak için server.js'e
+  ek route gerekir; şimdilik görsel için dosyayı Cursor'da
+  Live Preview veya profil-preview.html'i profil.html yerine
+  GEÇİCİ kopyalayıp localhost slug ile deneyin.
+
+  Önerilen güvenli yol:
+  - profil.html'e dokunmayın
+  - Sadece CSS'i beğenirseniz profil-preview.css içindeki
+    kuralları tek tek orijinal <style> bloğuna taşıyın
+
+Konum:
+  D:\Projects\gozbebegim\frontend\preview\
