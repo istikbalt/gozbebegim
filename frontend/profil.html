@@ -592,12 +592,9 @@
         </div>
       </div>
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
-        <a id="btnMaps" href="#" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; background: var(--pink); color: white; border-radius: 20px; font-size: 13px; font-weight: 600; text-decoration: none; text-align: center; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+        <a id="btnMaps" href="#" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; background: var(--pink); color: white; border-radius: 20px; font-size: 13px; font-weight: 600; text-decoration: none; text-align: center; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%;">
           📍 Haritada Aç
-        </a>
-        <a id="btnFlower" href="#" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; background: white; color: var(--pink-dark); border: 1.5px solid var(--pink-border); border-radius: 20px; font-size: 13px; font-weight: 600; text-decoration: none; text-align: center; transition: all 0.2s;">
-          🌸 Çiçek / Bağış Gönder
         </a>
       </div>
     </div>
@@ -634,62 +631,12 @@
         </div>
 
         <!-- Gifting (Takı Köşesi) Arayüzü -->
-        <div id="goldGiftingSection" style="display: none; flex-direction: column; gap: 1rem;">
-          <div style="font-size: 12.5px; color: var(--text-sec); text-align: left; line-height: 1.6;">
-            Türkiye'nin köklü adetlerinden olan takı törenini dijitalleştiriyoruz. Buradan ebeveynin IBAN'ına EFT/Havale göndererek dijital çeyrek altın, gram altın veya dilediğiniz nakit tutarda hediye bildirebilirsiniz.
-          </div>
-          
-          <!-- Takı Türü Seçimi -->
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px;">
-            <button type="button" class="taki-btn selected" onclick="selectTaki('Ceyrek Altin')" style="background: var(--pink-light); border: 1.5px solid var(--pink-border); color: var(--pink-dark); padding: 12px 6px; border-radius: var(--radius-md); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; box-shadow: none;">
-              <span style="font-size: 20px;">🪙</span>
-              <span>Çeyrek Altın</span>
-            </button>
-            <button type="button" class="taki-btn" onclick="selectTaki('Gram Altin')" style="background: var(--input-bg); border: var(--border); color: var(--text-sec); padding: 12px 6px; border-radius: var(--radius-md); font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
-              <span style="font-size: 20px;">🪙</span>
-              <span>Gram Altın</span>
-            </button>
-            <button type="button" class="taki-btn" onclick="selectTaki('Nakit Para')" style="background: var(--input-bg); border: var(--border); color: var(--text-sec); padding: 12px 6px; border-radius: var(--radius-md); font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;">
-              <span style="font-size: 20px;">💸</span>
-              <span>EFT / Havale</span>
-            </button>
-          </div>
-
-          <!-- Tutar Girişi -->
-          <div class="form-group" id="takiAmountGroup" style="display: none; text-align: left; display: flex; flex-direction: column; gap: 4px;">
-            <label class="form-label" style="font-size: 12px; font-weight: 600;">Gönderilecek Nakit Tutar (TL)</label>
-            <input class="form-input" id="takiAmount" type="number" placeholder="Örn: 500" style="padding: 8px 12px; font-size: 13px;" />
-          </div>
-
-          <!-- IBAN Bilgisi Raporu -->
-          <div id="takiIbanBox" style="background: var(--comments-bg); border: var(--border); border-radius: var(--radius-md); padding: 12px; text-align: left; display: flex; flex-direction: column; gap: 6px; transition: background-color 0.4s ease, border-color 0.4s ease;">
-            <div style="font-size: 10px; color: var(--text-sec); font-weight: 700; text-transform: uppercase;">Havale / EFT Alıcı Bilgileri</div>
-            <div style="font-size: 13px; font-weight: 700; color: var(--text);" id="takiIbanName">Yükleniyor...</div>
-            <div style="display: flex; align-items: center; justify-content: space-between; background: #fff; border: var(--border); border-radius: 6px; padding: 6px 10px; margin-top: 4px; transition: border-color 0.4s ease;">
-              <span id="takiIbanText" style="font-family: monospace; font-size: 13px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%;">TR00...</span>
-              <button onclick="copyTakiIban()" style="background: var(--pink-light); border: none; color: var(--pink-dark); font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: background-color 0.4s ease;">Kopyala</button>
-            </div>
-          </div>
-
-          <!-- Misafir Formu -->
-          <div style="display: flex; flex-direction: column; gap: 10px; text-align: left; margin-top: 6px;">
-            <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
-              <label class="form-label" style="font-size: 12px; font-weight: 600;">Adınız Soyadınız</label>
-              <input class="form-input" id="takiName" type="text" placeholder="Örn: Merve Koç" style="padding: 8px 12px; font-size: 13px;" />
-            </div>
-            <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
-              <label class="form-label" style="font-size: 12px; font-weight: 600;">Telefon Numarası</label>
-              <input class="form-input" id="takiPhone" type="text" placeholder="Örn: 0532..." style="padding: 8px 12px; font-size: 13px;" />
-            </div>
-            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
-              <input type="checkbox" id="takiAnon" />
-              İsmimi ebeveynden gizle (Anonim hediye yap)
-            </label>
-          </div>
-
-          <button type="button" class="btn-submit" onclick="submitTaki()" style="width: 100%; padding: 12px; font-size: 14px; border-radius: 20px; margin-top: 0.5rem; background: var(--pink); color: white; border: none; font-weight: 700; cursor: pointer; transition: background-color 0.4s ease;">
-            EFT/Havale Yapıldı, Bildir ✨
-          </button>
+        <div id="goldGiftingSection" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2.5rem 1.5rem; text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 0.5rem;">🪙</div>
+          <h3 style="font-size: 15px; font-weight: 700; color: var(--text);">Altın & EFT Takı Köşesi</h3>
+          <p style="font-size: 13.5px; color: var(--text-sec); max-width: 320px; line-height: 1.6;">
+            Bu bölüm test yayını sonrasında, çok yakında misafirlerinize aktif edilecektir! İlginiz için teşekkür ederiz.
+          </p>
         </div>
       </div>
       
@@ -1994,14 +1941,6 @@
         btnMaps.style.display = "flex";
       } else {
         btnMaps.style.display = "none";
-      }
-      
-      const btnFlower = document.getElementById("btnFlower");
-      if (org.flower_link) {
-        btnFlower.href = org.flower_link;
-        btnFlower.style.display = "flex";
-      } else {
-        btnFlower.style.display = "none";
       }
     } else {
       hospCard.style.display = "none";

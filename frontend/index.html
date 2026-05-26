@@ -691,6 +691,10 @@
       .phone { transform: none; }
       .compare-grid, .how-grid, .testi-grid { grid-template-columns: 1fr; }
       .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .features-premium-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .features-premium-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 480px) {
       .cat-grid { grid-template-columns: 1fr; }
@@ -939,10 +943,10 @@
       </div>
 
       <div class="premium-feature-card">
-        <div class="premium-feature-badge">GELENEKSEL VE MODERN</div>
+        <div class="premium-feature-badge">YAKINDA</div>
         <div class="premium-feature-icon">🪙</div>
         <h3>Takı Sandığı & EFT</h3>
-        <p>Çeyrek/gram altın veya nakit hediyeler için IBAN'ınızı ekleyin. Misafirleriniz tek tıkla kopyalayıp göndersin, ebeveyn panelinizde "Takı Sandığı" raporlarınız otomatik dolsun.</p>
+        <p>Çeyrek/gram altın veya nakit hediyeler için veli IBAN'ı tanımlanır. Test yayını sonrasında bu özellik misafirlerinize aktif edildiğinde otomatik olarak Takı Sandığınız dolmaya başlar.</p>
       </div>
 
       <div class="premium-feature-card">
@@ -955,8 +959,8 @@
       <div class="premium-feature-card">
         <div class="premium-feature-badge">HASTANE MODÜLÜ</div>
         <div class="premium-feature-icon">🏥</div>
-        <h3>Ziyaret ve Çiçek Bilgileri</h3>
-        <p>Doğum veya hastane ziyaretlerinde oda numarası, ziyaret saatleri, yol haritası ve çiçek sipariş linklerini tek ekranda misafirlerinize şıkça sunun.</p>
+        <h3>Ziyaretçi & Konum Bilgileri</h3>
+        <p>Doğum veya hastane ziyaretlerinde oda numarası, ziyaret saatleri ve yol haritası (Google Haritalar) gibi detayları tek ekranda misafirlerinize şıkça sunun.</p>
       </div>
     </div>
   </section>
