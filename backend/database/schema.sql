@@ -43,6 +43,12 @@ CREATE TABLE IF NOT EXISTS `organizations` (
   `notes` TEXT DEFAULT NULL,
   `age_milestone` INT DEFAULT NULL,
   `status` ENUM('Active', 'Archived', 'Private') DEFAULT 'Active',
+  `surprise_mode` TINYINT(1) DEFAULT 0,
+  `hospital_name` VARCHAR(255) DEFAULT NULL,
+  `hospital_room` VARCHAR(50) DEFAULT NULL,
+  `visit_hours` VARCHAR(100) DEFAULT NULL,
+  `maps_link` VARCHAR(500) DEFAULT NULL,
+  `flower_link` VARCHAR(500) DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY `unique_slugs` (`parent_slug`, `slug`),
@@ -91,7 +97,46 @@ CREATE TABLE IF NOT EXISTS `general_messages` (
   `message` TEXT NOT NULL,
   `parent_id` INT DEFAULT NULL,
   `likes` INT DEFAULT 0,
+  `is_time_capsule` TINYINT(1) DEFAULT 0,
+  `unlock_date` DATE DEFAULT NULL,
+  `media_url` VARCHAR(500) DEFAULT NULL,
+  `media_type` ENUM('Text', 'Video', 'Image', 'Audio') DEFAULT 'Text',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`org_id`) REFERENCES `organizations`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`parent_id`) REFERENCES `general_messages`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Family Circles table (Aile Çemberi)
+CREATE TABLE IF NOT EXISTS `family_circles` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(100) NOT NULL,
+  `creator_id` INT NOT NULL,
+  `invite_code` VARCHAR(20) UNIQUE NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`creator_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 8. Circle Members table (Çember Üyeleri)
+CREATE TABLE IF NOT EXISTS `circle_members` (
+  `circle_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `role` ENUM('Admin', 'Member') DEFAULT 'Member',
+  `joined_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`circle_id`, `user_id`),
+  FOREIGN KEY (`circle_id`) REFERENCES `family_circles`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 9. Gold and Cash Gifts table (Takı Sandığı)
+CREATE TABLE IF NOT EXISTS `gold_and_cash_gifts` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `org_id` INT NOT NULL,
+  `buyer_name` VARCHAR(255) NOT NULL,
+  `buyer_phone` VARCHAR(15) NOT NULL,
+  `gift_type` ENUM('Ceyrek Altin', 'Gram Altin', 'Nakit Para') NOT NULL,
+  `amount` DECIMAL(10,2) DEFAULT NULL,
+  `status` ENUM('Pending', 'Confirmed') DEFAULT 'Pending',
+  `is_anonymous` TINYINT(1) DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`org_id`) REFERENCES `organizations`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
