@@ -4,173 +4,791 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>gözbebeğim.com — Çocuğunuzun her özel günü için hediye listesi</title>
-  <meta name="description" content="Doğum, yaş günü, sünnet and mezuniyet hediye listelerinizi kolayca oluşturun." />
+  <meta name="description" content="Doğum, yaş günü, sünnet ve mezuniyet için hediye listesi oluşturun. WhatsApp'ta paylaşın, aynı hediye iki kez alınmasın. Ücretsiz." />
+  <meta property="og:title" content="gözbebeğim.com — Çocuk hediye listesi" />
+  <meta property="og:description" content="Listenizi oluşturun, WhatsApp'ta paylaşın. Sevdikleriniz neyin alındığını anlık görsün." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="tr_TR" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --pink: #D4537E; --pink-dark: #993556;
-      --pink-light: #FBEAF0; --pink-border: #F4C0D1;
-      --bg: #fff9fb; --card: #ffffff;
-      --text: #1a1a1a; --text-sec: #666; --text-ter: #aaa;
-      --border: 0.5px solid #ecdde4; --surface: #f7f1f4;
+      --pink: #D4537E;
+      --pink-dark: #993556;
+      --pink-light: #FBEAF0;
+      --pink-border: #F4C0D1;
+      --green: #1d9e75;
+      --green-light: #e8f7f1;
+      --bg: #fff9fb;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --text-sec: #5c5c5c;
+      --text-ter: #9a9a9a;
+      --border: 1px solid #ecdde4;
+      --surface: #f7f1f4;
+      --shadow: 0 12px 40px rgba(153, 53, 86, 0.08);
+      --radius: 16px;
+      --radius-lg: 24px;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* Nav */
     nav {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(255,249,251,.94); backdrop-filter: blur(12px);
-      border-bottom: var(--border); padding: 0 1.5rem; height: 56px;
+      background: rgba(255, 249, 251, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: var(--border);
+      height: 60px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .brand { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text);
+    }
     .brand span { color: var(--pink); }
-    .nav-actions { display: flex; gap: 10px; }
-    .btn-ghost { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-sec); background: none; border: var(--border); border-radius: 8px; padding: 7px 16px; cursor: pointer; text-decoration: none; transition: all .2s; }
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+    .btn-ghost {
+      font-family: inherit; font-size: 14px; font-weight: 600;
+      color: var(--text-sec); background: none; border: var(--border);
+      border-radius: 10px; padding: 8px 16px; cursor: pointer;
+      text-decoration: none; transition: all 0.2s;
+    }
     .btn-ghost:hover { background: var(--surface); color: var(--text); }
-    .btn-primary { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; color: #fff; background: var(--pink); border: none; border-radius: 8px; padding: 7px 18px; cursor: pointer; text-decoration: none; transition: background .2s; }
-    .btn-primary:hover { background: var(--pink-dark); }
-    .hero { max-width: 720px; margin: 0 auto; padding: 5rem 1.5rem 3rem; text-align: center; }
-    .hero-icon { font-size: 56px; display: block; margin-bottom: 1rem; animation: hb 2.4s ease-in-out infinite; }
-    @keyframes hb { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(30px,5vw,50px); font-weight: 500; line-height: 1.2; margin-bottom: 1.25rem; }
-    .hero h1 span { color: var(--pink); }
-    .hero-sub { font-size: 17px; color: var(--text-sec); line-height: 1.7; margin-bottom: 2.5rem; }
-    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 2.5rem; }
-    .btn-big { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; border-radius: 12px; padding: 13px 28px; cursor: pointer; text-decoration: none; transition: all .2s; }
-    .btn-big-pink { color: #fff; background: var(--pink); border: none; box-shadow: 0 4px 16px rgba(212,83,126,.25); }
-    .btn-big-pink:hover { background: var(--pink-dark); transform: translateY(-1px); }
-    .btn-big-ghost { color: var(--text-sec); background: var(--card); border: var(--border); }
+    .btn-primary {
+      font-family: inherit; font-size: 14px; font-weight: 600;
+      color: #fff; background: var(--pink); border: none;
+      border-radius: 10px; padding: 8px 18px; cursor: pointer;
+      text-decoration: none; transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--pink-dark); transform: translateY(-1px); }
+
+    /* Buttons */
+    .btn-big {
+      font-family: inherit; font-size: 15px; font-weight: 700;
+      border-radius: 12px; padding: 14px 26px; cursor: pointer;
+      text-decoration: none; transition: all 0.2s; display: inline-flex;
+      align-items: center; gap: 8px; justify-content: center;
+    }
+    .btn-big-pink {
+      color: #fff; background: var(--pink); border: none;
+      box-shadow: 0 6px 20px rgba(212, 83, 126, 0.3);
+    }
+    .btn-big-pink:hover { background: var(--pink-dark); transform: translateY(-2px); }
+    .btn-big-ghost {
+      color: var(--text-sec); background: var(--card); border: var(--border);
+    }
     .btn-big-ghost:hover { background: var(--surface); color: var(--text); }
-    .pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-    .pill { background: var(--card); border: var(--border); border-radius: 30px; padding: 8px 16px; font-size: 13px; color: var(--text-sec); display: flex; align-items: center; gap: 7px; }
-    .section { max-width: 900px; margin: 0 auto; padding: 4rem 1.5rem; }
-    .sec-label { font-size: 12px; font-weight: 700; color: var(--pink); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: .5rem; }
-    .sec-title { font-family: 'Playfair Display', serif; font-size: clamp(22px,3vw,32px); font-weight: 500; margin-bottom: 2.5rem; }
-    .cat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
-    .cat-card { background: var(--card); border: var(--border); border-radius: 20px; padding: 2rem 1.25rem; text-align: center; text-decoration: none; color: var(--text); transition: all .25s; }
-    .cat-card:hover { border-color: var(--pink-border); box-shadow: 0 8px 24px rgba(212,83,126,.1); transform: translateY(-3px); }
-    .cat-emoji { font-size: 38px; display: block; margin-bottom: .75rem; }
-    .cat-name { font-size: 15px; font-weight: 700; margin-bottom: .3rem; }
-    .cat-desc { font-size: 12px; color: var(--text-ter); }
-    .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
-    .how-card { background: var(--card); border: var(--border); border-radius: 20px; padding: 2rem 1.5rem; }
-    .how-num { width: 36px; height: 36px; border-radius: 50%; background: var(--pink); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; margin-bottom: 1rem; }
-    .how-card h3 { font-size: 15px; font-weight: 700; margin-bottom: .5rem; }
-    .how-card p { font-size: 13px; color: var(--text-sec); line-height: 1.6; }
-    .cta-wrap { padding: 0 1.5rem 4rem; max-width: 900px; margin: 0 auto; }
-    .cta-box { background: linear-gradient(135deg,#D4537E,#993556); border-radius: 20px; padding: 4rem 2rem; text-align: center; color: #fff; }
-    .cta-box h2 { font-family: 'Playfair Display', serif; font-size: clamp(22px,3vw,32px); margin-bottom: .75rem; }
-    .cta-box p { font-size: 15px; opacity: .85; margin-bottom: 2rem; }
-    .btn-white { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; color: var(--pink); background: #fff; border: none; border-radius: 12px; padding: 13px 28px; cursor: pointer; text-decoration: none; transition: all .2s; }
-    .btn-white:hover { background: #f5e8ed; }
-    footer { border-top: var(--border); padding: 2rem 1.5rem; text-align: center; font-size: 13px; color: var(--text-ter); }
+
+    /* Hero */
+    .hero {
+      padding: 3.5rem 0 4rem;
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--pink-light); color: var(--pink-dark);
+      border: 1px solid var(--pink-border);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 6px 14px; border-radius: 999px;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4.5vw, 3.1rem);
+      font-weight: 500;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 .accent {
+      color: var(--pink);
+      font-style: italic;
+      font-weight: 400;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--text-sec);
+      line-height: 1.7;
+      margin-bottom: 1.75rem;
+      max-width: 32rem;
+    }
+    .hero-btns { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 1.75rem; }
+    .social-proof {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 13px; color: var(--text-sec);
+    }
+    .avatars {
+      display: flex;
+    }
+    .avatars span {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 2px solid var(--card);
+      margin-left: -8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+    }
+    .avatars span:first-child { margin-left: 0; }
+
+    /* Phone mockup */
+    .phone-wrap {
+      display: flex; justify-content: center;
+      perspective: 800px;
+    }
+    .phone {
+      width: min(280px, 100%);
+      background: #1a1a1a;
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow: var(--shadow), 0 40px 80px rgba(0,0,0,0.12);
+      transform: rotateY(-6deg) rotateX(2deg);
+      transition: transform 0.4s ease;
+    }
+    .phone:hover { transform: rotateY(0) rotateX(0); }
+    .phone-screen {
+      background: var(--card);
+      border-radius: 26px;
+      overflow: hidden;
+      min-height: 420px;
+    }
+    .phone-header {
+      padding: 14px 16px 10px;
+      border-bottom: var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .phone-title { font-size: 14px; font-weight: 700; }
+    .phone-meta { font-size: 11px; color: var(--text-ter); margin-top: 2px; }
+    .phone-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.2);
+    }
+    .phone-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; padding: 12px 16px;
+      background: var(--surface);
+    }
+    .phone-stat { text-align: center; }
+    .phone-stat strong { display: block; font-size: 18px; color: var(--pink); }
+    .phone-stat small { font-size: 10px; color: var(--text-ter); }
+    .progress-bar {
+      height: 4px; background: #eee; margin: 0 16px 12px;
+      border-radius: 4px; overflow: hidden;
+    }
+    .progress-bar span {
+      display: block; height: 100%; width: 67%;
+      background: linear-gradient(90deg, var(--pink), var(--green));
+      border-radius: 4px;
+      animation: grow 1.2s ease 0.5s both;
+    }
+    @keyframes grow { from { width: 0; } }
+    .gift-list { padding: 0 12px 16px; }
+    .gift-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; margin-bottom: 8px;
+      background: var(--bg); border-radius: 12px;
+      border: var(--border);
+      font-size: 13px;
+    }
+    .gift-item.done { background: var(--green-light); border-color: #b8e6d4; }
+    .gift-check {
+      width: 22px; height: 22px; border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+    }
+    .gift-item.done .gift-check { background: var(--green); color: #fff; }
+    .gift-item.pending .gift-check { border: 2px solid var(--pink-border); }
+    .gift-info { flex: 1; min-width: 0; }
+    .gift-name { font-weight: 600; }
+    .gift-by { font-size: 11px; color: var(--text-ter); margin-top: 2px; }
+    .gift-btn {
+      font-size: 11px; font-weight: 700;
+      padding: 5px 10px; border-radius: 8px;
+      background: var(--pink); color: #fff;
+      border: none; flex-shrink: 0;
+    }
+
+    /* Trust bar */
+    .trust-bar {
+      border-top: var(--border);
+      border-bottom: var(--border);
+      background: var(--card);
+      padding: 1.25rem 0;
+    }
+    .trust-items {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: 1.5rem 2.5rem;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600; color: var(--text-sec);
+    }
+    .trust-item svg { width: 20px; height: 20px; color: var(--pink); flex-shrink: 0; }
+
+    /* Sections */
+    .section { padding: 4.5rem 0; }
+    .sec-label {
+      font-size: 11px; font-weight: 700;
+      color: var(--pink); letter-spacing: 0.14em;
+      text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+    .sec-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      font-weight: 500;
+      margin-bottom: 2rem;
+    }
+    .sec-title.center { text-align: center; }
+
+    /* Compare */
+    .compare-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    .compare-card {
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      border: var(--border);
+    }
+    .compare-card.before {
+      background: linear-gradient(160deg, #fff5f8, #fff);
+    }
+    .compare-card.after {
+      background: linear-gradient(160deg, var(--green-light), #fff);
+      border-color: #b8e6d4;
+    }
+    .compare-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 700;
+      margin-bottom: 1.25rem;
+      padding: 4px 10px; border-radius: 6px;
+    }
+    .compare-card.before .compare-tag {
+      background: #fde8ef; color: #c42d5a;
+    }
+    .compare-card.after .compare-tag {
+      background: #d4f0e4; color: var(--green);
+    }
+    .compare-list { list-style: none; }
+    .compare-list li {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 14px; color: var(--text-sec);
+      margin-bottom: 0.85rem; line-height: 1.5;
+    }
+    .compare-list li:last-child { margin-bottom: 0; }
+    .compare-icon { font-size: 18px; flex-shrink: 0; line-height: 1.2; }
+
+    /* Categories */
+    .cat-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    }
+    .cat-card {
+      background: var(--card); border: var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 1.25rem; text-align: center;
+      text-decoration: none; color: var(--text);
+      transition: all 0.25s;
+    }
+    .cat-card:hover {
+      border-color: var(--pink-border);
+      box-shadow: var(--shadow);
+      transform: translateY(-4px);
+    }
+    .cat-icon {
+      width: 48px; height: 48px; margin: 0 auto 1rem;
+      border-radius: 14px;
+      background: var(--pink-light);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--pink);
+    }
+    .cat-name { font-size: 15px; font-weight: 700; margin-bottom: 0.35rem; }
+    .cat-desc { font-size: 12px; color: var(--text-ter); line-height: 1.4; }
+
+    /* How */
+    .how-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .how-card {
+      background: var(--card); border: var(--border);
+      border-radius: var(--radius-lg); padding: 2rem 1.5rem;
+      position: relative;
+    }
+    .how-num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--pink); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; margin-bottom: 1rem;
+    }
+    .how-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 0.5rem; }
+    .how-card p { font-size: 14px; color: var(--text-sec); line-height: 1.65; }
+
+    /* Testimonials */
+    .testi-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .testi-card {
+      background: var(--card); border: var(--border);
+      border-radius: var(--radius-lg); padding: 1.5rem;
+    }
+    .stars { color: #e8a838; font-size: 14px; letter-spacing: 2px; margin-bottom: 0.75rem; }
+    .testi-quote {
+      font-size: 14px; color: var(--text-sec);
+      line-height: 1.65; margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+    .testi-author { display: flex; align-items: center; gap: 10px; }
+    .testi-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink-light), var(--pink-border));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: var(--pink-dark);
+    }
+    .testi-name { font-size: 14px; font-weight: 700; }
+    .testi-city { font-size: 12px; color: var(--text-ter); }
+
+    /* FAQ */
+    .faq-list { max-width: 640px; margin: 0 auto; }
+    .faq-item {
+      background: var(--card); border: var(--border);
+      border-radius: 12px; margin-bottom: 10px; overflow: hidden;
+    }
+    .faq-q {
+      width: 100%; text-align: left; padding: 1rem 1.25rem;
+      font-family: inherit; font-size: 15px; font-weight: 700;
+      background: none; border: none; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; color: var(--text);
+    }
+    .faq-q::after {
+      content: '+'; font-size: 20px; font-weight: 400;
+      color: var(--pink); transition: transform 0.2s;
+    }
+    .faq-item.open .faq-q::after { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      font-size: 14px; color: var(--text-sec);
+      line-height: 1.65; padding: 0 1.25rem;
+    }
+    .faq-item.open .faq-a {
+      max-height: 120px;
+      padding: 0 1.25rem 1rem;
+    }
+
+    /* CTA */
+    .cta-box {
+      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
+      border-radius: var(--radius-lg);
+      padding: 3.5rem 2rem;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 20px 50px rgba(153, 53, 86, 0.25);
+    }
+    .cta-box h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      margin-bottom: 0.75rem;
+    }
+    .cta-box p { font-size: 15px; opacity: 0.9; margin-bottom: 1.75rem; }
+    .btn-white {
+      font-family: inherit; font-size: 15px; font-weight: 700;
+      color: var(--pink); background: #fff; border: none;
+      border-radius: 12px; padding: 14px 28px;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s; display: inline-block;
+    }
+    .btn-white:hover { background: #f5e8ed; transform: translateY(-2px); }
+
+    footer {
+      border-top: var(--border);
+      padding: 2rem 1.5rem 2.5rem;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-ter);
+    }
     footer a { color: var(--pink); text-decoration: none; }
-    .bg-c { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
-    .bg-c1 { width: 600px; height: 600px; top: -200px; left: -200px; background: rgba(212,83,126,.04); }
-    .bg-c2 { width: 400px; height: 400px; bottom: -150px; right: -150px; background: rgba(29,158,117,.04); }
-    @media(max-width:700px) {
-      .cat-grid { grid-template-columns: repeat(2,1fr); }
-      .how-grid { grid-template-columns: 1fr; }
-      nav { padding: 0 1rem; }
-      .hero { padding: 3rem 1rem 2rem; }
+    footer a:hover { text-decoration: underline; }
+    .footer-links {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 1rem 1.5rem; margin-bottom: 1rem;
+    }
+    .footer-links a { color: var(--text-sec); font-weight: 600; }
+
+    .bg-c {
+      position: fixed; border-radius: 50%;
+      pointer-events: none; z-index: -1;
+    }
+    .bg-c1 {
+      width: 560px; height: 560px; top: -180px; left: -200px;
+      background: radial-gradient(circle, rgba(212, 83, 126, 0.06), transparent 70%);
+    }
+    .bg-c2 {
+      width: 420px; height: 420px; bottom: 10%; right: -120px;
+      background: radial-gradient(circle, rgba(29, 158, 117, 0.05), transparent 70%);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-btns, .social-proof { justify-content: center; }
+      .phone-wrap { order: -1; }
+      .phone { transform: none; }
+      .compare-grid, .how-grid, .testi-grid { grid-template-columns: 1fr; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .cat-grid { grid-template-columns: 1fr; }
+      nav .btn-ghost { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      html { scroll-behavior: auto; }
+      .hero-icon, .progress-bar span { animation: none; }
     }
   </style>
 </head>
 <body>
-<div class="bg-c bg-c1"></div>
-<div class="bg-c bg-c2"></div>
+  <div class="bg-c bg-c1" aria-hidden="true"></div>
+  <div class="bg-c bg-c2" aria-hidden="true"></div>
 
-<nav>
-  <a class="brand" href="/">göz<span>bebeğim</span>.com</a>
-  <div class="nav-actions">
-    <a class="btn-ghost" href="/login">Giriş yap</a>
-    <a class="btn-primary" href="/signup">Kayıt ol</a>
-  </div>
-</nav>
-
-<section class="hero">
-  <span class="hero-icon">🍼</span>
-  <h1>Çocuğunuzun her özel günü için<br /><span>hediye listesi</span></h1>
-  <p class="hero-sub">Doğum, yaş günü, sünnet ve mezuniyette sevdikleriniz aynı hediyeyi almasın.<br />Listenizi oluşturun, WhatsApp'ta paylaşın.</p>
-  <div class="hero-btns">
-    <a class="btn-big btn-big-pink" href="/signup">Ücretsiz liste oluştur</a>
-    <a class="btn-big btn-big-ghost" href="#nasil">Nasıl çalışır?</a>
-  </div>
-  <div class="pills">
-    <div class="pill">🎁 Çakışan hediye yok</div>
-    <div class="pill">🔒 Gizli liste seçeneği</div>
-    <div class="pill">💬 WhatsApp ile paylaş</div>
-    <div class="pill">👥 Grup hediye</div>
-    <div class="pill">📸 Fotoğraflı anılar</div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="sec-label">Organizasyon tipleri</div>
-  <div class="sec-title">Her özel gün için bir liste</div>
-  <div class="cat-grid">
-    <a class="cat-card" href="/signup">
-      <span class="cat-emoji">👶</span>
-      <div class="cat-name">Doğum</div>
-      <div class="cat-desc">Yeni bebeğiniz için ihtiyaç listesi</div>
-    </a>
-    <a class="cat-card" href="/signup">
-      <span class="cat-emoji">🎂</span>
-      <div class="cat-name">Yaş Günü</div>
-      <div class="cat-desc">Her yıl tekrar eden özel gün</div>
-    </a>
-    <a class="cat-card" href="/signup">
-      <span class="cat-emoji">✂️</span>
-      <div class="cat-name">Sünnet</div>
-      <div class="cat-desc">Minik kahramanın büyük günü</div>
-    </a>
-    <a class="cat-card" href="/signup">
-      <span class="cat-emoji">🎓</span>
-      <div class="cat-name">Mezuniyet</div>
-      <div class="cat-desc">İlkokul ve ortaokul mezuniyeti</div>
-    </a>
-  </div>
-</section>
-
-<section class="section" id="nasil">
-  <div class="sec-label">Basit ve hızlı</div>
-  <div class="sec-title">Nasıl çalışır?</div>
-  <div class="how-grid">
-    <div class="how-card">
-      <div class="how-num">1</div>
-      <h3>Liste oluştur</h3>
-      <p>Organizasyon tipini seç, ihtiyaç listenizi oluşturun. Şablon listeler otomatik gelir, istediğinizi ekleyip çıkarın.</p>
+  <nav class="wrap">
+    <a class="brand" href="/">göz<span>bebeğim</span>.com</a>
+    <div class="nav-actions">
+      <a class="btn-ghost" href="/login">Giriş yap</a>
+      <a class="btn-primary" href="/signup">Kayıt ol</a>
     </div>
-    <div class="how-card">
-      <div class="how-num">2</div>
-      <h3>WhatsApp'ta paylaş</h3>
-      <p>Tek bir link oluşur. Aile ve arkadaşlarınızla paylaşın, herkes neyin alındığını görsün.</p>
+  </nav>
+
+  <header class="hero wrap">
+    <div class="hero-grid">
+      <div class="hero-copy reveal">
+        <div class="hero-badge">🎉 Türkiye'nin ilk çocuk hediye listesi platformu</div>
+        <h1>
+          Aynı hediyeyi<br />
+          <span class="accent">5 kişi almadan</span><br />
+          önce biz buradayız
+        </h1>
+        <p class="hero-sub">
+          Doğum, yaş günü, sünnet ve mezuniyette ihtiyaç listenizi oluşturun,
+          WhatsApp'ta paylaşın. Sevdikleriniz neyin alındığını anlık görsün.
+        </p>
+        <div class="hero-btns">
+          <a class="btn-big btn-big-pink" href="/signup">🍼 Ücretsiz liste oluştur</a>
+          <a class="btn-big btn-big-ghost" href="#nasil">Nasıl çalışır?</a>
+        </div>
+        <div class="social-proof">
+          <div class="avatars" aria-hidden="true">
+            <span>A</span><span>K</span><span>M</span><span>Y</span>
+          </div>
+          <span>Bu hafta <strong>47 aile</strong> liste oluşturdu</span>
+        </div>
+      </div>
+
+      <div class="phone-wrap reveal" aria-label="Örnek hediye listesi önizlemesi">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-header">
+              <div>
+                <div class="phone-title">🍼 Zeynep'in Doğumu</div>
+                <div class="phone-meta">📍 İstanbul · 15 Mart 2026</div>
+              </div>
+              <div class="phone-dot" title="Aktif liste"></div>
+            </div>
+            <div class="phone-stats">
+              <div class="phone-stat"><strong>12</strong><small>Katılan</small></div>
+              <div class="phone-stat"><strong>8</strong><small>Alındı</small></div>
+              <div class="phone-stat"><strong>%67</strong><small>Tamam</small></div>
+            </div>
+            <div class="progress-bar"><span></span></div>
+            <div class="gift-list">
+              <div class="gift-item done">
+                <span class="gift-check">✓</span>
+                <div class="gift-info">
+                  <div class="gift-name">Bebek arabası</div>
+                  <div class="gift-by">Fatma Teyze aldı</div>
+                </div>
+              </div>
+              <div class="gift-item done">
+                <span class="gift-check">✓</span>
+                <div class="gift-info">
+                  <div class="gift-name">Uyku tulumu ×3</div>
+                  <div class="gift-by">Selin K. aldı</div>
+                </div>
+              </div>
+              <div class="gift-item pending">
+                <span class="gift-check"></span>
+                <div class="gift-info">
+                  <div class="gift-name">Mama sandalyesi</div>
+                  <div class="gift-by">Henüz alınmadı</div>
+                </div>
+                <button type="button" class="gift-btn">Al</button>
+              </div>
+              <div class="gift-item pending">
+                <span class="gift-check"></span>
+                <div class="gift-info">
+                  <div class="gift-name">Küvet seti</div>
+                  <div class="gift-by">Henüz alınmadı</div>
+                </div>
+                <button type="button" class="gift-btn">Al</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="how-card">
-      <div class="how-num">3</div>
-      <h3>Çakışma olmaz</h3>
-      <p>Herkes ne alacağını seçer, listede görünür. Aynı hediyeyi iki kişi almaz. Fotoğrafını paylaşabilir.</p>
+  </header>
+
+  <div class="trust-bar">
+    <div class="wrap trust-items">
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Gizli liste seçeneği
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        WhatsApp ile paylaş
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Grup hediye desteği
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Fotoğraflı anılar
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Tamamen ücretsiz
+      </div>
     </div>
   </div>
-</section>
 
-<div class="cta-wrap">
-  <div class="cta-box">
-    <h2>Hemen başlayın, ücretsiz</h2>
-    <p>Dakikalar içinde listenizi oluşturun ve paylaşın.</p>
-    <a class="btn-white" href="/signup">Liste oluştur →</a>
-  </div>
-</div>
+  <section class="section wrap reveal" aria-labelledby="compare-title">
+    <div class="sec-label">Neden gözbebeğim?</div>
+    <h2 class="sec-title center" id="compare-title">Tanıdık bir senaryo</h2>
+    <div class="compare-grid">
+      <div class="compare-card before">
+        <span class="compare-tag">✕ Önceden</span>
+        <ul class="compare-list">
+          <li><span class="compare-icon">😩</span> 5 kişi aynı pike takımını getiriyor</li>
+          <li><span class="compare-icon">📞</span> "Ne alsak?" sorusuyla telefon şarjı bitiyor</li>
+          <li><span class="compare-icon">🤷</span> Gerçekten lazım olan şeyler alınmıyor</li>
+          <li><span class="compare-icon">💸</span> Para çöpe gidiyor, ev yer kaplıyor</li>
+        </ul>
+      </div>
+      <div class="compare-card after">
+        <span class="compare-tag">✓ gözbebeğim ile</span>
+        <ul class="compare-list">
+          <li><span class="compare-icon">🎁</span> Herkes farklı bir hediye alıyor</li>
+          <li><span class="compare-icon">📱</span> WhatsApp'ta link paylaşmak yeterli</li>
+          <li><span class="compare-icon">✔️</span> İhtiyaç listesi eksiksiz tamamlanıyor</li>
+          <li><span class="compare-icon">💝</span> Herkes mutlu, hiçbir şey çakışmıyor</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-<footer>
-  <p style="margin-bottom:.5rem">
-    <a href="/">göz<strong>bebeğim</strong>.com</a>
-    &nbsp;·&nbsp;
-    <a href="mailto:info@gozbebegim.com">info@gozbebegim.com</a>
-  </p>
-  <p>© 2026 gözbebeğim.com</p>
-</footer>
+  <section class="section wrap reveal" aria-labelledby="cat-title">
+    <div class="sec-label">Organizasyon tipleri</div>
+    <h2 class="sec-title" id="cat-title">Her özel gün için bir liste</h2>
+    <div class="cat-grid">
+      <a class="cat-card" href="/signup">
+        <div class="cat-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-1a6 6 0 0 1 12 0v1"/></svg>
+        </div>
+        <div class="cat-name">Doğum</div>
+        <div class="cat-desc">Yeni bebeğiniz için ihtiyaç listesi oluşturun</div>
+      </a>
+      <a class="cat-card" href="/signup">
+        <div class="cat-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M12 3v4M8 5h8"/></svg>
+        </div>
+        <div class="cat-name">Yaş Günü</div>
+        <div class="cat-desc">Her yıl tekrar eden özel günü organize edin</div>
+      </a>
+      <a class="cat-card" href="/signup">
+        <div class="cat-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M9 9l6 6"/></svg>
+        </div>
+        <div class="cat-name">Sünnet</div>
+        <div class="cat-desc">Minik kahramanın büyük günü için liste</div>
+      </a>
+      <a class="cat-card" href="/signup">
+        <div class="cat-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        </div>
+        <div class="cat-name">Mezuniyet</div>
+        <div class="cat-desc">İlkokul ve ortaokul mezuniyeti kutlaması</div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section wrap reveal" id="nasil" aria-labelledby="how-title">
+    <div class="sec-label">Basit ve hızlı</div>
+    <h2 class="sec-title" id="how-title">3 adımda hazır</h2>
+    <div class="how-grid">
+      <article class="how-card">
+        <div class="how-num">1</div>
+        <h3>Liste oluştur</h3>
+        <p>Organizasyon tipini seçin. Şablon ihtiyaç listesi otomatik gelir; istediğinizi ekleyin, çıkarın — dakikalar içinde hazır.</p>
+      </article>
+      <article class="how-card">
+        <div class="how-num">2</div>
+        <h3>WhatsApp'ta paylaş</h3>
+        <p>Tek bir link oluşur. Aile grubuna atın; herkes listeyi görür, neyin alındığını anlık takip eder.</p>
+      </article>
+      <article class="how-card">
+        <div class="how-num">3</div>
+        <h3>Çakışma olmaz</h3>
+        <p>Herkes ne alacağını seçer, listede görünür. Aynı hediyeyi iki kişi almaz; fotoğrafını paylaşarak anı bırakır.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section wrap reveal" aria-labelledby="testi-title">
+    <div class="sec-label">Aileler ne diyor?</div>
+    <h2 class="sec-title center" id="testi-title">Gerçek deneyimler</h2>
+    <div class="testi-grid">
+      <blockquote class="testi-card">
+        <div class="stars" aria-label="5 yıldız">★★★★★</div>
+        <p class="testi-quote">"Geçen doğumumda 4 tane aynı pike geldi. Bu sefer hiç çakışma olmadı, harika bir uygulama!"</p>
+        <footer class="testi-author">
+          <div class="testi-avatar">AK</div>
+          <div>
+            <div class="testi-name">Ayşe K.</div>
+            <div class="testi-city">İstanbul</div>
+          </div>
+        </footer>
+      </blockquote>
+      <blockquote class="testi-card">
+        <div class="stars" aria-label="5 yıldız">★★★★★</div>
+        <p class="testi-quote">"WhatsApp grubuna linki atınca herkes kendi aldığını seçti. Çok pratik ve kullanışlı."</p>
+        <footer class="testi-author">
+          <div class="testi-avatar">MY</div>
+          <div>
+            <div class="testi-name">Murat Y.</div>
+            <div class="testi-city">Ankara</div>
+          </div>
+        </footer>
+      </blockquote>
+      <blockquote class="testi-card">
+        <div class="stars" aria-label="5 yıldız">★★★★★</div>
+        <p class="testi-quote">"Oğlumun sünneti için kullandık. Herkes rahat etti, biz de gerçekten lazım olanları aldık."</p>
+        <footer class="testi-author">
+          <div class="testi-avatar">FT</div>
+          <div>
+            <div class="testi-name">Fatma T.</div>
+            <div class="testi-city">İzmir</div>
+          </div>
+        </footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="section wrap reveal" aria-labelledby="faq-title">
+    <div class="sec-label">Sık sorulanlar</div>
+    <h2 class="sec-title center" id="faq-title">Merak edilenler</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false">Ücretli mi?</button>
+        <div class="faq-a">Hayır. Liste oluşturmak ve paylaşmak tamamen ücretsizdir; kredi kartı gerekmez.</div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false">Misafirler hesap açmak zorunda mı?</button>
+        <div class="faq-a">Hayır. Paylaştığınız link üzerinden liste görülür; misafirler hediye seçebilir.</div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false">Gizli liste nedir?</button>
+        <div class="faq-a">Listeyi yalnızca linki olan kişiler görür; arama motorlarında listelenmez.</div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false">Grup hediye nasıl çalışır?</button>
+        <div class="faq-a">Birden fazla kişi aynı hediyeye katkı payı ekleyebilir; toplam hedefe ulaşınca alınmış sayılır.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap reveal" aria-labelledby="cta-title">
+    <div class="cta-box">
+      <h2 id="cta-title">Hemen başlayın, ücretsiz</h2>
+      <p>Dakikalar içinde listenizi oluşturun ve WhatsApp'ta paylaşın.</p>
+      <a class="btn-white" href="/signup">🍼 Liste oluştur →</a>
+    </div>
+  </section>
+
+  <footer>
+    <nav class="footer-links" aria-label="Alt bilgi">
+      <a href="/">Ana sayfa</a>
+      <a href="/login">Giriş</a>
+      <a href="/signup">Kayıt</a>
+      <a href="mailto:info@gozbebegim.com">İletişim</a>
+    </nav>
+    <p style="margin-bottom: 0.5rem">
+      <a href="/">göz<strong>bebeğim</strong>.com</a>
+      &nbsp;·&nbsp;
+      <a href="mailto:info@gozbebegim.com">info@gozbebegim.com</a>
+    </p>
+    <p>© 2026 gözbebeğim.com — Tüm hakları saklıdır.</p>
+  </footer>
+
+  <script>
+    (function () {
+      var reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+      } else {
+        reveals.forEach(function (el) { el.classList.add('visible'); });
+      }
+
+      document.querySelectorAll('.faq-q').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var item = btn.closest('.faq-item');
+          var open = item.classList.toggle('open');
+          btn.setAttribute('aria-expanded', open);
+          document.querySelectorAll('.faq-item').forEach(function (other) {
+            if (other !== item) {
+              other.classList.remove('open');
+              other.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+            }
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
