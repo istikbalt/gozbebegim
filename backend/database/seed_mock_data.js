@@ -139,7 +139,7 @@ async function seed() {
     // 1. Generate 120 Users
     console.log("👤 Generating 120 realistic users...");
     const users = [];
-    const passwordHash = "$2b$10$EP36L0L4fW59f0fG4eB4OOKgLqK4957e84hFhXG1tHn88K2R2/eF2"; // hash for 'password123'
+    const passwordHash = "password123";
 
     for (let i = 0; i < 120; i++) {
       const isFemale = Math.random() > 0.4;
