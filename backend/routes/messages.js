@@ -107,4 +107,28 @@ router.delete("/:messageId", async (req, res) => {
   }
 });
 
+// POST /api/messages/contact-form - İletişim Formu Mesajı Kaydetme
+router.post("/contact-form", async (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ success: false, error: "Lütfen adınızı, e-posta adresinizi ve mesajınızı doldurun." });
+  }
+
+  try {
+    await pool.query(
+      "INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)",
+      [name, email, subject || null, message]
+    );
+
+    res.json({
+      success: true,
+      message: "Mesajınız başarıyla alınmıştır! En kısa sürede sizinle iletişime geçeceğiz. 🌸"
+    });
+  } catch (error) {
+    console.error("Save contact message error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası oluştu. Mesajınız gönderilemedi." });
+  }
+});
+
 module.exports = router;

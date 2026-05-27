@@ -179,6 +179,112 @@
   `;
   document.head.appendChild(style);
 
+  // Inject additional styles for the Contact Modal
+  const styleContact = document.createElement('style');
+  styleContact.textContent = `
+    .contact-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(40, 20, 30, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 999998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .contact-modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .contact-modal-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 40px rgba(212, 83, 126, 0.08);
+      border: 1px solid rgba(244, 192, 209, 0.4);
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.3s ease;
+      position: relative;
+      text-align: left;
+    }
+    .contact-modal-overlay.open .contact-modal-card {
+      transform: scale(1) translateY(0);
+    }
+    .contact-close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #999;
+      cursor: pointer;
+      line-height: 1;
+      outline: none;
+    }
+    .contact-close-btn:hover {
+      color: #333;
+    }
+    .contact-form-group {
+      margin-bottom: 12px;
+    }
+    .contact-form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .contact-form-group input, .contact-form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 0.5px solid #e8e0e4;
+      border-radius: 8px;
+      font-size: 13.5px;
+      outline: none;
+      background: #fafafa;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .contact-form-group input:focus, .contact-form-group textarea:focus {
+      border-color: #D4537E;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(212, 83, 126, 0.05);
+    }
+    .contact-submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #D4537E 0%, #B83A64 100%);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(212, 83, 126, 0.25);
+      transition: all 0.2s;
+      outline: none;
+    }
+    .contact-submit-btn:hover {
+      background: linear-gradient(135deg, #B83A64 0%, #992F53 100%);
+      transform: translateY(-1px);
+    }
+    .contact-submit-btn:disabled {
+      background: #ccc;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+  `;
+  document.head.appendChild(styleContact);
+
   // 2. Setup DOM Elements for Alert Box
   let overlay, card, iconWrapper, titleEl, messageEl, btnEl;
 
@@ -257,7 +363,133 @@
     }
   }
 
-  // 3. Override window.alert
+  // 3. Setup DOM Elements for Contact Modal
+  let contactOverlay;
+
+  function createContactDOM() {
+    if (document.getElementById('contactModalOverlay')) return;
+
+    contactOverlay = document.createElement('div');
+    contactOverlay.className = 'contact-modal-overlay';
+    contactOverlay.id = 'contactModalOverlay';
+
+    contactOverlay.innerHTML = `
+      <div class="contact-modal-card">
+        <button class="contact-close-btn" id="contactCloseBtn">✕</button>
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; margin-bottom: 0.5rem; color: #1a1a1a;">📬 İletişim Formu</h3>
+        <p style="font-size: 12.5px; color: #666; margin-bottom: 1.25rem; line-height: 1.5;">Bizimle iletişime geçmek, görüşlerinizi iletmek veya teknik destek almak için formu doldurabilirsiniz. 🌸</p>
+        
+        <div id="contactFormError" style="display: none; background: #FDF2F2; border: 1px solid #FDE8E8; color: #E24B4A; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px;"></div>
+
+        <form id="contactFormSubmit">
+          <div class="contact-form-group">
+            <label>Adınız Soyadınız</label>
+            <input type="text" id="contactName" required placeholder="Örn: Ayşe Demir" />
+          </div>
+          <div class="contact-form-group">
+            <label>E-posta Adresiniz</label>
+            <input type="email" id="contactEmail" required placeholder="ayse@demir.com" />
+          </div>
+          <div class="contact-form-group">
+            <label>Konu</label>
+            <input type="text" id="contactSubject" placeholder="Örn: Teknik Destek / Öneri" />
+          </div>
+          <div class="contact-form-group" style="margin-bottom: 1.25rem;">
+            <label>Mesajınız</label>
+            <textarea id="contactMessage" required placeholder="Mesajınızı buraya yazın..." style="min-height: 90px; resize: vertical;"></textarea>
+          </div>
+          <button type="submit" id="btnSendContact" class="contact-submit-btn">Gönder</button>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(contactOverlay);
+
+    // Event listeners
+    document.getElementById('contactCloseBtn').addEventListener('click', closeContactModal);
+    
+    // Close on overlay backdrop click
+    contactOverlay.addEventListener('click', function(e) {
+      if (e.target === contactOverlay) {
+        closeContactModal();
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && contactOverlay.classList.contains('open')) {
+        closeContactModal();
+      }
+    });
+
+    // Handle Form Submit
+    document.getElementById('contactFormSubmit').addEventListener('submit', handleContactFormSubmit);
+  }
+
+  function openContactModal() {
+    createContactDOM();
+    document.getElementById('contactFormError').style.display = 'none';
+    
+    // Pre-fill user data if logged in
+    const cachedUser = localStorage.getItem('user');
+    if (cachedUser) {
+      try {
+        const u = JSON.parse(cachedUser);
+        document.getElementById('contactName').value = `${u.first_name || ''} ${u.last_name || ''}`.trim();
+        document.getElementById('contactEmail').value = u.email || '';
+      } catch (err) {}
+    }
+
+    contactOverlay.classList.add('open');
+  }
+
+  function closeContactModal() {
+    if (contactOverlay) {
+      contactOverlay.classList.remove('open');
+      document.getElementById('contactFormSubmit').reset();
+    }
+  }
+
+  function handleContactFormSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const subject = document.getElementById('contactSubject').value.trim();
+    const message = document.getElementById('contactMessage').value.trim();
+    const errBox = document.getElementById('contactFormError');
+    const submitBtn = document.getElementById('btnSendContact');
+
+    errBox.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Gönderiliyor...';
+
+    fetch('/api/messages/contact-form', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, subject, message })
+    })
+    .then(res => res.json())
+    .then(data => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Gönder';
+      if (data.success) {
+        closeContactModal();
+        alert("Mesajınız başarıyla iletilmiştir! 🌸\nEn kısa sürede e-posta adresiniz üzerinden geri dönüş sağlayacağız.");
+      } else {
+        errBox.textContent = data.error || 'Mesaj gönderilirken bir hata oluştu.';
+        errBox.style.display = 'block';
+      }
+    })
+    .catch(err => {
+      console.error("Submit contact error:", err);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Gönder';
+      errBox.textContent = 'Bağlantı hatası oluştu.';
+      errBox.style.display = 'block';
+    });
+  }
+
+  // 4. Override window.alert
   window.alert = function(message) {
     createAlertDOM();
 
@@ -308,7 +540,20 @@
     });
   };
 
-  // 4. DomContentLoaded check
+  // 5. Global click listener to hijack mailto:info@gozbebegim.com links
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('a[href^="mailto:info@gozbebegim.com"]');
+    if (link) {
+      e.preventDefault();
+      openContactModal();
+    }
+  });
+
+  // Expose methods
+  window.openContactModal = openContactModal;
+  window.closeContactModal = closeContactModal;
+
+  // 6. DomContentLoaded check
   if (document.body) {
     createAlertDOM();
   } else {
