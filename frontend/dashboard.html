@@ -192,7 +192,7 @@
     <span id="tabChest" onclick="switchDashboardTab('chest')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: none; align-items: center; gap: 6px;">🪙 Takı Sandığı</span>
     <span id="tabAi" onclick="switchDashboardTab('ai')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">🤖 AI Hediye Asistanı</span>
     <span id="tabCircles" onclick="switchDashboardTab('circles')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">👥 Aile Çemberim</span>
-    <span id="tabCatcher" onclick="switchDashboardTab('catcher')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">🎯 Müşteri Bulucu</span>
+    <span id="tabCatcher" onclick="switchDashboardTab('catcher')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: none; align-items: center; gap: 6px;">🎯 Müşteri Bulucu</span>
   </div>
 
   <!-- 1. Listelerim Bölümü -->
@@ -403,6 +403,14 @@
   const user = JSON.parse(userData);
 
   document.getElementById("welcomeTitle").textContent = `Hoş geldin, ${user.first_name}! 👋`;
+
+  // Sadece sayfa sahibi (4168389066) için Müşteri Bulucu tabını aktif et
+  const isAdmin = (user.phone_number === "4168389066" || (user.email && user.email.includes("4168389066")));
+  if (isAdmin) {
+    document.getElementById("tabCatcher").style.display = "flex";
+  } else {
+    document.getElementById("tabCatcher").style.display = "none";
+  }
 
   let activeDashboardTab = "lists";
   let myOrganizations = [];
