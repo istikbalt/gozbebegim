@@ -192,6 +192,7 @@
     <span id="tabChest" onclick="switchDashboardTab('chest')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: none; align-items: center; gap: 6px;">🪙 Takı Sandığı</span>
     <span id="tabAi" onclick="switchDashboardTab('ai')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">🤖 AI Hediye Asistanı</span>
     <span id="tabCircles" onclick="switchDashboardTab('circles')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">👥 Aile Çemberim</span>
+    <span id="tabCatcher" onclick="switchDashboardTab('catcher')" style="font-weight: 600; font-size: 14px; color: var(--text-sec); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">🎯 Müşteri Bulucu</span>
   </div>
 
   <!-- 1. Listelerim Bölümü -->
@@ -360,6 +361,35 @@
     <div id="circleCalendarBox" style="display: none; background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 10px;">
       <h3 style="font-size: 14px; font-weight: 700; color: var(--text); border-bottom: var(--border); padding-bottom: 8px;" id="circleCalendarTitle">📅 Aile Ortak Etkinlik Takvimi</h3>
       <div id="circleEventsContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </div>
+  </div>
+
+  <!-- 5. Müşteri Bulucu (Sosyal Dinleme) Bölümü -->
+  <div id="sectionCatcher" style="display: none; flex-direction: column; gap: 1.25rem; text-align: left;">
+    <div style="background: var(--card-bg); border: var(--border); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.01); display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: var(--border); padding-bottom: 10px; margin-bottom: 5px;">
+        <div>
+          <h2 style="font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 500; color: var(--text);">🎯 Müşteri Bulucu (Sosyal Dinleme)</h2>
+          <p style="font-size: 11.5px; color: var(--text-sec); margin-top: 4px;">Türkiye genelinde hediye listesi ve tavsiye arayan sıcak potansiyel müşterileri anlık yakalayın.</p>
+        </div>
+        <button onclick="loadSocialLeads()" style="background: var(--pink); color: white; border: none; padding: 10px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;" id="btnScanLeads">
+          <span>🔍 Mecraları Tara</span>
+        </button>
+      </div>
+
+      <div id="leadsLoadingBox" style="display: none; text-align: center; padding: 30px 10px; color: var(--text-sec);">
+        <div style="width: 40px; height: 40px; border: 3px solid var(--pink-light); border-top-color: var(--pink); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px auto;"></div>
+        <p style="font-size: 13px; font-weight: 600;">Sosyal forumlar, bloglar ve soru-cevap siteleri taranıyor...</p>
+      </div>
+
+      <div id="leadsContainer" style="display: flex; flex-direction: column; gap: 15px; margin-top: 5px;">
+        <div style="text-align: center; color: var(--text-sec); font-size: 13px; padding: 30px; border: 1px dashed var(--pink-border); border-radius: 12px; background: #fffbfb;">
+          <p style="font-size: 26px; margin-bottom: 8px;">🎯</p>
+          <p style="font-weight: 600; color: var(--pink-dark); margin-bottom: 4px;">Henüz Arama Yapılmadı</p>
+          <p style="font-size: 11.5px; max-width: 320px; margin: 0 auto 15px auto;">Müşteri Bulucu'yu çalıştırmak ve hediye listesi arayan Türk anne & aile forumlarını sorgulamak için yukarıdaki butona tıklayın.</p>
+          <button onclick="loadSocialLeads()" style="background: none; border: 1px solid var(--pink); color: var(--pink); padding: 8px 16px; border-radius: 20px; font-size: 12.5px; font-weight: 700; cursor: pointer;">Şimdi Tara</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -582,6 +612,7 @@
     document.getElementById("sectionChest").style.display = tab === "chest" ? "flex" : "none";
     document.getElementById("sectionAi").style.display = tab === "ai" ? "flex" : "none";
     document.getElementById("sectionCircles").style.display = tab === "circles" ? "flex" : "none";
+    document.getElementById("sectionCatcher").style.display = tab === "catcher" ? "flex" : "none";
 
     if (tab === "chest") {
       loadChestDetails();
@@ -589,6 +620,8 @@
       populateOrgDropdown("aiOrgSelect");
     } else if (tab === "circles") {
       loadCircles();
+    } else if (tab === "catcher") {
+      // Do not auto-load so they can explicitly click "Tara" or we can trigger it
     }
   }
 
@@ -1028,6 +1061,99 @@
   function logout() {
     localStorage.removeItem("user");
     window.location.href = "/";
+  }
+
+  function loadSocialLeads() {
+    const container = document.getElementById("leadsContainer");
+    const loadingBox = document.getElementById("leadsLoadingBox");
+    const btn = document.getElementById("btnScanLeads");
+
+    container.style.display = "none";
+    loadingBox.style.display = "block";
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+    btn.innerHTML = "<span>⏳ Taranıyor...</span>";
+
+    fetch("/api/ai/social-catcher")
+      .then(res => res.json())
+      .then(data => {
+        container.style.display = "flex";
+        loadingBox.style.display = "none";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.innerHTML = "<span>🔍 Yeniden Tara</span>";
+
+        if (data.success && data.leads && data.leads.length > 0) {
+          container.innerHTML = "";
+
+          data.leads.forEach(lead => {
+            const card = document.createElement("div");
+            card.style.background = "#fffbfb";
+            card.style.border = "1px solid var(--pink-border)";
+            card.style.borderRadius = "12px";
+            card.style.padding = "1.25rem";
+            card.style.display = "flex";
+            card.style.flexDirection = "column";
+            card.style.gap = "10px";
+            card.style.textAlign = "left";
+            card.style.boxShadow = "0 2px 8px rgba(212, 83, 126, 0.02)";
+
+            // Format source badge color
+            const isForum = /kadinlar|kizlar|sozluk|forum|donanim/i.test(lead.source) || /kadinlar|kizlar|sozluk|forum/i.test(lead.title);
+            const badgeBg = isForum ? "var(--pink-light)" : "#EFF6FF";
+            const badgeColor = isForum ? "var(--pink-dark)" : "#1E40AF";
+            const badgeLabel = lead.source || "Sosyal Forum";
+
+            // Safe ID for textarea
+            const safeId = "replyText_" + lead.link.replace(/[^a-zA-Z0-9]/g, '');
+
+            card.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid rgba(212,83,126,0.1); padding-bottom: 8px;">
+                <span style="font-size: 11px; background: ${badgeBg}; color: ${badgeColor}; padding: 3px 10px; border-radius: 12px; font-weight: 700; font-family: 'Courier New', monospace;">🌐 ${badgeLabel}</span>
+                <span style="font-size: 11.5px; color: var(--text-sec); font-weight: 600;">📅 ${lead.pubDate}</span>
+              </div>
+              <div>
+                <a href="${lead.link}" target="_blank" style="font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: var(--text); text-decoration: none; display: block; line-height: 1.4; transition: color 0.2s;" onmouseover="this.style.color='var(--pink)'" onmouseout="this.style.color='var(--text)'">
+                  📢 ${lead.title}
+                </a>
+              </div>
+              <div style="background: #ffffff; border: 1px solid rgba(212,83,126,0.15); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+                <div style="font-size: 11px; font-weight: 700; color: #1D9E75; display: flex; align-items: center; gap: 4px;">
+                  ✨ ÖNERİLEN ORGANİK YANIT:
+                </div>
+                <textarea readonly style="width: 100%; border: none; background: none; font-family: inherit; font-size: 12.5px; color: #444; resize: none; min-height: 50px; outline: none; line-height: 1.4; cursor: text;" id="${safeId}">${lead.suggestedReply}</textarea>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; border-top: 0.5px solid #f0f0f0; padding-top: 6px;">
+                  <a href="${lead.link}" target="_blank" style="font-size: 11.5px; color: var(--pink); font-weight: 700; text-decoration: none;">💬 Konuya Git & Cevap Yaz</a>
+                  <button onclick="copyReplyText('${safeId}')" style="background: #1D9E75; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; transition: background 0.2s;">📋 Kopyala</button>
+                </div>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = `
+            <div style="text-align: center; color: var(--text-sec); font-size: 12.5px; padding: 30px;">
+              Şu anda taranan kriterlere uygun aktif bir konuşma bulunamadı. Lütfen daha sonra tekrar deneyin.
+            </div>
+          `;
+        }
+      })
+      .catch(err => {
+        console.error("Fetch social catcher error:", err);
+        container.style.display = "flex";
+        loadingBox.style.display = "none";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.innerHTML = "<span>🔍 Yeniden Tara</span>";
+        container.innerHTML = `<div style="text-align: center; color: #E24B4A; font-size: 12.5px; padding: 20px; font-weight: 600;">Sosyal aramalar yapılırken bir hata oluştu.</div>`;
+      });
+  }
+
+  function copyReplyText(areaId) {
+    const textarea = document.getElementById(areaId);
+    textarea.select();
+    document.execCommand("copy");
+    alert("Önerilen hazır yanıt kopyalandı! 📋✨\nKonuya gidip doğrudan yapıştırarak yanıtlayabilirsiniz.");
   }
 </script>
   <script src="/js/alerts.js"></script>

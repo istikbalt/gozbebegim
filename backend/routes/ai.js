@@ -153,4 +153,81 @@ router.post("/suggest", async (req, res) => {
   });
 });
 
+// GET /api/ai/social-catcher - Sosyal Mecralardan Potansiyel Müşteri Konuşmalarını Çek
+router.get("/social-catcher", async (req, res) => {
+  const queries = [
+    "bebek hediye listesi",
+    "baby shower hediye",
+    "sünnet hazırlıkları",
+    "doğum günü hediye listesi"
+  ];
+
+  try {
+    const allItems = [];
+    const seenLinks = new Set();
+
+    // Google News RSS serves Turkish news, forum posts, blogs, Q&As perfectly
+    for (const q of queries) {
+      const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=tr&gl=TR&ceid=TR:tr`;
+      const response = await fetch(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+        }
+      });
+      if (!response.ok) continue;
+
+      const xml = await response.text();
+      const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+      let match;
+
+      while ((match = itemRegex.exec(xml)) !== null) {
+        const itemContent = match[1];
+        const title = (itemContent.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '';
+        let link = (itemContent.match(/<link>([\s\S]*?)<\/link>/) || [])[1] || '';
+        const pubDate = (itemContent.match(/<pubDate>([\s\S]*?)<\/pubDate>/) || [])[1] || '';
+        const source = (itemContent.match(/<source[^>]*>([\s\S]*?)<\/source>/) || [])[1] || 'Sosyal Medya';
+
+        const cleanTitle = title.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<\/?[^>]+(>|$)/g, "").trim();
+        const cleanLink = link.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim();
+
+        if (cleanLink && !seenLinks.has(cleanLink)) {
+          seenLinks.add(cleanLink);
+
+          // Generate customized reply template based on title content
+          let suggestedReply = "Merhabalar! Özel günleriniz için gozbebegim.com üzerinden tamamen ücretsiz, şık ve dinamik bir hediye ihtiyaç listesi oluşturup sevdiklerinizle paylaşarak mükemmel bir koordinasyon sağlayabilirsiniz. Şimdiden tebrik ederiz! 🎁👶";
+          const lowerTitle = cleanTitle.toLowerCase();
+
+          if (lowerTitle.includes("baby shower") || lowerTitle.includes("shower")) {
+            suggestedReply = "Harika bir Baby Shower partisi hazırlığı! gozbebegim.com üzerinden tamamen ücretsiz bir Baby Shower ihtiyaç listesi oluşturarak davetlilerinizle paylaşabilirsiniz. Böylece aynı hediyeden birden fazla alınmasını önlemiş olursunuz! 👶💖🎉";
+          } else if (lowerTitle.includes("sünnet")) {
+            suggestedReply = "Sünnet düğünü hazırlıklarınızda tebrik ederiz! gozbebegim.com üzerinden ücretsiz hediye ihtiyaç listesi ve kolay altın/takı köşesi oluşturarak sevdiklerinizin hediyeleşmesini çok daha kolay koordine edebilirsiniz! 🪙✨";
+          } else if (lowerTitle.includes("doğum günü") || lowerTitle.includes("yaş günü") || lowerTitle.includes("yas günü")) {
+            suggestedReply = "Mutlu yıllar dileriz! Çocuğunuzun yeni yaşı için gozbebegim.com üzerinden ücretsiz bir doğum günü ihtiyaç listesi oluşturarak yakınlarınızla paylaşabilir ve tam istediğiniz hediyelerin alınmasını koordine edebilirsiniz! 🎂🎁";
+          } else if (lowerTitle.includes("mezuniyet")) {
+            suggestedReply = "Tebrikler! Mezuniyet kutlamasında ihtiyaç duyulan hediyeler ve hatıralar için gozbebegim.com üzerinden tamamen ücretsiz hediye ihtiyaç listesi oluşturarak koordinasyon sağlayabilirsiniz! 🎓🌟";
+          }
+
+          allItems.push({
+            title: cleanTitle,
+            link: cleanLink,
+            pubDate: pubDate ? new Date(pubDate).toLocaleDateString("tr-TR") : new Date().toLocaleDateString("tr-TR"),
+            source: source,
+            suggestedReply: suggestedReply
+          });
+        }
+      }
+    }
+
+    const sortedItems = allItems.slice(0, 10);
+
+    res.json({
+      success: true,
+      leads: sortedItems
+    });
+  } catch (error) {
+    console.error("Social catcher error:", error);
+    res.status(500).json({ success: false, error: "Sosyal dinleme sistemi çalıştırılamadı." });
+  }
+});
+
 module.exports = router;
