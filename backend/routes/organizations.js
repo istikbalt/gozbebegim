@@ -2,81 +2,227 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../database/db");
 
-// Yaşa Göre Dinamik Şablon Seçim Fonksiyonu
-function getTemplatesForEvent(type, age, ageMilestone) {
+// Yaş, Cinsiyet ve Kategoriye Göre Akıllı Dinamik Şablon Seçim Fonksiyonu
+function getTemplatesForEvent(type, age, ageMilestone, gender) {
   const eventAge = Number(ageMilestone || age || 0);
+  const childGender = String(gender || "Bilinmiyor").trim();
 
-  if (type === "Yaş Günü") {
-    if (eventAge < 3) {
+  // 1. DOĞUM (Yenidoğan İhtiyaçları)
+  if (type === "Doğum") {
+    if (childGender === "Kız") {
       return [
-        { name: "Bebek aktivite masası", category: "Eğitim", is_group: 0 },
-        { name: "Peluş uyku oyuncağı", category: "Oyuncak", is_group: 0 },
-        { name: "Mama sandalyesi", category: "Beslenme", is_group: 1, group_target: 3 },
-        { name: "İlk yaşım anı albümü", category: "Anı", is_group: 0 },
-        { name: "Bebek giysi seti", category: "Kıyafet", is_group: 0 }
+        { name: "Kız bebek giysi seti (Pembe/Ekru)", category: "Kıyafet", is_group: 0 },
+        { name: "Pembe organik bebek battaniyesi", category: "Uyku", is_group: 0 },
+        { name: "Kız bebek saç bandı ve patiği seti", category: "Kıyafet", is_group: 0 },
+        { name: "Peluş tavşan uyku arkadaşı", category: "Oyuncak", is_group: 0 },
+        { name: "Kız bebek şampuan & bakım seti", category: "Banyo", is_group: 0 },
+        { name: "Bebek arabası (Travel sistem)", category: "Ulaşım", is_group: 1, group_target: 3 },
+        { name: "Mama sandalyesi", category: "Beslenme", is_group: 1, group_target: 2 },
+        { name: "Bebek telsizi & monitörü", category: "Güvenlik", is_group: 0 },
+        { name: "Altın takısı (Çeyrek Altın)", category: "Takı & Altın", is_group: 0 }
       ];
-    } else if (eventAge >= 3 && eventAge < 7) {
+    } else if (childGender === "Erkek") {
       return [
-        { name: "Scooter (3 Tekerlekli)", category: "Spor/Aktivite", is_group: 0 },
-        { name: "Lego Duplo büyük set", category: "Oyuncak", is_group: 0 },
-        { name: "Akülü Araba", category: "Oyuncak", is_group: 1, group_target: 4 },
-        { name: "Resimli hikaye kitapları", category: "Eğitim", is_group: 0 },
-        { name: "Oyun çadırı", category: "Oyuncak", is_group: 0 }
+        { name: "Erkek bebek giysi seti (Mavi/Ekru)", category: "Kıyafet", is_group: 0 },
+        { name: "Mavi organik bebek battaniyesi", category: "Uyku", is_group: 0 },
+        { name: "Erkek bebek papyonlu tulum ve patiği seti", category: "Kıyafet", is_group: 0 },
+        { name: "Peluş ayı uyku arkadaşı", category: "Oyuncak", is_group: 0 },
+        { name: "Erkek bebek şampuan & bakım seti", category: "Banyo", is_group: 0 },
+        { name: "Bebek arabası (Travel sistem)", category: "Ulaşım", is_group: 1, group_target: 3 },
+        { name: "Mama sandalyesi", category: "Beslenme", is_group: 1, group_target: 2 },
+        { name: "Bebek telsizi & monitörü", category: "Güvenlik", is_group: 0 },
+        { name: "Altın takısı (Çeyrek Altın)", category: "Takı & Altın", is_group: 0 }
       ];
-    } else { // 7 yaş ve üzeri (Kız/Erkek büyük çocuk)
+    } else {
       return [
-        { name: "Bisiklet (20 Jant)", category: "Spor/Aktivite", is_group: 1, group_target: 2 },
-        { name: "Lego Technic / Creator Seti", category: "Oyuncak", is_group: 0 },
-        { name: "Çocuk Akıllı Saat", category: "Teknoloji", is_group: 1, group_target: 3 },
-        { name: "Eğitici kutu oyunları (Monopoly)", category: "Oyuncak", is_group: 0 },
-        { name: "Okul sırt çantası (Ergonomik)", category: "Eğitim", is_group: 0 },
-        { name: "Genç kitap serisi (10 Kitap)", category: "Eğitim", is_group: 0 }
+        { name: "Unisex pamuklu bebek giysi seti", category: "Kıyafet", is_group: 0 },
+        { name: "Unisex soft organik bebek battaniyesi", category: "Uyku", is_group: 0 },
+        { name: "Eğitici oyun halısı (Baby play gym)", category: "Oyuncak", is_group: 0 },
+        { name: "Bebek bakım sırt çantası", category: "Diğer", is_group: 0 },
+        { name: "Bebek arabası (Travel sistem)", category: "Ulaşım", is_group: 1, group_target: 3 },
+        { name: "Mama sandalyesi", category: "Beslenme", is_group: 1, group_target: 2 },
+        { name: "Bebek telsizi & monitörü", category: "Güvenlik", is_group: 0 },
+        { name: "Altın takısı (Çeyrek Altın)", category: "Takı & Altın", is_group: 0 }
       ];
     }
   }
 
+  // 2. SÜNNET (Geleneksel ve Yaşa Uygun Hediyeler)
   if (type === "Sünnet") {
     if (eventAge < 5) {
       return [
-        { name: "Sünnet kıyafeti seti", category: "Kıyafet", is_group: 0 },
-        { name: "Altın takısı (Çeyrek)", category: "Para/Değerli", is_group: 0 },
-        { name: "Uzaktan kumandalı küçük araba", category: "Oyuncak", is_group: 0 },
-        { name: "Nakit takı havuzu", category: "Para", is_group: 0 }
+        { name: "Sünnet kıyafeti ve şapkası seti", category: "Kıyafet", is_group: 0 },
+        { name: "Uzaktan kumandalı drifter araba", category: "Oyuncak", is_group: 0 },
+        { name: "Lego Duplo büyük set", category: "Oyuncak", is_group: 0 },
+        { name: "Çocuk Akıllı Saat (Mavi)", category: "Teknoloji", is_group: 1, group_target: 2 },
+        { name: "Altın takısı (Çeyrek Altın)", category: "Takı & Altın", is_group: 0 },
+        { name: "Nakit takı havuzu (EFT)", category: "Takı & Altın", is_group: 0 }
       ];
-    } else { // 5 yaş ve üzeri
+    } else {
       return [
-        { name: "Sünnet kıyafeti seti", category: "Kıyafet", is_group: 0 },
-        { name: "Altın takısı (Çeyrek)", category: "Para/Değerli", is_group: 0 },
-        { name: "Bisiklet (20 Jant)", category: "Spor/Aktivite", is_group: 1, group_target: 3 },
-        { name: "Tablet Katkı Havuzu", category: "Teknoloji", is_group: 1, group_target: 4 },
-        { name: "Lego Harry Potter / Ninjago Seti", category: "Oyuncak", is_group: 0 }
+        { name: "Sünnet kıyafeti ve pelerini seti", category: "Kıyafet", is_group: 0 },
+        { name: "Bisiklet (20 Jant - Dağ Tipi)", category: "Spor/Aktivite", is_group: 1, group_target: 3 },
+        { name: "Lego Ninjago büyük set", category: "Oyuncak", is_group: 0 },
+        { name: "Çocuk Akıllı Saat (Mavi)", category: "Teknoloji", is_group: 1, group_target: 2 },
+        { name: "PlayStation 5 Katkı Havuzu", category: "Teknoloji", is_group: 1, group_target: 5 },
+        { name: "Altın takısı (Çeyrek Altın)", category: "Takı & Altın", is_group: 0 }
       ];
     }
   }
 
-  if (type === "Doğum") {
-    return [
-      { name: "Bebek arabası", category: "Ulaşım", is_group: 0 },
-      { name: "Uyku tulumu x3", category: "Kıyafet", is_group: 0 },
-      { name: "Küvet seti", category: "Banyo", is_group: 0 },
-      { name: "Pike takımı", category: "Uyku", is_group: 0 },
-      { name: "Oyuncak seti", category: "Oyuncak", is_group: 0 },
-      { name: "Giysi seti", category: "Kıyafet", is_group: 0 },
-      { name: "500₺ para hediyesi", category: "Para", is_group: 0 },
-      { name: "Mama sandalyesi", category: "Beslenme", is_group: 1, group_target: 3 },
-      { name: "Emzik seti", category: "Beslenme", is_group: 0 },
-      { name: "Bebek monitörü", category: "Güvenlik", is_group: 0 },
-      { name: "Banyo seti", category: "Banyo", is_group: 0 }
-    ];
+  // 3. MEZUNİYET (Yaşa Göre Eğitim ve Başarı Hediyeleri)
+  if (type === "Mezuniyet") {
+    if (eventAge <= 10) { // İlkokul mezuniyeti
+      if (childGender === "Kız") {
+        return [
+          { name: "Sevimli mezuniyet elbisesi (Kız)", category: "Kıyafet", is_group: 0 },
+          { name: "Instax Mini anlık kamera (Pembe)", category: "Teknoloji", is_group: 1, group_target: 2 },
+          { name: "Çocuk Akıllı Saat (Pembe)", category: "Teknoloji", is_group: 1, group_target: 2 },
+          { name: "Eğitici kutu oyunları (Monopoly/Tabu)", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Genç kitap serisi (10 Kitap)", category: "Eğitim/Kitap", is_group: 0 }
+        ];
+      } else {
+        return [
+          { name: "Şık mezuniyet takımı (Erkek)", category: "Kıyafet", is_group: 0 },
+          { name: "Mikroskop seti (Eğitici/Işıklı)", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Çocuk Akıllı Saat (Mavi)", category: "Teknoloji", is_group: 1, group_target: 2 },
+          { name: "Lego Creator 3'ü 1 arada set", category: "Oyuncak", is_group: 0 },
+          { name: "Macera kitapları serisi (10 Kitap)", category: "Eğitim/Kitap", is_group: 0 }
+        ];
+      }
+    } else if (eventAge > 10 && eventAge <= 14) { // Ortaokul mezuniyeti
+      return [
+        { name: "Kablosuz bluetooth kulak üstü kulaklık", category: "Teknoloji", is_group: 0 },
+        { name: "Akıllı bileklik / spor takip saati", category: "Teknoloji", is_group: 0 },
+        { name: "Ergonomik okul sırt çantası", category: "Eğitim/Kitap", is_group: 0 },
+        { name: "Dünya Klasikleri serisi (15 Kitap)", category: "Eğitim/Kitap", is_group: 0 },
+        { name: "Teleskop başlangıç seti", category: "Eğitim/Kitap", is_group: 1, group_target: 2 }
+      ];
+    } else { // Lise ve üzeri mezuniyet
+      return [
+        { name: "Kablosuz gürültü engelleyici kulaklık", category: "Teknoloji", is_group: 1, group_target: 2 },
+        { name: "E-kitap okuyucu (Kindle Touch)", category: "Teknoloji", is_group: 1, group_target: 3 },
+        { name: "Üniversite hazırlık kitapları seti", category: "Eğitim/Kitap", is_group: 0 },
+        { name: "Taşınabilir bluetooth hoparlör", category: "Teknoloji", is_group: 0 },
+        { name: "Şık mezuniyet deri sırt çantası", category: "Kıyafet", is_group: 0 }
+      ];
+    }
   }
 
-  if (type === "Mezuniyet") {
-    return [
-      { name: "Çocuk Akıllı Saat", category: "Teknoloji", is_group: 1, group_target: 3 },
-      { name: "Okul sırt çantası (Ergonomik)", category: "Eğitim", is_group: 0 },
-      { name: "Dünya Klasikleri serisi", category: "Eğitim", is_group: 0 },
-      { name: "Mikroskop seti (Eğitici)", category: "Eğitim", is_group: 0 }
-    ];
+  // 4. YAŞ GÜNÜ (En Detaylı Bölüm: Cinsiyet ve Yaş Dilimleri)
+  if (type === "Yaş Günü") {
+    // 4a. BEBEK (0-2 yaş)
+    if (eventAge <= 2) {
+      if (childGender === "Kız") {
+        return [
+          { name: "İlk adım pembe ayakkabısı", category: "Kıyafet", is_group: 0 },
+          { name: "Konuşan peluş pembe tavşan", category: "Oyuncak", is_group: 0 },
+          { name: "Bebek aktivite masası (Pembe)", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Mama sandalyesi", category: "Beslenme", is_group: 1, group_target: 2 },
+          { name: "Kız bebek pamuklu doğum günü elbisesi", category: "Kıyafet", is_group: 0 }
+        ];
+      } else if (childGender === "Erkek") {
+        return [
+          { name: "İlk adım mavi ayakkabısı", category: "Kıyafet", is_group: 0 },
+          { name: "Konuşan eğitici köpekçik", category: "Oyuncak", is_group: 0 },
+          { name: "Bebek aktivite masası (Mavi)", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Mama sandalyesi", category: "Beslenme", is_group: 1, group_target: 2 },
+          { name: "Erkek bebek papyonlu doğum günü tulumu", category: "Kıyafet", is_group: 0 }
+        ];
+      } else {
+        return [
+          { name: "İlk adım unisex bebek patiği", category: "Kıyafet", is_group: 0 },
+          { name: "Eğitici aktivite masası", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Montessori ahşap oyuncak seti", category: "Oyuncak", is_group: 0 },
+          { name: "Sallanan ahşap at", category: "Oyuncak", is_group: 0 },
+          { name: "İlk yaşım anı albümü", category: "Diğer", is_group: 0 }
+        ];
+      }
+    }
+    // 4b. OKUL ÖNCESİ (3-5 yaş)
+    else if (eventAge >= 3 && eventAge <= 5) {
+      if (childGender === "Kız") {
+        return [
+          { name: "Barbie rüya evi seti", category: "Oyuncak", is_group: 1, group_target: 3 },
+          { name: "Lego Duplo aile evi pembe set", category: "Oyuncak", is_group: 0 },
+          { name: "3 Tekerlekli pembe scooter", category: "Spor/Aktivite", is_group: 0 },
+          { name: "Resimli kız çocuk masal kitapları", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Disney prenses kostümü (Elsa/Pamuk Prenses)", category: "Kıyafet", is_group: 0 }
+        ];
+      } else if (childGender === "Erkek") {
+        return [
+          { name: "Hot Wheels çılgın viraj pist seti", category: "Oyuncak", is_group: 0 },
+          { name: "Lego Duplo şantiye araçları seti", category: "Oyuncak", is_group: 0 },
+          { name: "3 Tekerlekli mavi scooter", category: "Spor/Aktivite", is_group: 0 },
+          { name: "Oyuncak ahşap tamir tezgahı seti", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Süper kahraman kostümü (Örümcek Adam/Batman)", category: "Kıyafet", is_group: 0 }
+        ];
+      } else {
+        return [
+          { name: "Lego Duplo büyük yaratıcı kutu", category: "Oyuncak", is_group: 0 },
+          { name: "Oyun çadırı (Kızılderili temalı unisex)", category: "Oyuncak", is_group: 0 },
+          { name: "Akülü araba (Unisex)", category: "Oyuncak", is_group: 1, group_target: 4 },
+          { name: "Çocuk oyun kili & oyun hamuru dev seti", category: "Oyuncak", is_group: 0 },
+          { name: "Eğitici sesli çocuk hikaye kitapları", category: "Eğitim/Kitap", is_group: 0 }
+        ];
+      }
+    }
+    // 4c. ÇOCUK (6-10 yaş)
+    else if (eventAge >= 6 && eventAge <= 10) {
+      if (childGender === "Kız") {
+        return [
+          { name: "Pembe 20 Jant sepetli bisiklet", category: "Spor/Aktivite", is_group: 1, group_target: 3 },
+          { name: "Lego Friends büyük otel seti", category: "Oyuncak", is_group: 0 },
+          { name: "Akıllı çocuk saati (Pembe)", category: "Teknoloji", is_group: 1, group_target: 2 },
+          { name: "Kız çocuk boncuklu takı tasarım seti", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Barbie meslekler bebekleri seti", category: "Oyuncak", is_group: 0 }
+        ];
+      } else if (childGender === "Erkek") {
+        return [
+          { name: "Mavi 20 Jant dağ bisikleti", category: "Spor/Aktivite", is_group: 1, group_target: 3 },
+          { name: "Lego City polis merkezi seti", category: "Oyuncak", is_group: 0 },
+          { name: "Akıllı çocuk saati (Mavi)", category: "Teknoloji", is_group: 1, group_target: 2 },
+          { name: "Nerf Elite dart tabancası", category: "Oyuncak", is_group: 0 },
+          { name: "Uzaktan kumandalı arazi cipi (RC Jeep)", category: "Oyuncak", is_group: 0 }
+        ];
+      } else {
+        return [
+          { name: "Bisiklet (20 Jant unisex)", category: "Spor/Aktivite", is_group: 1, group_target: 3 },
+          { name: "Lego Creator 3'ü 1 arada set", category: "Oyuncak", is_group: 0 },
+          { name: "Akıllı çocuk saati (Siyah/Nötr)", category: "Teknoloji", is_group: 1, group_target: 2 },
+          { name: "Eğitici kutu oyunları seti (Monopoly/Scrabble)", category: "Oyuncak", is_group: 0 },
+          { name: "Çocuk teleskobu başlangıç seti", category: "Eğitim/Kitap", is_group: 1, group_target: 2 }
+        ];
+      }
+    }
+    // 4d. GENÇ (11-18 yaş)
+    else {
+      if (childGender === "Kız") {
+        return [
+          { name: "Instax Mini anlık fotoğraf makinesi", category: "Teknoloji", is_group: 1, group_target: 2 },
+          { name: "Bluetooth kulaküstü kulaklık (Pembe/Gold)", category: "Teknoloji", is_group: 0 },
+          { name: "Dijital çizim tableti ve kalemi", category: "Teknoloji", is_group: 1, group_target: 2 },
+          { name: "Genç kız sürükleyici roman seti (10 Kitap)", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Kişisel bakım ve makyaj çantası seti", category: "Diğer", is_group: 0 }
+        ];
+      } else if (childGender === "Erkek") {
+        return [
+          { name: "Profesyonel oyuncu kulaklığı & mouse seti", category: "Teknoloji", is_group: 0 },
+          { name: "Bluetooth kulaküstü kulaklık (Siyah/Mat)", category: "Teknoloji", is_group: 0 },
+          { name: "Lego Technic spor araba seti", category: "Oyuncak", is_group: 0 },
+          { name: "Tuttuğu takımın lisanslı orijinal forması", category: "Kıyafet", is_group: 0 },
+          { name: "Akıllı bileklik / spor takip saati", category: "Teknoloji", is_group: 0 }
+        ];
+      } else {
+        return [
+          { name: "Kablosuz bluetooth kulaküstü kulaklık", category: "Teknoloji", is_group: 0 },
+          { name: "Dünya Klasikleri kitap seti (20 Kitap)", category: "Eğitim/Kitap", is_group: 0 },
+          { name: "Taşınabilir kablosuz bluetooth hoparlör", category: "Teknoloji", is_group: 0 },
+          { name: "Ergonomik genç sırt çantası", category: "Kıyafet", is_group: 0 },
+          { name: "Akıllı saat / spor izleme bilekliği", category: "Teknoloji", is_group: 1, group_target: 2 }
+        ];
+      }
+    }
   }
 
   return [];
@@ -269,10 +415,11 @@ router.post("/", async (req, res) => {
     }
 
     // Çocuk bilgilerini çek
-    const [children] = await connection.query("SELECT name, age FROM children WHERE id = ?", [finalChildId]);
+    const [children] = await connection.query("SELECT name, age, gender FROM children WHERE id = ?", [finalChildId]);
     const child = children[0];
     const childName = child.name;
     const childAge = child.age;
+    const childGender = child.gender || 'Bilinmiyor';
 
     // Ebeveyn isimlerini al (Slug oluşturmak için)
     const [parents] = await connection.query("SELECT first_name, last_name FROM users WHERE id = ?", [parent_id]);
@@ -309,7 +456,7 @@ router.post("/", async (req, res) => {
 
     // 3. Yaşa göre dinamik şablon listeyi belirle ve ekle
     const selectedAge = age_milestone || childAge || 0;
-    const templateGifts = getTemplatesForEvent(type, childAge, selectedAge);
+    const templateGifts = getTemplatesForEvent(type, childAge, selectedAge, childGender);
 
     for (const gift of templateGifts) {
       await connection.query(

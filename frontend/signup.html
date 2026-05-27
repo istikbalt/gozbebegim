@@ -175,12 +175,8 @@
         <input type="text" id="lastName" required placeholder="Demir" />
       </div>
       <div class="form-group">
-        <label for="email">E-posta Adresiniz</label>
-        <input type="email" id="email" placeholder="ayse@demir.com" />
-      </div>
-      <div class="form-group">
-        <label for="phone">Telefon Numaranız</label>
-        <input type="tel" id="phone" placeholder="0555 123 4567" />
+        <label for="emailOrPhone">E-posta veya Telefon Numaranız</label>
+        <input type="text" id="emailOrPhone" required placeholder="ayse@demir.com veya 0555 123 4567" />
       </div>
       <div class="form-group">
         <label for="password">Şifreniz</label>
@@ -195,22 +191,31 @@
     </p>
   </div>
 
+  <script src="/js/alerts.js"></script>
   <script>
     function handleSignup(e) {
       e.preventDefault();
-      const firstName = document.getElementById("firstName").value;
-      const lastName = document.getElementById("lastName").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const emailOrPhone = document.getElementById("emailOrPhone").value.trim();
       const password = document.getElementById("password").value;
       const errBox = document.getElementById("errorMsg");
 
       errBox.style.display = "none";
 
-      if (!email && !phone) {
-        errBox.textContent = "Kaydolmak için e-posta adresi veya telefon numaranızdan en az birini girmelisiniz.";
+      if (!emailOrPhone) {
+        errBox.textContent = "Kaydolmak için e-posta adresi veya telefon numaranızı girmelisiniz.";
         errBox.style.display = "block";
         return;
+      }
+
+      let email = null;
+      let phone = null;
+
+      if (emailOrPhone.includes('@')) {
+        email = emailOrPhone;
+      } else {
+        phone = emailOrPhone;
       }
 
       fetch("/api/auth/signup", {
@@ -219,17 +224,19 @@
         body: JSON.stringify({
           first_name: firstName,
           last_name: lastName,
-          email: email || null,
-          phone_number: phone || null,
+          email: email,
+          phone_number: phone,
           password: password
         })
       })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          // Otomatik giriş yapmak için kullanıcı bilgilerini tarayıcıya kaydet
           localStorage.setItem("user", JSON.stringify(data.user));
-          window.location.href = "/dashboard";
+          alert("Tebrikler! Hesabınız başarıyla oluşturuldu. 🎉\nPanonuza yönlendiriliyorsunuz...");
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 2200);
         } else {
           errBox.textContent = data.error || "Bir hata oluştu.";
           errBox.style.display = "block";

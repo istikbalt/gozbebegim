@@ -182,4 +182,89 @@ router.get("/children/:parentId", async (req, res) => {
   }
 });
 
+// POST /api/auth/forgot-password - Şifre Sıfırlama Kodu Talebi
+router.post("/forgot-password", async (req, res) => {
+  const { emailOrPhone } = req.body;
+
+  if (!emailOrPhone) {
+    return res.status(400).json({ success: false, error: "Lütfen kayıtlı e-posta veya telefon numaranızı girin." });
+  }
+
+  try {
+    const [users] = await pool.query(
+      "SELECT id, email, phone_number, first_name FROM users WHERE email = ? OR phone_number = ?",
+      [emailOrPhone, emailOrPhone]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, error: "Girdiğiniz e-posta veya telefon numarasıyla kayıtlı bir kullanıcı bulunamadı." });
+    }
+
+    const user = users[0];
+    // 6 haneli güvenli sıfırlama kodu üret
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const resetExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 dakika geçerli
+
+    await pool.query(
+      "UPDATE users SET reset_code = ?, reset_expires = ? WHERE id = ?",
+      [resetCode, resetExpires, user.id]
+    );
+
+    console.log(`[PASSWORD RESET] Generated code for user ${user.id} (${emailOrPhone}): ${resetCode}`);
+
+    res.json({
+      success: true,
+      message: "Şifre sıfırlama kodunuz başarıyla oluşturuldu. 🎉",
+      debug_code: resetCode // Test kolaylığı açısından ekranda doğrudan gösterilecek
+    });
+  } catch (error) {
+    console.error("Forgot password request error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası oluştu." });
+  }
+});
+
+// POST /api/auth/reset-password - Şifre Yenileme
+router.post("/reset-password", async (req, res) => {
+  const { emailOrPhone, resetCode, newPassword } = req.body;
+
+  if (!emailOrPhone || !resetCode || !newPassword) {
+    return res.status(400).json({ success: false, error: "Lütfen tüm alanları doldurun." });
+  }
+
+  try {
+    const [users] = await pool.query(
+      "SELECT id, reset_code, reset_expires FROM users WHERE email = ? OR phone_number = ?",
+      [emailOrPhone, emailOrPhone]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, error: "Kullanıcı bulunamadı." });
+    }
+
+    const user = users[0];
+
+    if (!user.reset_code || user.reset_code !== String(resetCode)) {
+      return res.status(400).json({ success: false, error: "Girdiğiniz sıfırlama kodu geçersiz." });
+    }
+
+    if (new Date(user.reset_expires) < new Date()) {
+      return res.status(400).json({ success: false, error: "Sıfırlama kodunun süresi dolmuş. Lütfen tekrar kod talep edin." });
+    }
+
+    // Şifreyi güncelle ve sıfırlama kodlarını temizle
+    await pool.query(
+      "UPDATE users SET password_hash = ?, reset_code = NULL, reset_expires = NULL WHERE id = ?",
+      [newPassword, user.id]
+    );
+
+    res.json({
+      success: true,
+      message: "Şifreniz başarıyla değiştirildi! Yeni şifrenizle giriş yapabilirsiniz. 🔐"
+    });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    res.status(500).json({ success: false, error: "Sunucu hatası oluştu." });
+  }
+});
+
 module.exports = router;

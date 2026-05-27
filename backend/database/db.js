@@ -55,6 +55,20 @@ const pool = mysql.createPool({
   } catch (err) {
     // Hata yoksayılır
   }
+
+  try {
+    await pool.query("ALTER TABLE `users` ADD COLUMN `reset_code` VARCHAR(10) DEFAULT NULL");
+    console.log("Database updated: added 'reset_code' column to 'users' table.");
+  } catch (err) {
+    // Hata yoksayılır
+  }
+
+  try {
+    await pool.query("ALTER TABLE `users` ADD COLUMN `reset_expires` TIMESTAMP DEFAULT NULL");
+    console.log("Database updated: added 'reset_expires' column to 'users' table.");
+  } catch (err) {
+    // Hata yoksayılır
+  }
 })();
 
 module.exports = pool;
