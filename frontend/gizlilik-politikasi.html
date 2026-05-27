@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gizlilik Politikası — Gözbebeğim</title>
+  <meta name="description" content="gözbebeğim.com gizlilik politikası sayfası. Çocuğunuzun ve sizin verilerinizin korunması bizim için en öncelikli konudur." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink: #D4537E;
+      --pink-dark: #993556;
+      --pink-light: #FBEAF0;
+      --pink-border: #F4C0D1;
+      --bg: #fff9fb;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --text-sec: #5c5c5c;
+      --text-ter: #9a9a9a;
+      --border: 1px solid #ecdde4;
+      --radius: 16px;
+      --radius-sm: 8px;
+      --shadow: 0 10px 30px rgba(212, 83, 126, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
+      --transition: all 0.3s ease;
+    }
+    
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Soft premium decorative background elements */
+    .decor-blob-1 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(214,83,126,0.05) 0%, rgba(214,83,126,0) 70%);
+      top: -150px;
+      right: -150px;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .decor-blob-2 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(29,158,117,0.03) 0%, rgba(29,158,117,0) 70%);
+      bottom: 10%;
+      left: -150px;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    header {
+      max-width: 800px;
+      margin: 2.5rem auto 1.5rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-container {
+      text-decoration: none;
+      font-family: 'Nunito', sans-serif;
+      font-size: 22px;
+      color: var(--text);
+    }
+    .logo-container strong {
+      color: var(--pink);
+      font-weight: 800;
+    }
+    
+    .back-btn {
+      text-decoration: none;
+      color: var(--pink);
+      font-weight: 700;
+      font-size: 14.5px;
+      border: 1px solid var(--pink-border);
+      background: #fff;
+      padding: 8px 16px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .back-btn:hover {
+      background: var(--pink-light);
+      transform: translateY(-1px);
+    }
+
+    main {
+      max-width: 800px;
+      margin: 0 auto 5rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .hero-section h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 0.75rem;
+    }
+    .hero-section p {
+      font-size: 15.5px;
+      color: var(--text-sec);
+    }
+
+    .legal-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .policy-update-date {
+      font-size: 13px;
+      color: var(--text-ter);
+      margin-bottom: 1.5rem;
+      border-bottom: 1px dashed var(--pink-border);
+      padding-bottom: 1rem;
+    }
+
+    .legal-intro {
+      font-size: 15px;
+      color: var(--text-sec);
+      margin-bottom: 2rem;
+    }
+
+    /* Modern Accordion Styles */
+    .policy-accordion {
+      margin-top: 1.5rem;
+      border: var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .accordion-item {
+      border-bottom: var(--border);
+    }
+    .accordion-item:last-child {
+      border-bottom: none;
+    }
+    .accordion-header {
+      width: 100%;
+      background: #fff;
+      border: none;
+      padding: 18px 24px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a1a;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition);
+      outline: none;
+    }
+    .accordion-header:hover {
+      background: var(--pink-light);
+      color: var(--pink-dark);
+    }
+    .accordion-header::after {
+      content: '▼';
+      font-size: 11px;
+      color: var(--pink);
+      transition: transform 0.3s ease;
+    }
+    .accordion-item.active .accordion-header::after {
+      transform: rotate(180deg);
+    }
+    .accordion-content {
+      background: #fafafa;
+      padding: 0 24px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+    }
+    .accordion-item.active .accordion-content {
+      padding: 20px 24px;
+      max-height: 2000px; /* High enough value to accommodate all text */
+    }
+    
+    .accordion-content p {
+      font-size: 14.5px;
+      color: var(--text-sec);
+      margin-bottom: 1rem;
+    }
+    .accordion-content p:last-child {
+      margin-bottom: 0;
+    }
+    .accordion-content ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+      font-size: 14.5px;
+      color: var(--text-sec);
+    }
+    .accordion-content li {
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem 0;
+      border-top: var(--border);
+      font-size: 13.5px;
+      color: var(--text-ter);
+    }
+  </style>
+</head>
+<body>
+  <div class="decor-blob-1"></div>
+  <div class="decor-blob-2"></div>
+
+  <header>
+    <a href="/" class="logo-container">göz<strong>bebeğim</strong>.com</a>
+    <a href="/" class="back-btn">← Ana Sayfa</a>
+  </header>
+
+  <main>
+    <div class="hero-section">
+      <h1>Gizlilik Politikası</h1>
+      <p>Kişisel verilerinizin ve çocuğunuzun anılarının güvenliği bizim en yüksek önceliğimizdir.</p>
+    </div>
+
+    <div class="legal-card">
+      <div class="policy-update-date">Son Güncelleme Tarihi: 27 Mayıs 2026</div>
+      
+      <p class="legal-intro">
+        gözbebeğim.com ("Platform") olarak, kullanıcılarımızın ("Kullanıcı") kişisel verilerinin korunması ve gizliliğinin sağlanması konusunda azami hassasiyeti göstermekteyiz. 
+        Bu Gizlilik Politikası, Platformumuzu kullandığınızda hangi verileri topladığımızı, bu verileri nasıl sakladığımızı, kullandığımızı ve koruduğumuzu açıklamaktadır.
+      </p>
+
+      <div class="policy-accordion">
+        
+        <div class="accordion-item active">
+          <button class="accordion-header" onclick="toggleAccordion(this)">1. Toplanan Bilgiler ve Toplanma Amacı</button>
+          <div class="accordion-content">
+            <p>Platformumuzdan yararlanabilmeniz amacıyla aşağıdaki bilgileri yasalara uygun bir şekilde topluyoruz:</p>
+            <ul>
+              <li><strong>Hesap Bilgileri:</strong> Kayıt olurken veya profilinizi güncellerken verdiğiniz ad, soyadı, e-posta adresi ve telefon numarası. Bu bilgiler hesabınızın güvenliği, şifre sıfırlama süreçleri ve sizinle iletişim kurulması için kullanılır.</li>
+              <li><strong>Organizasyon/Etkinlik Bilgileri:</strong> Oluşturduğunuz baby shower, sünnet, doğum günü veya mezuniyet etkinliklerinin başlığı, tarihi, konumu, çocuğunuzun adı, cinsiyeti ve yaş kırılımı. Bu veriler etkinliğe özel hediye listesi şablonları hazırlamak için kullanılır.</li>
+              <li><strong>Medya Dosyaları (S3):</strong> Etkinlik tebrik panolarına yüklediğiniz anı fotoğrafları veya videoları. Bu dosyalar Amazon S3 altyapısında güvenli bir şekilde depolanır ve yalnızca organizasyon sayfalarında görüntülenir.</li>
+              <li><strong>İletişim Mesajları:</strong> İletişim formumuzu kullanarak gönderdiğiniz ad, e-posta adresi ve mesaj içeriği. Bu bilgiler taleplerinizi yanıtlamak ve teknik destek sağlamak amacıyla RDS veritabanımızda saklanır.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">2. Çerezler (Cookies) ve Google AdSense</button>
+          <div class="accordion-content">
+            <p>Platformumuz, kullanıcı deneyimini zenginleştirmek, performansı artırmak ve reklam hizmetleri sunmak amacıyla çerezleri (cookies) ve benzer teknolojileri kullanmaktadır:</p>
+            <ul>
+              <li><strong>Oturum Çerezleri:</strong> Sisteme giriş yaptığınızda oturumunuzun aktif kalmasını sağlayan geçici teknik çerezler.</li>
+              <li><strong>Google AdSense ve DoubleClick Çerezleri:</strong> Google, üçüncü taraf bir sağlayıcı olarak Platformumuzda reklam yayınlamak üzere çerezlerden yararlanır. Google, DART çerezlerini kullanarak kullanıcılarımızın Platformumuza ve internetteki diğer sitelere yaptıkları ziyaretlere dayalı olarak reklamlar sunar.</li>
+              <li>Kullanıcılar, <a href="https://policies.google.com/technologies/ads" target="_blank" style="color:var(--pink); text-decoration:none; font-weight:600;">Google Reklam ve İçerik Ağı Gizlilik Politikası</a> sayfasını ziyaret ederek DART çerezinin kullanılmasını engelleyebilirler.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">3. Üçüncü Taraf İş Ortakları ve Affiliate Açıklaması</button>
+          <div class="accordion-content">
+            <p>Platformumuzda yer alan hediye listelerindeki ürünlerin satın alınmasını kolaylaştırmak amacıyla üçüncü taraf e-ticaret platformlarına (örneğin Trendyol, Amazon) ait ürün yönlendirme bağlantıları yer alabilir:</p>
+            <ul>
+              <li><strong>Affiliate (Ortaklık) Bağlantıları:</strong> Ziyaretçiler hediye listelerinden bir ürünü incelemek amacıyla bu bağlantılara tıkladıklarında, Platformumuz otomatik olarak kendi ortaklık kodlarını bağlantıya ekleyebilir. Bu durum, yapılan alışverişlerden Platformumuzun komisyon almasını sağlar ancak kullanıcılara veya hediye alan kişilere ekstra hiçbir ek maliyet çıkarmaz.</li>
+              <li>Yönlendirilen e-ticaret sitelerinin kendi bağımsız gizlilik ve güvenlik politikaları bulunmaktadır. Platformumuz, bu üçüncü taraf sitelerin içeriklerinden veya gizlilik uygulamalarından sorumlu tutulamaz.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">4. Verilerin Saklanması, Güvenliği ve Paylaşımı</button>
+          <div class="accordion-content">
+            <p>Kişisel verileriniz AWS RDS (İlişkisel Veritabanı Servisi) üzerinde, şifreleriniz ise modern şifreleme yöntemleriyle (hash) koruma altında tutulmaktadır. Yüklenen fotoğraflarınız AWS S3 üzerinde barındırılmaktadır.</p>
+            <p>Kişisel verileriniz, yasal zorunluluklar veya resmi makamların talepleri haricinde hiçbir üçüncü şahıs, kurum ya da reklam şirketi ile kesinlikle ticari amaçlarla paylaşılmaz, satılmaz veya kiralanmaz.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">5. Kullanıcı Hakları ve İletişim</button>
+          <div class="accordion-content">
+            <p>Kullanıcılar olarak, KVKK (Kişisel Verilerin Korunması Kanunu) ve ilgili mevzuat uyarınca aşağıdaki haklara sahipsiniz:</p>
+            <ul>
+              <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme,</li>
+              <li>İşlenmişse bilgi talep etme ve düzeltilmesini isteme,</li>
+              <li>Kişisel verilerinizin silinmesini veya yok edilmesini talep etme.</li>
+            </ul>
+            <p>Bu haklarınızı kullanmak, bilgi almak veya gizlilik ile ilgili görüşlerinizi paylaşmak için bizimle dilediğiniz zaman <a href="mailto:info@gozbebegim.com" style="color:var(--pink); text-decoration:none; font-weight:600;">info@gozbebegim.com</a> adresi üzerinden iletişime geçebilirsiniz.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 gözbebeğim.com — Tüm hakları saklıdır.</p>
+  </footer>
+
+  <script>
+    function toggleAccordion(header) {
+      const item = header.parentElement;
+      const isActive = item.classList.contains('active');
+      
+      // Close all active items
+      document.querySelectorAll('.accordion-item').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // Toggle clicked item
+      if (!isActive) {
+        item.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>

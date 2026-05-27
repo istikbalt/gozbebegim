@@ -540,12 +540,42 @@
     });
   };
 
-  // 5. Global click listener to hijack mailto:info@gozbebegim.com links
+  // 5. Global click listener to hijack mailto:info@gozbebegim.com links and auto-convert Amazon/Trendyol Affiliate URLs
   document.addEventListener('click', function(e) {
-    const link = e.target.closest('a[href^="mailto:info@gozbebegim.com"]');
-    if (link) {
+    // A. Mailto click hijacker
+    const mailLink = e.target.closest('a[href^="mailto:info@gozbebegim.com"]');
+    if (mailLink) {
       e.preventDefault();
       openContactModal();
+      return;
+    }
+
+    // B. Affiliate URL auto-converter
+    const affiliateLink = e.target.closest('a[href*="amazon."], a[href*="trendyol.com"]');
+    if (affiliateLink) {
+      try {
+        const href = affiliateLink.getAttribute('href');
+        // Parse url
+        const url = new URL(href, window.location.origin);
+        
+        // Amazon: add/replace partner store ID tag
+        if (url.hostname.includes('amazon.')) {
+          // Use 'gozbebegim-21' as default store ID (feel free to change this in alerts.js!)
+          url.searchParams.set('tag', 'gozbebegim-21');
+        }
+        // Trendyol: add campaign and partner source tracking parameters
+        else if (url.hostname.includes('trendyol.com')) {
+          url.searchParams.set('utm_source', 'affiliate');
+          url.searchParams.set('utm_medium', 'gozbebegim');
+          url.searchParams.set('utm_campaign', 'baby_registry');
+        }
+
+        // Set the modified href back to the anchor so it navigates with the affiliate tags!
+        affiliateLink.setAttribute('href', url.toString());
+        console.log(`[Affiliate Converter] Formatted URL: ${url.toString()}`);
+      } catch (err) {
+        console.error("Affiliate link converter error:", err);
+      }
     }
   });
 

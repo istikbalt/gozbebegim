@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kullanım Koşulları — Gözbebeğim</title>
+  <meta name="description" content="gözbebeğim.com kullanım koşulları sayfası. Platformumuzu kullanırken uyulması gereken kurallar ve yasal şartlar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink: #D4537E;
+      --pink-dark: #993556;
+      --pink-light: #FBEAF0;
+      --pink-border: #F4C0D1;
+      --bg: #fff9fb;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --text-sec: #5c5c5c;
+      --text-ter: #9a9a9a;
+      --border: 1px solid #ecdde4;
+      --radius: 16px;
+      --radius-sm: 8px;
+      --shadow: 0 10px 30px rgba(212, 83, 126, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
+      --transition: all 0.3s ease;
+    }
+    
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Soft premium decorative background elements */
+    .decor-blob-1 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(214,83,126,0.05) 0%, rgba(214,83,126,0) 70%);
+      top: -150px;
+      right: -150px;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .decor-blob-2 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(29,158,117,0.03) 0%, rgba(29,158,117,0) 70%);
+      bottom: 10%;
+      left: -150px;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    header {
+      max-width: 800px;
+      margin: 2.5rem auto 1.5rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-container {
+      text-decoration: none;
+      font-family: 'Nunito', sans-serif;
+      font-size: 22px;
+      color: var(--text);
+    }
+    .logo-container strong {
+      color: var(--pink);
+      font-weight: 800;
+    }
+    
+    .back-btn {
+      text-decoration: none;
+      color: var(--pink);
+      font-weight: 700;
+      font-size: 14.5px;
+      border: 1px solid var(--pink-border);
+      background: #fff;
+      padding: 8px 16px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .back-btn:hover {
+      background: var(--pink-light);
+      transform: translateY(-1px);
+    }
+
+    main {
+      max-width: 800px;
+      margin: 0 auto 5rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .hero-section h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 0.75rem;
+    }
+    .hero-section p {
+      font-size: 15.5px;
+      color: var(--text-sec);
+    }
+
+    .legal-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .policy-update-date {
+      font-size: 13px;
+      color: var(--text-ter);
+      margin-bottom: 1.5rem;
+      border-bottom: 1px dashed var(--pink-border);
+      padding-bottom: 1rem;
+    }
+
+    .legal-intro {
+      font-size: 15px;
+      color: var(--text-sec);
+      margin-bottom: 2rem;
+    }
+
+    /* Modern Accordion Styles */
+    .policy-accordion {
+      margin-top: 1.5rem;
+      border: var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .accordion-item {
+      border-bottom: var(--border);
+    }
+    .accordion-item:last-child {
+      border-bottom: none;
+    }
+    .accordion-header {
+      width: 100%;
+      background: #fff;
+      border: none;
+      padding: 18px 24px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a1a;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition);
+      outline: none;
+    }
+    .accordion-header:hover {
+      background: var(--pink-light);
+      color: var(--pink-dark);
+    }
+    .accordion-header::after {
+      content: '▼';
+      font-size: 11px;
+      color: var(--pink);
+      transition: transform 0.3s ease;
+    }
+    .accordion-item.active .accordion-header::after {
+      transform: rotate(180deg);
+    }
+    .accordion-content {
+      background: #fafafa;
+      padding: 0 24px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+    }
+    .accordion-item.active .accordion-content {
+      padding: 20px 24px;
+      max-height: 2000px; /* High enough value to accommodate all text */
+    }
+    
+    .accordion-content p {
+      font-size: 14.5px;
+      color: var(--text-sec);
+      margin-bottom: 1rem;
+    }
+    .accordion-content p:last-child {
+      margin-bottom: 0;
+    }
+    .accordion-content ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+      font-size: 14.5px;
+      color: var(--text-sec);
+    }
+    .accordion-content li {
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem 0;
+      border-top: var(--border);
+      font-size: 13.5px;
+      color: var(--text-ter);
+    }
+  </style>
+</head>
+<body>
+  <div class="decor-blob-1"></div>
+  <div class="decor-blob-2"></div>
+
+  <header>
+    <a href="/" class="logo-container">göz<strong>bebeğim</strong>.com</a>
+    <a href="/" class="back-btn">← Ana Sayfa</a>
+  </header>
+
+  <main>
+    <div class="hero-section">
+      <h1>Kullanım Koşulları</h1>
+      <p>Gözbebeğim platformunu kullanırken uymanız gereken genel kural ve koşullar.</p>
+    </div>
+
+    <div class="legal-card">
+      <div class="policy-update-date">Son Güncelleme Tarihi: 27 Mayıs 2026</div>
+      
+      <p class="legal-intro">
+        Lütfen gözbebeğim.com platformunu ("Platform") kullanmadan önce bu Kullanım Koşullarını dikkatle okuyunuz. 
+        Platformu ziyaret ederek veya üye olarak, bu koşullarda yer alan tüm şartları kabul etmiş sayılmaktasınız.
+      </p>
+
+      <div class="policy-accordion">
+        
+        <div class="accordion-item active">
+          <button class="accordion-header" onclick="toggleAccordion(this)">1. Sunulan Hizmetlerin Kapsamı</button>
+          <div class="accordion-content">
+            <p>Platformumuz, ebeveynlerin çocuklarının özel günleri (doğum, sünnet, yaş günü, mezuniyet vb.) için dijital hediye listeleri oluşturmasını, bu listeleri aile ve arkadaş çevresiyle paylaşmasını ve davetlilerin hediye rezerve etmesini sağlayan bir dijital hediyeleşme asistanıdır.</p>
+            <p>Hizmetlerimiz şu an için tamamen ücretsiz olup, Platform hizmetlerin kapsamını, çalışma şeklini ve ücret politikasını tek taraflı olarak değiştirme hakkını saklı tutar.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">2. Üyelik ve Hesap Güvenliği</button>
+          <div class="accordion-content">
+            <p>Platformda organizasyon oluşturabilmek için bir üyelik hesabı açmanız gerekmektedir. Üyelik işlemlerinde verdiğiniz tüm bilgilerin doğru ve güncel olduğunu kabul edersiniz:</p>
+            <ul>
+              <li>Hesap şifrenizin ve giriş bilgilerinizin gizliliğini korumak sizin sorumluluğunuzdadır.</li>
+              <li>Yetkisiz bir kullanım tespit ettiğinizde derhal <a href="mailto:info@gozbebegim.com" style="color:var(--pink); text-decoration:none; font-weight:600;">info@gozbebegim.com</a> adresine bildirimde bulunmalısınız.</li>
+              <li>Platformumuzda rezerve edilmemiş veya satın alınmamış pasif listeler, Platform yönetimi tarafından sunucu temizliği kapsamında arşivlenebilir veya silinebilir.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">3. İçerik Yükleme ve Telif Hakları</button>
+          <div class="accordion-content">
+            <p>Platform üzerindeki tebrik panolarına yüklediğiniz tüm fotoğraf, video, metin veya tebrik mesajlarından doğrudan kendiniz sorumlusunuzdur. Yüklenen içeriklerle ilgili aşağıdaki kurallar kesinlikle geçerlidir:</p>
+            <ul>
+              <li>Telif hakkı başkasına ait olan, izinsiz kullanılan, genel ahlaka veya yasalara aykırı, nefret söylemi içeren hiçbir görsel, video veya mesaj yüklenemez.</li>
+              <li>Ziyaretçiler tarafından tebrik panolarına yüklenen yasa dışı veya telif hakkı ihlali barındıran içerikler, Platform yönetimi tarafından hiçbir ön bildirim yapılmaksızın kalıcı olarak silinir.</li>
+              <li>İçeriklerin silinmesi veya ihlaller durumunda Platform yönetimi hiçbir sorumluluk kabul etmez.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">4. Sorumluluk Sınırları ve Garanti Reddi</button>
+          <div class="accordion-content">
+            <p>Platformumuz "olduğu gibi" ve "kullanılabilir olduğu sürece" esasıyla hizmet sunmaktadır. Platform yönetimi, sistemin kesintisiz veya hatasız çalışacağını, verilerin hiçbir şekilde kaybolmayacağını garanti etmez.</p>
+            <p>Hediye listelerinde yer alan ürünlerin e-ticaret sitelerinden satın alınması, kargolanması, iade süreçleri ve ürün kalitesi tamamen satın alan kişi ile e-ticaret firması arasındadır. Platformumuz, hediyeleşme veya alışveriş sürecindeki anlaşmazlıklardan veya doğabilecek maddi/manevi zararlardan sorumlu tutulamaz.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <button class="accordion-header" onclick="toggleAccordion(this)">5. Koşulların Değiştirilmesi ve Yürürlük</button>
+          <div class="accordion-content">
+            <p>Platform yönetimi, bu Kullanım Koşullarını dilediği zaman tek taraflı olarak güncelleme veya değiştirme hakkını saklı tutar. Güncellenen koşullar, Platformda yayınlandığı andan itibaren tüm kullanıcılar için geçerlilik kazanır. Kullanıcıların güncellemeleri takip etmesi kendi sorumluluğundadır.</p>
+            <p>Sorularınız veya geri bildirimleriniz için <a href="mailto:info@gozbebegim.com" style="color:var(--pink); text-decoration:none; font-weight:600;">info@gozbebegim.com</a> e-posta adresi üzerinden bizimle iletişime geçebilirsiniz.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 gözbebeğim.com — Tüm hakları saklıdır.</p>
+  </footer>
+
+  <script>
+    function toggleAccordion(header) {
+      const item = header.parentElement;
+      const isActive = item.classList.contains('active');
+      
+      // Close all active items
+      document.querySelectorAll('.accordion-item').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // Toggle clicked item
+      if (!isActive) {
+        item.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
