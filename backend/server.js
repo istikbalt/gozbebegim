@@ -81,6 +81,10 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
+const { startEmailForwarder } = require("./services/emailForwarder");
+
 app.listen(PORT, () => {
   console.log(`Gözbebeğim server running on port ${PORT}`);
+  // Start the background email forwarding S3-to-Gmail routing service
+  startEmailForwarder();
 });

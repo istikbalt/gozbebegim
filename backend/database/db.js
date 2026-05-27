@@ -85,6 +85,18 @@ const pool = mysql.createPool({
   } catch (err) {
     // Hata yoksayılır
   }
+
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS \`processed_emails\` (
+        \`message_key\` VARCHAR(255) PRIMARY KEY,
+        \`processed_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
+    console.log("Database updated: created 'processed_emails' table if not exists.");
+  } catch (err) {
+    // Hata yoksayılır
+  }
 })();
 
 module.exports = pool;
