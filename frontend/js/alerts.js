@@ -375,7 +375,7 @@
 
     contactOverlay.innerHTML = `
       <div class="contact-modal-card">
-        <button class="contact-close-btn" id="contactCloseBtn">✕</button>
+        <button class="contact-close-btn" id="contactCloseBtn" aria-label="Kapat">✕</button>
         <h3 style="font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; margin-bottom: 0.5rem; color: #1a1a1a;">📬 İletişim Formu</h3>
         <p style="font-size: 12.5px; color: #666; margin-bottom: 1.25rem; line-height: 1.5;">Bizimle iletişime geçmek, görüşlerinizi iletmek veya teknik destek almak için formu doldurabilirsiniz. 🌸</p>
         

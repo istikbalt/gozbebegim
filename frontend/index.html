@@ -13,7 +13,8 @@
   <meta property="og:locale" content="tr_TR" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Nunito:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -26,8 +27,8 @@
       --bg: #fff9fb;
       --card: #ffffff;
       --text: #1a1a1a;
-      --text-sec: #5c5c5c;
-      --text-ter: #9a9a9a;
+      --text-sec: #4a4a4a;
+      --text-ter: #707070;
       --border: 1px solid #ecdde4;
       --surface: #f7f1f4;
       --shadow: 0 12px 40px rgba(153, 53, 86, 0.08);
@@ -761,6 +762,7 @@
     </div>
   </div>
 
+  <main id="main-content">
   <header class="hero wrap">
     <div class="hero-grid">
       <div class="hero-copy reveal">
@@ -1077,6 +1079,8 @@
       <a class="btn-white" href="/signup">🍼 Liste oluştur →</a>
     </div>
   </section>
+
+  </main>
 
   <footer>
     <nav class="footer-links" aria-label="Alt bilgi">
