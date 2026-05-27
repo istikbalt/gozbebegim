@@ -279,6 +279,37 @@
     }
     .reveal.visible { opacity: 1; transform: none; }
 
+    /* Ticker Banner */
+    .ticker-wrap {
+      width: 100%;
+      overflow: hidden;
+      background: rgba(251, 234, 240, 0.45);
+      border-top: 0.5px solid rgba(212, 83, 126, 0.1);
+      border-bottom: 0.5px solid rgba(212, 83, 126, 0.1);
+      padding: 7px 0;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 10;
+    }
+    .ticker {
+      display: flex;
+      width: max-content;
+      animation: ticker-loop 24s linear infinite;
+    }
+    .ticker__item {
+      flex-shrink: 0;
+      padding: 0 3rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #993556;
+      letter-spacing: 0.5px;
+    }
+    @keyframes ticker-loop {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+
     /* Nav */
     nav {
       position: sticky; top: 0; z-index: 100;
@@ -718,6 +749,15 @@
       <a class="btn-primary" href="/signup">Kayıt ol</a>
     </div>
   </nav>
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <div class="ticker__item">🚀 Sayfamız şu anda geliştirme aşamasındadır. 💝 Sayfamızın kullanımı tamamen ücretsizdir!</div>
+      <div class="ticker__item">🚀 Sayfamız şu anda geliştirme aşamasındadır. 💝 Sayfamızın kullanımı tamamen ücretsizdir!</div>
+      <div class="ticker__item">🚀 Sayfamız şu anda geliştirme aşamasındadır. 💝 Sayfamızın kullanımı tamamen ücretsizdir!</div>
+      <div class="ticker__item">🚀 Sayfamız şu anda geliştirme aşamasındadır. 💝 Sayfamızın kullanımı tamamen ücretsizdir!</div>
+    </div>
+  </div>
 
   <header class="hero wrap">
     <div class="hero-grid">
